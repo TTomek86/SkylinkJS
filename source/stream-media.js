@@ -1883,31 +1883,38 @@ Skylink.prototype.sendStream = function(stream, callback) {
       },false);
     }
 
-    if (self._inRoom) {
-      self.once('mediaAccessSuccess', function (stream) {
-        if (self._hasMCU) {
-          self._restartMCUConnection();
-        } else {
-          self._trigger('incomingStream', self._user.sid, self._mediaStream,
-            true, self.getPeerInfo(), false);
-          for (var peer in self._peerConnections) {
-            if (self._peerConnections.hasOwnProperty(peer)) {
-              self._restartPeerConnection(peer, true, false, null, true);
+    // get the mediastream and then wait for it to be retrieved before sending
+    self._waitForLocalMediaStream(function (error, stream) {
+      if (!error) {
+        if (self._inRoom) {
+          if (hasNoPeers) {
+            // The callback is provided but there is not peers, so automatically invoke the callback
+            callback(null, stream);
+
+          } else {
+            if (self._hasMCU) {
+              self._restartMCUConnection();
+
+            } else {
+              // the stream could be empty due to { audio: false, video: false }
+              if (stream) {
+                self._trigger('incomingStream', self._user.sid, stream, true, self.getPeerInfo(), false);
+              }
+
+              for (var peer in self._peerConnections) {
+                if (self._peerConnections.hasOwnProperty(peer)) {
+                  self._restartPeerConnection(peer, true, false, null, true);
+                }
+              }
             }
           }
+        } else {
+          // Just trigger since the connection is made
+          callback(null, stream);
         }
 
         self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
-      });
-    }
 
-    // get the mediastream and then wait for it to be retrieved before sending
-    self._waitForLocalMediaStream(function (error) {
-      if (!error) {
-        // The callback is provided but there is not peers, so automatically invoke the callback
-        if (typeof callback === 'function' && hasNoPeers) {
-          callback(null, self._mediaStream);
-        }
       } else {
         callback(error, null);
       }
