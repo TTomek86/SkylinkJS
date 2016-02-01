@@ -1887,7 +1887,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
     self._waitForLocalMediaStream(function (error, stream) {
       if (!error) {
         if (self._inRoom) {
-          if (hasNoPeers) {
+          if (typeof callback === 'function' && hasNoPeers) {
             // The callback is provided but there is not peers, so automatically invoke the callback
             callback(null, stream);
 
@@ -1898,7 +1898,9 @@ Skylink.prototype.sendStream = function(stream, callback) {
             } else {
               // the stream could be empty due to { audio: false, video: false }
               if (stream) {
-                self._trigger('incomingStream', self._user.sid, stream, true, self.getPeerInfo(), false);
+                if (!self._mediaScreen) {
+                  self._trigger('incomingStream', self._user.sid, stream, true, self.getPeerInfo(), false);
+                }
               }
 
               for (var peer in self._peerConnections) {
@@ -1910,12 +1912,15 @@ Skylink.prototype.sendStream = function(stream, callback) {
           }
         } else {
           // Just trigger since the connection is made
-          callback(null, stream);
+          if (typeof callback === 'function') {
+            callback(null, stream);
+          }
         }
 
-        self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
-
-      } else {
+        if (!self._mediaScreen) {
+          self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
+        }
+      } else if (typeof callback === 'function') {
         callback(error, null);
       }
     }, stream);
