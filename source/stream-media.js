@@ -1883,6 +1883,10 @@ Skylink.prototype.sendStream = function(stream, callback) {
       },false);
     }
 
+    if (stream.audio === false && stream.video === false) {
+      self.stopStream();
+    }
+
     // get the mediastream and then wait for it to be retrieved before sending
     self._waitForLocalMediaStream(function (error, stream) {
       if (!error) {

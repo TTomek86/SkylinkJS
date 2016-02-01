@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Mon Feb 01 2016 11:39:04 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Mon Feb 01 2016 12:02:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -13801,6 +13801,10 @@ Skylink.prototype.sendStream = function(stream, callback) {
         }
         return false;
       },false);
+    }
+
+    if (stream.audio === false && stream.video === false) {
+      self.stopStream();
     }
 
     // get the mediastream and then wait for it to be retrieved before sending
