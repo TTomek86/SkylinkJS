@@ -1891,6 +1891,9 @@ Skylink.prototype.sendStream = function(stream, callback) {
     self._waitForLocalMediaStream(function (error, stream) {
       if (!error) {
         if (self._inRoom) {
+          if (!self._mediaScreen) {
+            self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
+          }
           if (typeof callback === 'function' && hasNoPeers) {
             // The callback is provided but there is not peers, so automatically invoke the callback
             callback(null, stream);
@@ -1921,9 +1924,6 @@ Skylink.prototype.sendStream = function(stream, callback) {
           }
         }
 
-        if (!self._mediaScreen) {
-          self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
-        }
       } else if (typeof callback === 'function') {
         callback(error, null);
       }
