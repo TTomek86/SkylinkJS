@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 19:00:09 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 19:06:13 GMT+0800 (SGT) */
 
 (function() {
 
@@ -13738,7 +13738,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
         log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent as new user. Firing callback'], success);
 
         if (typeof callback === 'function'){
-          callback(null, success);
+          callback(null, success || null);
         }
 
       } else {
@@ -13784,7 +13784,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
           log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent. Firing callback'], success);
 
           if (typeof callback === 'function'){
-            callback(null, success);
+            callback(null, success || null);
           }
 
         /*} else {
@@ -13804,7 +13804,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
       log.log([null, 'MediaStream', success.id, 'Stream was replaced before joining room. Firing callback'], success);
 
       if (typeof callback === 'function'){
-        callback(null, success);
+        callback(null, success || null);
       }
     }
   };

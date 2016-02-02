@@ -1819,7 +1819,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
         log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent as new user. Firing callback'], success);
 
         if (typeof callback === 'function'){
-          callback(null, success);
+          callback(null, success || null);
         }
 
       } else {
@@ -1865,7 +1865,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
           log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent. Firing callback'], success);
 
           if (typeof callback === 'function'){
-            callback(null, success);
+            callback(null, success || null);
           }
 
         /*} else {
@@ -1885,7 +1885,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
       log.log([null, 'MediaStream', success.id, 'Stream was replaced before joining room. Firing callback'], success);
 
       if (typeof callback === 'function'){
-        callback(null, success);
+        callback(null, success || null);
       }
     }
   };
