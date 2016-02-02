@@ -2347,6 +2347,8 @@ Skylink.prototype.stopScreen = function () {
         if (!!this._mediaStream && this._mediaStream !== null) {
           this._trigger('incomingStream', this._user.sid, this._mediaStream, true,
             this.getPeerInfo(), false);
+        } else {
+          this._trigger('peerUpdated', this._user.sid, this.getPeerInfo(), true);
         }
         for (var peer in this._peerConnections) {
           if (this._peerConnections.hasOwnProperty(peer)) {
