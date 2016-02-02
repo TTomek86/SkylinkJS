@@ -1829,7 +1829,9 @@ Skylink.prototype.sendStream = function(stream, callback) {
             true, self.getPeerInfo(), false);
         }
 
-        var restartCount = 0;
+        // uncommenting out because
+        // if there's sudden peerLeft/peerJoined events, it's better not to take the risk
+        /*var restartCount = 0;
         var peerCount = Object.keys(self._peerConnections).length;
 
         if (peerCount > 0) {
@@ -1850,20 +1852,27 @@ Skylink.prototype.sendStream = function(stream, callback) {
               }
             }
             return false;
-          }, false);
+          }, false);*/
 
           for (var peer in self._peerConnections) {
             if (self._peerConnections.hasOwnProperty(peer)) {
               self._restartPeerConnection(peer, true, false, null, true);
             }
           }
-        } else {
+
+          log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent. Firing callback'], success);
+
+          if (typeof callback === 'function'){
+            callback(null, success);
+          }
+
+        /*} else {
           log.log([null, 'MediaStream', (success || {}).id, 'Stream was replaced. Firing callback'], success);
 
           if (typeof callback === 'function'){
             callback(null, success);
           }
-        }
+        }*/
       }
 
       // Do not trigger for screensharing case
