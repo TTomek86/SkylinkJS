@@ -1786,19 +1786,105 @@ Skylink.prototype.getUserMedia = function(options,callback) {
 
 Skylink.prototype.sendStream = function(stream, callback) {
   var self = this;
-  var restartCount = 0;
-  var peerCount = Object.keys(self._peerConnections).length;
 
-  if (typeof stream !== 'object' || stream === null) {
+  // sendStream(object)
+  if (!(typeof stream === 'object' && stream !== null)) {
     var error = 'Provided stream settings is invalid';
+
     log.error(error, stream);
+
+    // sendStream(function () {})
+    if (typeof stream === 'function') {
+      callback = stream;
+    }
+
+    // sendStream(invalid, function () {})
     if (typeof callback === 'function'){
-      callback(new Error(error),null);
+      callback(new Error(error), null);
     }
     return;
   }
 
+
+
+  var peerCount = Object.keys(self._peerConnections).length;
   var hasNoPeers = Object.keys(self._peerConnections).length === 0;
+
+
+  var handleRestartFn = function (success) {
+    if (self._inRoom) {
+      if (self._hasMCU) {
+        self._restartMCUConnection();
+
+        log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent as new user. Firing callback'], success);
+
+        if (typeof callback === 'function'){
+          callback(null, success);
+        }
+
+      } else {
+        // Do not trigger for screensharing case
+        if (!self._mediaScreen && self._mediaStream) {
+          self._trigger('incomingStream', self._user.sid, self._mediaStream,
+            true, self.getPeerInfo(), false);
+        }
+
+        var restartCount = 0;
+        var peerCount = Object.keys(self._peerConnections).length;
+
+        if (peerCount > 0) {
+          self.once('peerRestart',function(peerId, peerInfo, isSelfInitiatedRestart){
+            log.log([null, 'MediaStream', (success || {}).id, 'Stream was sent. Firing callback'], success);
+
+            if (typeof callback === 'function'){
+              callback(null, success);
+            }
+
+            restartCount = 0; //reset counter
+
+          },function (peerId, peerInfo, isSelfInitiatedRestart){
+            if (isSelfInitiatedRestart){
+              restartCount++;
+              if (restartCount === peerCount){
+                return true;
+              }
+            }
+            return false;
+          }, false);
+
+          for (var peer in self._peerConnections) {
+            if (self._peerConnections.hasOwnProperty(peer)) {
+              self._restartPeerConnection(peer, true, false, null, true);
+            }
+          }
+        } else {
+          log.log([null, 'MediaStream', (success || {}).id, 'Stream was replaced. Firing callback'], success);
+
+          if (typeof callback === 'function'){
+            callback(null, success);
+          }
+        }
+      }
+
+      // Do not trigger for screensharing case
+      if (!self._mediaScreen) {
+        self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
+      }
+    } else {
+      log.log([null, 'MediaStream', success.id, 'Stream was replaced before joining room. Firing callback'], success);
+
+      if (typeof callback === 'function'){
+        callback(null, success);
+      }
+    }
+  };
+
+  var handleErrorFn = function (error) {
+    if (typeof callback === 'function') {
+      callback(error, null);
+    }
+  };
+
 
   // Stream object
   // getAudioTracks or getVideoTracks first because adapterjs
@@ -1806,127 +1892,40 @@ Skylink.prototype.sendStream = function(stream, callback) {
   // interopability with firefox and chrome
   //MediaStream = MediaStream || webkitMediaStream;
   // NOTE: eventually we should do instanceof
+  // sendStream(MediaStream)
   if (typeof stream.getAudioTracks === 'function' ||
     typeof stream.getVideoTracks === 'function') {
+
     // stop playback
     self.stopStream();
 
     self._streamSettings.audio = stream.getAudioTracks().length > 0;
     self._streamSettings.video = stream.getVideoTracks().length > 0;
 
-    self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
-    self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
+    // commenting out because of other possible changes
+    //self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
+    //self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
 
-    if (self._inRoom) {
-      self.once('mediaAccessSuccess', function (stream) {
-        if (self._hasMCU) {
-          self._restartMCUConnection();
-        } else {
-          self._trigger('incomingStream', self._user.sid, self._mediaStream,
-            true, self.getPeerInfo(), false);
-          for (var peer in self._peerConnections) {
-            if (self._peerConnections.hasOwnProperty(peer)) {
-              self._restartPeerConnection(peer, true, false, null, true);
-            }
-          }
-        }
+    self.once('mediaAccessSuccess', handleRestartFn);
 
-        self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
-      });
-    }
+    self._onUserMediaSuccess(stream, false);
 
-    // send the stream
-    if (self._mediaStream !== stream) {
-      self._onUserMediaSuccess(stream);
-    }
-
-    // The callback is provided and has peers, so require to wait for restart
-    if (typeof callback === 'function' && !hasNoPeers) {
-      self.once('peerRestart',function(peerId, peerInfo, isSelfInitiatedRestart){
-        log.log([null, 'MediaStream', stream.id,
-          'Stream was sent. Firing callback'], stream);
-        callback(null,stream);
-        restartCount = 0; //reset counter
-      },function(peerId, peerInfo, isSelfInitiatedRestart){
-        if (isSelfInitiatedRestart){
-          restartCount++;
-          if (restartCount === peerCount){
-            return true;
-          }
-        }
-        return false;
-      },false);
-    }
-
-    // The callback is provided but there is no peers, so automatically invoke the callback
-    if (typeof callback === 'function' && hasNoPeers) {
-      callback(null, self._mediaStream);
-    }
-
-  // Options object
+  // sendStream({})
   } else {
-    // The callback is provided but there is peers, so require to wait for restart
-    if (typeof callback === 'function' && !hasNoPeers) {
-      self.once('peerRestart',function(peerId, peerInfo, isSelfInitiatedRestart){
-        log.log([null, 'MediaStream', stream.id,
-          'Stream was sent. Firing callback'], stream);
-        callback(null,stream);
-        restartCount = 0; //reset counter
-      },function(peerId, peerInfo, isSelfInitiatedRestart){
-        if (isSelfInitiatedRestart){
-          restartCount++;
-          if (restartCount === peerCount){
-            return true;
-          }
-        }
-        return false;
-      },false);
-    }
-
+    // stopStream() for audio or video false
     if (stream.audio === false && stream.video === false) {
       self.stopStream();
     }
 
     // get the mediastream and then wait for it to be retrieved before sending
-    self._waitForLocalMediaStream(function (error, stream) {
-      if (!error) {
-        if (self._inRoom) {
-          if (!self._mediaScreen) {
-            self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
-          }
-          if (typeof callback === 'function' && hasNoPeers) {
-            // The callback is provided but there is not peers, so automatically invoke the callback
-            callback(null, stream);
-
-          } else {
-            if (self._hasMCU) {
-              self._restartMCUConnection();
-
-            } else {
-              // the stream could be empty due to { audio: false, video: false }
-              if (stream) {
-                if (!self._mediaScreen) {
-                  self._trigger('incomingStream', self._user.sid, stream, true, self.getPeerInfo(), false);
-                }
-              }
-
-              for (var peer in self._peerConnections) {
-                if (self._peerConnections.hasOwnProperty(peer)) {
-                  self._restartPeerConnection(peer, true, false, null, true);
-                }
-              }
-            }
-          }
-        } else {
-          // Just trigger since the connection is made
-          if (typeof callback === 'function') {
-            callback(null, stream);
-          }
-        }
-
-      } else if (typeof callback === 'function') {
-        callback(error, null);
+    self._waitForLocalMediaStream(function (error, success) {
+      if (error) {
+        handleErrorFn(error);
+        return;
       }
+
+      handleRestartFn(success);
+
     }, stream);
   }
 };
