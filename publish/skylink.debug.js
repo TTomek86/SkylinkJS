@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 15:22:06 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 19:00:09 GMT+0800 (SGT) */
 
 (function() {
 
@@ -13773,9 +13773,11 @@ Skylink.prototype.sendStream = function(stream, callback) {
             return false;
           }, false);*/
 
-          for (var peer in self._peerConnections) {
-            if (self._peerConnections.hasOwnProperty(peer)) {
-              self._restartPeerConnection(peer, true, false, null, true);
+          if (!self._mediaScreen) {
+            for (var peer in self._peerConnections) {
+              if (self._peerConnections.hasOwnProperty(peer)) {
+                self._restartPeerConnection(peer, true, false, null, true);
+              }
             }
           }
 

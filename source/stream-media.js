@@ -1854,9 +1854,11 @@ Skylink.prototype.sendStream = function(stream, callback) {
             return false;
           }, false);*/
 
-          for (var peer in self._peerConnections) {
-            if (self._peerConnections.hasOwnProperty(peer)) {
-              self._restartPeerConnection(peer, true, false, null, true);
+          if (!self._mediaScreen) {
+            for (var peer in self._peerConnections) {
+              if (self._peerConnections.hasOwnProperty(peer)) {
+                self._restartPeerConnection(peer, true, false, null, true);
+              }
             }
           }
 
