@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 12:56:21 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 15:06:12 GMT+0800 (SGT) */
 
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -8936,7 +8936,7 @@ if ( navigator.mozGetUserMedia
     console.warn('Opera does not support screensharing feature in getUserMedia');
   }
 })();
-/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 12:56:21 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 15:06:12 GMT+0800 (SGT) */
 
 (function() {
 
@@ -22768,9 +22768,9 @@ Skylink.prototype.sendStream = function(stream, callback) {
     self._streamSettings.audio = stream.getAudioTracks().length > 0;
     self._streamSettings.video = stream.getVideoTracks().length > 0;
 
-    // commenting out because of other possible changes
-    //self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
-    //self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
+    // NOTE-ESS-427: Remember ESS-427 changes first and take in note
+    self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
+    self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
 
     self.once('mediaAccessSuccess', handleRestartFn);
 

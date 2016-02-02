@@ -1911,9 +1911,9 @@ Skylink.prototype.sendStream = function(stream, callback) {
     self._streamSettings.audio = stream.getAudioTracks().length > 0;
     self._streamSettings.video = stream.getVideoTracks().length > 0;
 
-    // commenting out because of other possible changes
-    //self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
-    //self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
+    // NOTE-ESS-427: Remember ESS-427 changes first and take in note
+    self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
+    self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
 
     self.once('mediaAccessSuccess', handleRestartFn);
 
