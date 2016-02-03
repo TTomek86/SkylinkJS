@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Tue Feb 02 2016 19:06:13 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Wed Feb 03 2016 15:58:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -13724,7 +13724,22 @@ Skylink.prototype.sendStream = function(stream, callback) {
     return;
   }
 
+  if (!self._inRoom) {
+    var notInRoomError = 'User is not in room. Unable to send stream';
 
+    log.error(notInRoomError, stream);
+
+    // sendStream(function () {})
+    if (typeof stream === 'function') {
+      callback = stream;
+    }
+
+    // sendStream(invalid, function () {})
+    if (typeof callback === 'function'){
+      callback(new Error(notInRoomError), null);
+    }
+    return;
+  }
 
   var peerCount = Object.keys(self._peerConnections).length;
   var hasNoPeers = Object.keys(self._peerConnections).length === 0;
