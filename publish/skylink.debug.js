@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Mon Jan 25 2016 16:34:38 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Thu Feb 11 2016 19:00:16 GMT+0800 (SGT) */
 
 (function() {
 
@@ -14162,7 +14162,9 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
                 }
               }
             }
-          } else if (typeof callback === 'function') {
+          }
+
+          if (typeof callback === 'function') {
             callback(null, stream);
           }
         }, function (stream, isScreenSharing) {

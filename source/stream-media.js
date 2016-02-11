@@ -2243,7 +2243,9 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
                 }
               }
             }
-          } else if (typeof callback === 'function') {
+          }
+
+          if (typeof callback === 'function') {
             callback(null, stream);
           }
         }, function (stream, isScreenSharing) {
