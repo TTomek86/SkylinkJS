@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Feb 17 2016 13:10:43 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Feb 17 2016 13:27:09 GMT+0800 (SGT) */
 
 (function() {
 
@@ -14086,89 +14086,182 @@ Skylink.prototype.disableVideo = function() {
  */
 Skylink.prototype.shareScreen = function (enableAudio, callback) {
   var self = this;
-  var hasAudio = false;
 
-  var settings = {
-    video: {
-      mediaSource: 'window'
-    }
-  };
-
+  // shareScreen(function () {})
   if (typeof enableAudio === 'function') {
     callback = enableAudio;
     enableAudio = true;
+
+  // shareScreen(false) or shareScreen()
+  } else {
+    enableAudio = enableAudio !== false;
   }
 
-  if (typeof enableAudio !== 'boolean') {
-    enableAudio = true;
-  }
 
-  var triggerSuccessFn = function (sStream) {
-    if (hasAudio) {
-      if (typeof self._streamSettings.audio === 'object') {
-        self._screenSharingStreamSettings.audio = {
-          stereo: !!self._streamSettings.audio.stereo
-        };
+  // Function that handles the error
+  var handleErrorFn = function (error) {
+    self._onUserMediaError(error, true, false);
+
+    if (typeof callback === 'function') {
+      callback(error, null);
+    }
+  };
+
+  // Function that handles the restart or trigger the success
+  var handleRestartFn = function (stream) {
+    // Function that handles the case when tracks does not reach the expected tracks
+    var handleTracksNotSameFn = function (isError) {
+      // Construct the Rrror object
+      var error = new Error(
+        'Expected audio tracks length with ' +
+        (enableAudio ? '1' : '0') + ' and video tracks length with ' +
+        '1 but received audio tracks length ' +
+        'with ' + stream.getAudioTracks().length + ' and video ' +
+        'tracks length with ' + stream.getVideoTracks().length);
+
+      // This is an exception
+      if (isError) {
+        handleErrorFn(error);
+
+      // This is a fallback
       } else {
-        self._screenSharingStreamSettings.audio = true;
-      }
-    } else {
-      log.warn('This screensharing session will not support audio streaming');
-      self._screenSharingStreamSettings.audio = false;
-    }
-
-    var requireAudio = enableAudio === true;
-    var requireVideo = true;
-    var checkAudio = !requireAudio;
-    var checkVideo = !requireVideo;
-    var notSameTracksError = new Error(
-      'Expected audio tracks length with ' +
-      (requireAudio ? '1' : '0') + ' and video tracks length with ' +
-      (requireVideo ? '1' : '0') + ' but received audio tracks length ' +
-      'with ' + sStream.getAudioTracks().length + ' and video ' +
-      'tracks length with ' + sStream.getVideoTracks().length);
-
-    // do the check
-    if (requireAudio) {
-      checkAudio = sStream.getAudioTracks().length > 0;
-    }
-    if (requireVideo) {
-      checkVideo =  sStream.getVideoTracks().length > 0;
-    }
-
-    if (checkVideo) {
-      self._screenSharingStreamSettings.video = true;
-
-      // no audio but has video for screensharing
-      if (!checkAudio) {
         self._trigger('mediaAccessFallback', {
-          error: notSameTracksError,
+          error: error,
           diff: {
             video: { expected: 1, received: sStream.getVideoTracks().length },
             audio: { expected: requireAudio ? 1 : 0, received: sStream.getAudioTracks().length }
           }
         }, 1, true, false);
-        self._screenSharingStreamSettings.audio = false;
       }
+    };
 
-      self._onUserMediaSuccess(sStream, true);
+    // Start checking
+    if (stream.getVideoTracks().length > 0) {
+      self._screenSharingStreamSettings.video = true;
 
     } else {
-      self._onUserMediaError(notSameTracksError, true);
+      self._screenSharingStreamSettings.video = false;
+      handleTracksNotSameFn(true);
+      return;
     }
+
+    if (stream.getAudioTracks().length > 0) {
+      self._screenSharingStreamSettings.audio = true;
+
+    } else {
+      log.warn('This screensharing session will not support audio streaming');
+
+      self._screenSharingStreamSettings.audio = false;
+      handleTracksNotSameFn(false);
+    }
+
+    if (stream.getVideoTracks().length === 0) {
+      self._screenSharingStreamSettings.video = false;
+
+
+    } else {
+      self._screenSharingStreamSettings.video = true;
+    }
+
+    if (enableAudio && stream.getAudioTracks().length === 0) {
+      handleTracksNotSameFn(false);
+    }
+
+    self.once('mediaAccessSuccess', function (eventStream) {
+      if (self._inRoom) {
+        if (self._hasMCU) {
+          self._restartMCUConnection();
+
+        } else {
+          self._trigger('incomingStream', self._user.sid, eventStream, true, self.getPeerInfo(), false);
+
+          for (var peer in self._peerConnections) {
+            if (self._peerConnections.hasOwnProperty(peer)) {
+              self._restartPeerConnection(peer, true, false, null, true);
+            }
+          }
+        }
+
+        // NOTE: Should we trigger "peerUpdated" event to follow suit ESS-426 case to trigger
+      }
+
+      if (typeof callback === 'function') {
+        callback(null, eventStream);
+      }
+
+    }, function (eventStream, isScreenSharing) {
+      return isScreenSharing;
+    });
+
+    self._onUserMediaSuccess(stream, true);
 
     self._timestamp.screen = true;
   };
 
-  if (window.webrtcDetectedBrowser === 'firefox') {
-    settings.audio = !!enableAudio;
-  }
+  // Function that does the share screen functionality
+  var toShareScreenFn = function () {
+    var videoSettings = {
+      mediaSource: 'window'
+    };
 
-  var throttleFn = function (fn, wait) {
+    // Firefox browsers allow screensharing stream to be bundled with audio and video
+    if (window.webrtcDetectedBrowser === 'firefox') {
+      // Retrieve video+audio stream
+      window.getUserMedia({
+        audio: enableAudio,
+        video: videoSettings
+
+      }, handleRestartFn, handleErrorFn);
+
+    // Chrome and Safari does not allow bundling of audio and video
+    // To retrieve seperately
+    } else {
+      // Retrieve video stream
+      window.getUserMedia({
+        video: videoSettings
+
+      }, function (videoStream) {
+        var handleFallbackFn = function (error) {
+          log.error('Failed retrieving audio stream for screensharing stream', error);
+
+          handleRestartFn(videoStream);
+        };
+
+        // Retrieve audio stream if audio is required
+        if (enableAudio) {
+          // Retrieve audio stream
+          window.getUserMedia({
+              audio: true
+
+          }, function (audioStream) {
+            try {
+              audioStream.addTrack(videoStream.getVideoTracks()[0]);
+              self._mediaScreenClone = videoStream;
+              handleRestartFn(audioStream);
+
+            } catch (error) {
+              self._mediaScreenClone = audioStream;
+              handleFallbackFn(error);
+            }
+
+          }, handleFallbackFn);
+        // Ignore retrieval of audio stream since it's not required
+        } else {
+          handleRestartFn(videoStream);
+        }
+
+      }, handleErrorFn);
+    }
+  };
+
+  //self._throttle(toShareScreen,10000)();
+  (function (fn, wait) {
+
     if (!self._timestamp.func){
-      //First time run, need to force timestamp to skip condition
+      // First time run, need to force timestamp to skip condition
       self._timestamp.func = self._timestamp.now - wait;
     }
+
     var now = Date.now();
 
     if (!self._timestamp.screen) {
@@ -14179,78 +14272,8 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
     fn();
     self._timestamp.screen = false;
     self._timestamp.func = now;
-  };
 
-  var toShareScreen = function(){
-    try {
-      window.getUserMedia(settings, function (stream) {
-        self.once('mediaAccessSuccess', function (stream) {
-          if (self._inRoom) {
-            if (self._hasMCU) {
-              self._restartMCUConnection();
-            } else {
-              self._trigger('incomingStream', self._user.sid, stream,
-                true, self.getPeerInfo(), false);
-              for (var peer in self._peerConnections) {
-                if (self._peerConnections.hasOwnProperty(peer)) {
-                  self._restartPeerConnection(peer, true, false, null, true);
-                }
-              }
-            }
-          }
-
-          if (typeof callback === 'function') {
-            callback(null, stream);
-          }
-        }, function (stream, isScreenSharing) {
-          return isScreenSharing;
-        });
-
-        if (window.webrtcDetectedBrowser !== 'firefox' && enableAudio) {
-          window.getUserMedia({
-            audio: true
-          }, function (audioStream) {
-            try {
-              audioStream.addTrack(stream.getVideoTracks()[0]);
-              self._mediaScreenClone = stream;
-              hasAudio = true;
-              triggerSuccessFn(audioStream, true);
-
-            } catch (error) {
-              log.error('Failed retrieving audio stream for screensharing stream', error);
-              triggerSuccessFn(stream, true);
-            }
-
-          }, function (error) {
-            log.error('Failed retrieving audio stream for screensharing stream', error);
-            triggerSuccessFn(stream, true);
-          });
-        } else {
-          hasAudio = window.webrtcDetectedBrowser === 'firefox' ? enableAudio : false;
-          triggerSuccessFn(stream, true);
-        }
-
-      }, function (error) {
-        self._onUserMediaError(error, true, false);
-
-        self._timestamp.screen = true;
-
-        if (typeof callback === 'function') {
-          callback(error, null);
-        }
-      });
-
-    } catch (error) {
-      self._onUserMediaError(error, true, false);
-
-      if (typeof callback === 'function') {
-        callback(error, null);
-      }
-    }
-  };
-
-  //self._throttle(toShareScreen,10000)();
-  throttleFn(toShareScreen, 10000);
+  })(toShareScreenFn, 10000);
 };
 
 /**
