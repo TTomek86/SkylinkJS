@@ -2248,7 +2248,8 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
           }
         }
 
-        // NOTE: Should we trigger "peerUpdated" event to follow suit ESS-426 case to trigger
+        // Trigger "peerUpdated" on latest updated event
+        self._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
       }
 
       if (typeof callback === 'function') {
