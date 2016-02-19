@@ -292,13 +292,19 @@ Demo.Skylink.on('incomingStream', function (peerId, stream, isSelf, peerInfo){
   }
 });
 //---------------------------------------------------
-Demo.Skylink.on('mediaAccessSuccess', function (stream){
+Demo.Skylink.on('mediaAccessSuccess', function (stream, isScreensharing){
+  console.info(stream, isScreensharing)
   Demo.Methods.displayChatMessage('System', 'Audio and video access is allowed.');
 });
 //---------------------------------------------------
-Demo.Skylink.on('mediaAccessError', function (error){
+Demo.Skylink.on('mediaAccessError', function (error, isScreensharing, isAudioFallback){
+  console.error('mediaAccessError', error, isScreensharing, isAudioFallback);
   //alert((typeof error === 'object') ? error.message : error);
   Demo.Methods.displayChatMessage('System', 'Failed to join room as video and audio stream is required.');
+});
+//---------------------------------------------------
+Demo.Skylink.on('mediaAccessFallback', function (error, state, isScreensharing, isAudioFallback){
+  console.warn('mediaAccessFallback', error, state, isScreensharing, isAudioFallback);
 });
 //---------------------------------------------------
 Demo.Skylink.on('readyStateChange', function (state, error){
