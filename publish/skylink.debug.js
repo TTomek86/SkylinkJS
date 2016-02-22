@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Wed Feb 03 2016 15:58:50 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Mon Feb 22 2016 12:24:33 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12414,8 +12414,14 @@ Skylink.prototype._onUserMediaSuccess = function(stream, isScreenSharing) {
 
   // check if readyStateChange is done
   if (!isScreenSharing) {
+    self._stopLocalMediaStreams({
+      userMedia: true
+    });
     self._mediaStream = stream;
   } else {
+    self._stopLocalMediaStreams({
+      screenshare: true
+    });
     self._mediaScreen = stream;
   }
 
@@ -13338,7 +13344,7 @@ Skylink.prototype._waitForLocalMediaStream = function(callback, options) {
   }
 
   // clear previous mediastreams
-  self.stopStream();
+  //self.stopStream();
 
   if (options.manualGetUserMedia === true) {
     var current50Block = 0;
@@ -13525,7 +13531,7 @@ Skylink.prototype.getUserMedia = function(options,callback) {
   // if audio and video is false, do not call getUserMedia
   if (!(options.audio === false && options.video === false)) {
     // clear previous mediastreams
-    self.stopStream();
+    //self.stopStream();
 
     setTimeout(function () {
       try {
@@ -13842,7 +13848,7 @@ Skylink.prototype.sendStream = function(stream, callback) {
     typeof stream.getVideoTracks === 'function') {
 
     // stop playback
-    self.stopStream();
+    //self.stopStream();
 
     self._streamSettings.audio = stream.getAudioTracks().length > 0;
     self._streamSettings.video = stream.getVideoTracks().length > 0;
