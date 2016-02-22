@@ -345,9 +345,7 @@ Skylink.prototype._streamSettings = {};
  * @since 0.6.1
  */
 Skylink.prototype._screenSharingStreamSettings = {
-  video: {
-    screenshare: true
-  }
+  video: true
 };
 
 /**
@@ -504,6 +502,17 @@ Skylink.prototype._onUserMediaSuccess = function(stream, isScreenSharing) {
       screenshare: true
     });
     self._mediaScreen = stream;
+
+    /*// for the case where local user media (audio) is not available for screensharing audio is, do not mute it
+    if (!self._streamSettings.audio) {
+      self._mediaStreamsStatus.audioMuted = !self._screenSharingStreamSettings.audio;
+    }
+
+    // for the case where local user media (video) is not available for screensharing video is, do not mute it
+    // logically, this should always pass because screensharing will always require video
+    if (!self._streamSettings.video) {
+      self._mediaStreamsStatus.videoMuted = !self._screenSharingStreamSettings.video;
+    }*/
   }
 
   self._muteLocalMediaStreams();
@@ -896,9 +905,9 @@ Skylink.prototype._parseMutedSettings = function (options) {
     options : { audio: false, video: false };
 
   var updateAudioMuted = (typeof options.audio === 'object') ?
-    !!options.audio.mute : !options.audio;
+    !!options.audio.mute : false;//!options.audio;
   var updateVideoMuted = (typeof options.video === 'object') ?
-    !!options.video.mute : !options.video;
+    !!options.video.mute : false;//!options.video;
 
   return {
     audioMuted: updateAudioMuted,
@@ -1208,11 +1217,11 @@ Skylink.prototype._muteLocalMediaStreams = function () {
 
   // update accordingly if failed
   if (!hasAudioTracks) {
-    this._mediaStreamsStatus.audioMuted = true;
+    //this._mediaStreamsStatus.audioMuted = true;
     this._streamSettings.audio = false;
   }
   if (!hasVideoTracks) {
-    this._mediaStreamsStatus.videoMuted = true;
+    //this._mediaStreamsStatus.videoMuted = true;
     this._streamSettings.video = false;
   }
 
@@ -1240,6 +1249,7 @@ Skylink.prototype._muteLocalMediaStreams = function () {
  * @since 0.6.3
  */
 Skylink.prototype._stopLocalMediaStreams = function (options) {
+  var self = this;
   var stopUserMedia = false;
   var stopScreenshare = false;
   var triggerStopped = false;
@@ -1293,8 +1303,11 @@ Skylink.prototype._stopLocalMediaStreams = function (options) {
     }
 
     if (triggerStopped) {
+      this._screenSharingStreamSettings.audio = false;
+      this._screenSharingStreamSettings.video = false;
       this._trigger('mediaAccessStopped', true);
     }
+
   } else {
     log.log([null, 'MediaStream', self._selectedRoom, 'Screensharing MediaStream will not be stopped']);
   }
@@ -1309,11 +1322,15 @@ Skylink.prototype._stopLocalMediaStreams = function (options) {
     }
 
     if (triggerStopped) {
+      this._streamSettings.audio = false;
+      this._streamSettings.video = false;
       this._trigger('mediaAccessStopped', false);
     }
   } else {
     log.log([null, 'MediaStream', self._selectedRoom, 'User\'s MediaStream will not be stopped']);
   }
+
+  this._trigger('peerUpdated', self._user.sid, self.getPeerInfo(), true);
 };
 
 /**
@@ -1937,9 +1954,8 @@ Skylink.prototype.sendStream = function(stream, callback) {
     self._streamSettings.audio = stream.getAudioTracks().length > 0;
     self._streamSettings.video = stream.getVideoTracks().length > 0;
 
-    // NOTE-ESS-427: Remember ESS-427 changes first and take in note
-    self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
-    self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
+    //self._mediaStreamsStatus.audioMuted = self._streamSettings.audio === false;
+    //self._mediaStreamsStatus.videoMuted = self._streamSettings.video === false;
 
     self.once('mediaAccessSuccess', handleRestartFn);
 
@@ -2231,6 +2247,8 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
     }
 
     if (checkVideo) {
+      self._screenSharingStreamSettings.video = true;
+
       // no audio but has video for screensharing
       if (!checkAudio) {
         self._trigger('mediaAccessFallback', {
@@ -2240,6 +2258,7 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
             audio: { expected: requireAudio ? 1 : 0, received: sStream.getAudioTracks().length }
           }
         }, 1, true, false);
+        self._screenSharingStreamSettings.audio = false;
       }
 
       self._onUserMediaSuccess(sStream, true);
@@ -2360,6 +2379,16 @@ Skylink.prototype.stopScreen = function () {
     this._stopLocalMediaStreams({
       screenshare: true
     });
+
+    /*// for changes where the audio is not muted in here but the original mediastream has no audio
+    if (!this._mediaStreamsStatus.audioMuted && !this._streamSettings.audio) {
+      this._mediaStreamsStatus.audioMuted = true;
+    }
+
+    // for changes where the video is not muted in here but the original mediastream has no video
+    if (!this._mediaStreamsStatus.videoMuted && !this._streamSettings.video) {
+      this._mediaStreamsStatus.videoMuted = true;
+    }*/
 
     if (this._inRoom) {
       if (this._hasMCU) {
