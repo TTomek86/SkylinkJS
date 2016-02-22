@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.9 - Mon Feb 22 2016 12:24:33 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.9 - Mon Feb 22 2016 15:37:43 GMT+0800 (SGT) */
 
 (function() {
 
@@ -5896,7 +5896,6 @@ Skylink.prototype._inRoom = false;
 Skylink.prototype.joinRoom = function(room, mediaOptions, callback) {
   var self = this;
   var error;
-  var stopStream = false;
   var previousRoom = self._selectedRoom;
 
   if (room === null) {
@@ -6035,17 +6034,9 @@ Skylink.prototype.joinRoom = function(room, mediaOptions, callback) {
   };
 
   if (self._inRoom) {
-    if (typeof mediaOptions === 'object') {
-      if (mediaOptions.audio === false && mediaOptions.video === false) {
-        stopStream = true;
-        log.warn([null, 'MediaStream', self._selectedRoom, 'Stopping current MediaStream ' +
-          'as provided settings for audio and video is false (' + stopStream + ')'], mediaOptions);
-      }
-    }
-
     log.log([null, 'Socket', previousRoom, 'Leaving room before joining new room'], self._selectedRoom);
 
-    self.leaveRoom(stopStream, function(error, success) {
+    self.leaveRoom(false, function(error, success) {
       log.log([null, 'Socket', previousRoom, 'Leave room callback result'], {
         error: error,
         success: success
@@ -13321,6 +13312,9 @@ Skylink.prototype._waitForLocalMediaStream = function(callback, options) {
   if (!requireAudio && !requireVideo && !options.manualGetUserMedia) {
     // set to default
     if (options.audio === false && options.video === false) {
+      log.warn([null, 'MediaStream', self._selectedRoom, 'Stopping current MediaStream ' +
+        'as provided settings for audio and video is false'], options);
+      self.stopStream();
       self._parseMediaStreamSettings(options);
     }
 
@@ -13863,11 +13857,6 @@ Skylink.prototype.sendStream = function(stream, callback) {
 
   // sendStream({})
   } else {
-    // stopStream() for audio or video false
-    if (stream.audio === false && stream.video === false) {
-      self.stopStream();
-    }
-
     // get the mediastream and then wait for it to be retrieved before sending
     self._waitForLocalMediaStream(function (error, success) {
       if (error) {

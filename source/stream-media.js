@@ -1402,6 +1402,9 @@ Skylink.prototype._waitForLocalMediaStream = function(callback, options) {
   if (!requireAudio && !requireVideo && !options.manualGetUserMedia) {
     // set to default
     if (options.audio === false && options.video === false) {
+      log.warn([null, 'MediaStream', self._selectedRoom, 'Stopping current MediaStream ' +
+        'as provided settings for audio and video is false'], options);
+      self.stopStream();
       self._parseMediaStreamSettings(options);
     }
 
@@ -1944,11 +1947,6 @@ Skylink.prototype.sendStream = function(stream, callback) {
 
   // sendStream({})
   } else {
-    // stopStream() for audio or video false
-    if (stream.audio === false && stream.video === false) {
-      self.stopStream();
-    }
-
     // get the mediastream and then wait for it to be retrieved before sending
     self._waitForLocalMediaStream(function (error, success) {
       if (error) {
