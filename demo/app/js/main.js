@@ -167,13 +167,6 @@ Demo.Skylink.on('incomingMessage', function (message, peerId, peerInfo, isSelf) 
 });
 //---------------------------------------------------
 Demo.Skylink.on('peerRestart', function (peerId, peerInfo, isSelf){
-  /*if (!isSelf) {
-    $('#user' + peerId + ' .video').css('color',
-      (peerInfo.mediaStatus.videoMuted) ? 'red' : 'green');
-    $('#user' + peerId + ' .audio').css('color',
-      (peerInfo.mediaStatus.audioMuted) ? 'red' : 'green');
-    $('#user' + peerId + ' .name').html(peerInfo.userData);
-  }*/
   if (isSelf) {
     $('#isAudioMuted').css('color',
       (peerInfo.mediaStatus.audioMuted) ? 'red' : 'green');
