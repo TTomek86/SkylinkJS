@@ -463,8 +463,8 @@ Skylink.prototype._onUserMediaSuccess = function(stream, isScreenSharing) {
         sessionType: !!isScreenSharing ? 'screensharing' : 'stream',
         status: 'ended'
       });
+      self._trigger('streamEnded', self._user.sid || null, self.getPeerInfo(), true, !!isScreenSharing);
     }
-    self._trigger('streamEnded', self._user.sid || null, self.getPeerInfo(), true, !!isScreenSharing);
   };
 
   // chrome uses the new specs

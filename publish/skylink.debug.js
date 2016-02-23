@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Mon Feb 22 2016 16:04:01 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Tue Feb 23 2016 20:10:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12388,8 +12388,8 @@ Skylink.prototype._onUserMediaSuccess = function(stream, isScreenSharing) {
         sessionType: !!isScreenSharing ? 'screensharing' : 'stream',
         status: 'ended'
       });
+      self._trigger('streamEnded', self._user.sid || null, self.getPeerInfo(), true, !!isScreenSharing);
     }
-    self._trigger('streamEnded', self._user.sid || null, self.getPeerInfo(), true, !!isScreenSharing);
   };
 
   // chrome uses the new specs
