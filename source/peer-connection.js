@@ -212,6 +212,7 @@ Skylink.prototype._recreatePeerConnection = function (peerId) {
   }
 
   self._peerConnections[peerId].dataChannelClosed = true;
+  self._peerConnections[peerId].destroyed = true;
 
   delete self._peerConnections[peerId];
 
@@ -410,6 +411,7 @@ Skylink.prototype._removePeer = function(peerId) {
   if (typeof this._peerConnections[peerId] !== 'undefined') {
     // new flag to check if datachannels are all closed
     this._peerConnections[peerId].dataChannelClosed = true;
+    this._peerConnections[peerId].destroyed = true;
 
     if (this._peerConnections[peerId].signalingState !== 'closed') {
       this._peerConnections[peerId].close();
@@ -477,6 +479,7 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
   pc.hasScreen = !!isScreenSharing;
   pc.hasMainChannel = false;
   pc.firefoxStreamId = '';
+  pc.destroyed = false;
 
   // datachannels
   self._dataChannels[targetMid] = {};
@@ -610,6 +613,15 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
       self._peerConnectionHealth[targetMid] = true;
       self._stopPeerConnectionHealthCheck(targetMid);
       self._retryCount = 0;
+    }
+
+    if (pc.signalingState === self.PEER_CONNECTION_STATE.CLOSED && !pc.destroyed) {
+      // refresh when failed. ignore for MCU case since restart is handled by MCU in this case
+      if (!self._hasMCU) {
+        log.warn([targetMid, 'RTCSignalingState', null, 'Peer connection signalingState is closed abruptly. Reopening connection']);
+        self._recreatePeerConnection(targetMid);
+        self._restartPeerConnection(targetMid, true, true, null, false);
+      }
     }
   };
   pc.onicegatheringstatechange = function() {

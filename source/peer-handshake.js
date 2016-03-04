@@ -376,7 +376,7 @@ Skylink.prototype._startPeerConnectionHealthCheck = function (peerId, toOffer) {
       });
     }
 
-    log.debug([peerId, 'PeerConnectionHealth', null, 'Require reconnection?'], connectionStable);
+    log.debug([peerId, 'PeerConnectionHealth', null, 'Require reconnection?'], !connectionStable);
 
     if (!connectionStable) {
       log.warn([peerId, 'PeerConnectionHealth', null, 'Peer\'s health timer ' +
