@@ -1374,7 +1374,8 @@ Skylink.prototype._candidateHandler = function(message) {
     // this will cause a black screen of media stream
     if ((pc.setOffer === 'local' && pc.setAnswer === 'remote') ||
       (pc.setAnswer === 'local' && pc.setOffer === 'remote')) {
-      pc.addIceCandidate(candidate, this._onAddIceCandidateSuccess, this._onAddIceCandidateFailure);
+      pc.addIceCandidate(candidate, this._onAddIceCandidateSuccess(targetMid, candidate),
+        this._onAddIceCandidateFailure(targetMid, candidate));
       // NOTE ALEX: not implemented in chrome yet, need to wait
       // function () { trace('ICE  -  addIceCandidate Succesfull. '); },
       // function (error) { trace('ICE  - AddIceCandidate Failed: ' + error); }
@@ -1392,23 +1393,6 @@ Skylink.prototype._candidateHandler = function(message) {
     // we might keep a buffer of candidates to replay after receiving an offer.
     this._addIceCandidateToQueue(targetMid, candidate);
   }
-
-  if (!this._addedCandidates[targetMid]) {
-    this._addedCandidates[targetMid] = {
-      relay: [],
-      host: [],
-      srflx: []
-    };
-  }
-
-  // shouldnt happen but just incase
-  if (!this._addedCandidates[targetMid][canType]) {
-    this._addedCandidates[targetMid][canType] = [];
-  }
-
-  this._addedCandidates[targetMid][canType].push('remote:' + messageCan[4] +
-    (messageCan[5] !== '0' ? ':' + messageCan[5] : '') +
-    (messageCan[2] ? '?transport=' + messageCan[2].toLowerCase() : ''));
 };
 
 /**

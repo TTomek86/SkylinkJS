@@ -504,11 +504,16 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
   // datachannels
   self._dataChannels[targetMid] = {};
   // candidates
-  self._addedCandidates[targetMid] = {
-    relay: [],
-    host: [],
-    srflx: []
-  };
+  if (!self._addedCandidates[targetMid]) {
+    self._addedCandidates[targetMid] = {
+      outgoing: [],
+      incoming: {
+        success: [],
+        failure: [],
+        queued: []
+      }
+    };
+  }
 
   // callbacks
   // standard not implemented: onnegotiationneeded,

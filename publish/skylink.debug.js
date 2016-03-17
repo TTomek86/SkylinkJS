@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 11:13:43 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 12:05:24 GMT+0800 (SGT) */
 
 (function() {
 
@@ -3214,35 +3214,24 @@ Skylink.prototype.sendURLData = function(data, timeout, targetPeerId, callback) 
   this._startDataTransfer(data, dataInfo, listOfPeers, callback);
 };
 
-Skylink.prototype._peerCandidatesQueue = {};
-
-/**
- * Stores the list of flags associated to the PeerConnections
- *   to disable trickle ICE as attempting to establish an
- *   ICE connection failed after many trickle ICE connection
- *   attempts. To ensure the stability and increase the chances
- *   of a successful ICE connection, track the Peer connection and store
- *   it as a flag in this list to disable trickling of ICE connections.
- * @attribute _peerIceTrickleDisabled
- * @param {Boolean} (#peerId) The Peer trickle ICE disabled flag.
- *   If value is <code>true</code>, it means that trickling of ICE is
- *   disabled for subsequent connection attempt.
- * @type JSON
- * @private
- * @required
- * @since 0.5.8
- * @component ICE
- * @for Skylink
- */
 Skylink.prototype._peerIceTrickleDisabled = {};
 
 /**
  * Stores the list of candidates sent <code>local</code> and added <code>remote</code> information.
  * @attribute _addedCandidates
- * @param {JSON} (#peerId) The list of candidates sent and added associated with the Peer ID.
- * @param {Array} (#peerId).relay The number of relay candidates added and sent.
- * @param {Array} (#peerId).srflx The number of server reflexive candidates added and sent.
- * @param {Array} (#peerId).host The number of host candidates added and sent.
+ * @param {JSON} (#peerId) The list of candidates sent associated with the Peer ID.
+ * @param {JSON} (#peerId).outgoing The list of candidates sent associated with the Peer ID.
+ * @param {JSON} (#peerId).outgoing.(#index) The candidate sent.
+ * @param {RTCIceCandidate} (#peerId).outgoing.(#index).candidate The candidate RTCIceCandidate object.
+ * @param {RTCIceCandidate} (#peerId).outgoing.(#index).type The candidate type.
+ *   Types are <code>"relay"</code>, <code>"srflx"</code> and <code>"host"</code>.
+ * @param {JSON} (#peerId).incoming The list of candidates added associated with the Peer ID.
+ * @param {Array} (#peerId).incoming.success The number of relay candidates added successfully.
+ * @param {JSON} (#peerId).incoming.success.(#index) The candidate added successfully. Follow "outgoing" candidate format.
+ * @param {Array} (#peerId).incoming.failure The number of relay candidates that failed adding.
+ * @param {JSON} (#peerId).incoming.failure.(#index) The candidate that failed adding. Follow "outgoing" candidate format.
+ * @param {Array} (#peerId).incoming.queued The number of relay candidates that is queued for adding.
+ * @param {JSON} (#peerId).incoming.queued.(#index) The candidate that is queued for adding. Follow "outgoing" candidate format.
  * @type JSON
  * @private
  * @required
@@ -3296,18 +3285,20 @@ Skylink.prototype.CANDIDATE_GENERATION_STATE = {
  */
 Skylink.prototype._onIceCandidate = function(targetMid, event) {
   var self = this;
-  if (event.candidate) {
+  var candidate = event.candidate || event;
+
+  if (candidate.candidate) {
     if (self._enableIceTrickle && !self._peerIceTrickleDisabled[targetMid]) {
-      var messageCan = event.candidate.candidate.split(' ');
+      var messageCan = candidate.candidate.split(' ');
       var candidateType = messageCan[7];
       log.debug([targetMid, 'RTCIceCandidate', null, 'Created and sending ' +
-        candidateType + ' candidate:'], event);
+        candidateType + ' candidate:'], candidate);
 
       self._sendChannelMessage({
         type: self._SIG_MESSAGE_TYPE.CANDIDATE,
-        label: event.candidate.sdpMLineIndex,
-        id: event.candidate.sdpMid,
-        candidate: event.candidate.candidate,
+        label: candidate.sdpMLineIndex,
+        id: candidate.sdpMid,
+        candidate: candidate.candidate,
         mid: self._user.sid,
         target: targetMid,
         rid: self._room.id
@@ -3315,20 +3306,28 @@ Skylink.prototype._onIceCandidate = function(targetMid, event) {
 
       if (!self._addedCandidates[targetMid]) {
         self._addedCandidates[targetMid] = {
-          relay: [],
-          host: [],
-          srflx: []
+          outgoing: [],
+          incoming: {
+            success: [],
+            failure: [],
+            queued: []
+          }
         };
       }
 
-      // shouldnt happen but just incase
-      if (!self._addedCandidates[targetMid][candidateType]) {
+      /*// shouldnt happen but just incase
+      if (!self._addedCandidates[targetMid]) {
         self._addedCandidates[targetMid][candidateType] = [];
       }
 
       self._addedCandidates[targetMid][candidateType].push('local:' + messageCan[4] +
         (messageCan[5] !== '0' ? ':' + messageCan[5] : '') +
-        (messageCan[2] ? '?transport=' + messageCan[2].toLowerCase() : ''));
+        (messageCan[2] ? '?transport=' + messageCan[2].toLowerCase() : ''));*/
+
+      self._addedCandidates[targetMid].outgoing.push({
+        type: candidateType,
+        candidate: candidate
+      });
 
     }
   } else {
@@ -3393,22 +3392,62 @@ Skylink.prototype._onIceCandidate = function(targetMid, event) {
 Skylink.prototype._addIceCandidateToQueue = function(targetMid, candidate) {
   log.debug([targetMid, null, null, 'Queued candidate to add after ' +
     'setRemoteDescription'], candidate);
-  this._peerCandidatesQueue[targetMid] =
-    this._peerCandidatesQueue[targetMid] || [];
-  this._peerCandidatesQueue[targetMid].push(candidate);
+
+  if (!this._addedCandidates[targetMid]) {
+    this._addedCandidates[targetMid] = {
+      outgoing: [],
+      incoming: {
+        success: [],
+        failure: [],
+        queued: []
+      }
+    };
+  }
+
+  var messageCan = candidate.candidate.split(' ');
+  var candidateType = messageCan[7];
+
+  this._addedCandidates[targetMid].incoming.queued.push({
+    type: candidateType,
+    candidate: candidate
+  });
 };
 
 /**
  * Handles the event when adding an ICE candidate has been added
  *   successfully. This is mainly to prevent JShint errors.
  * @method _onAddIceCandidateSuccess
+ * @param {String} targetMid The Per ID assiociated with the candidate.
+ * @param {RTCIceCandidate} candidate The candidate object that is added successfully.
  * @private
  * @since 0.5.9
  * @component ICE
  * @for Skylink
  */
-Skylink.prototype._onAddIceCandidateSuccess = function () {
-  log.debug([null, 'RTCICECandidate', null, 'Successfully added ICE candidate']);
+Skylink.prototype._onAddIceCandidateSuccess = function (targetMid, candidate) {
+  var self = this;
+  return function () {
+    log.debug([targetMid, 'RTCICECandidate', null, 'Successfully added ICE candidate ->'], candidate);
+
+    if (!self._addedCandidates[targetMid]) {
+      self._addedCandidates[targetMid] = {
+        outgoing: [],
+        incoming: {
+          success: [],
+          failure: [],
+          queued: []
+        }
+      };
+    }
+
+    var messageCan = candidate.candidate.split(' ');
+    var candidateType = messageCan[7];
+
+    self._addedCandidates[targetMid].incoming.success.push({
+      type: candidateType,
+      candidate: candidate
+    });
+  };
 };
 
 /**
@@ -3422,8 +3461,31 @@ Skylink.prototype._onAddIceCandidateSuccess = function () {
  * @component ICE
  * @for Skylink
  */
-Skylink.prototype._onAddIceCandidateFailure = function (error) {
-  log.error([null, 'RTCICECandidate', null, 'Error'], error);
+Skylink.prototype._onAddIceCandidateFailure = function (targetMid, candidate) {
+  var self = this;
+  return function (error) {
+    log.error([targetMid, 'RTCICECandidate', null, 'Failed adding ICE candidate ->'], [candidate, error]);
+
+    if (!self._addedCandidates[targetMid]) {
+      self._addedCandidates[targetMid] = {
+        outgoing: [],
+        incoming: {
+          success: [],
+          failure: [],
+          queued: []
+        }
+      };
+    }
+
+    var messageCan = candidate.candidate.split(' ');
+    var candidateType = messageCan[7];
+
+    self._addedCandidates[targetMid].incoming.failure.push({
+      type: candidateType,
+      candidate: candidate,
+      error: error
+    });
+  };
 };
 
 /**
@@ -3438,16 +3500,30 @@ Skylink.prototype._onAddIceCandidateFailure = function (error) {
  * @for Skylink
  */
 Skylink.prototype._addIceCandidateFromQueue = function(targetMid) {
-  this._peerCandidatesQueue[targetMid] =
-    this._peerCandidatesQueue[targetMid] || [];
-  if(this._peerCandidatesQueue[targetMid].length > 0) {
-    for (var i = 0; i < this._peerCandidatesQueue[targetMid].length; i++) {
-      var candidate = this._peerCandidatesQueue[targetMid][i];
-      log.debug([targetMid, null, null, 'Added queued candidate'], candidate);
-      this._peerConnections[targetMid].addIceCandidate(candidate,
-        this._onAddIceCandidateSuccess, this._onAddIceCandidateFailure);
+  if (!this._addedCandidates[targetMid]) {
+    this._addedCandidates[targetMid] = {
+      outgoing: [],
+      incoming: {
+        success: [],
+        failure: [],
+        queued: []
+      }
+    };
+  }
+
+  if(this._addedCandidates[targetMid].incoming.queued.length > 0) {
+    for (var i = 0; i < this._addedCandidates[targetMid].incoming.queued.length; i++) {
+      var candidate = this._addedCandidates[targetMid].incoming.queued[i];
+
+      if (candidate && candidate.candidate) {
+        log.debug([targetMid, null, null, 'Adding queued candidate'], candidate.candidate);
+
+        this._peerConnections[targetMid].addIceCandidate(candidate.candidate,
+          this._onAddIceCandidateSuccess(targetMid, candidate.candidate),
+          this._onAddIceCandidateFailure(targetMid, candidate.candidate));
+      }
     }
-    delete this._peerCandidatesQueue[targetMid];
+    this._addedCandidates[targetMid].incoming.queued = [];
   } else {
     log.log([targetMid, null, null, 'No queued candidates to add']);
   }
@@ -4300,11 +4376,16 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
   // datachannels
   self._dataChannels[targetMid] = {};
   // candidates
-  self._addedCandidates[targetMid] = {
-    relay: [],
-    host: [],
-    srflx: []
-  };
+  if (!self._addedCandidates[targetMid]) {
+    self._addedCandidates[targetMid] = {
+      outgoing: [],
+      incoming: {
+        success: [],
+        failure: [],
+        queued: []
+      }
+    };
+  }
 
   // callbacks
   // standard not implemented: onnegotiationneeded,
@@ -12101,7 +12182,8 @@ Skylink.prototype._candidateHandler = function(message) {
     // this will cause a black screen of media stream
     if ((pc.setOffer === 'local' && pc.setAnswer === 'remote') ||
       (pc.setAnswer === 'local' && pc.setOffer === 'remote')) {
-      pc.addIceCandidate(candidate, this._onAddIceCandidateSuccess, this._onAddIceCandidateFailure);
+      pc.addIceCandidate(candidate, this._onAddIceCandidateSuccess(targetMid, candidate),
+        this._onAddIceCandidateFailure(targetMid, candidate));
       // NOTE ALEX: not implemented in chrome yet, need to wait
       // function () { trace('ICE  -  addIceCandidate Succesfull. '); },
       // function (error) { trace('ICE  - AddIceCandidate Failed: ' + error); }
@@ -12119,23 +12201,6 @@ Skylink.prototype._candidateHandler = function(message) {
     // we might keep a buffer of candidates to replay after receiving an offer.
     this._addIceCandidateToQueue(targetMid, candidate);
   }
-
-  if (!this._addedCandidates[targetMid]) {
-    this._addedCandidates[targetMid] = {
-      relay: [],
-      host: [],
-      srflx: []
-    };
-  }
-
-  // shouldnt happen but just incase
-  if (!this._addedCandidates[targetMid][canType]) {
-    this._addedCandidates[targetMid][canType] = [];
-  }
-
-  this._addedCandidates[targetMid][canType].push('remote:' + messageCan[4] +
-    (messageCan[5] !== '0' ? ':' + messageCan[5] : '') +
-    (messageCan[2] ? '?transport=' + messageCan[2].toLowerCase() : ''));
 };
 
 /**
