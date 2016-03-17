@@ -1054,7 +1054,8 @@ Skylink.prototype.getConnectionStatus = function (targetPeerId, callback) {
       var receivedRemoteSDPType = null,
           receivedLocalSDPType = null,
           localDescription = self._peerConnections[peerId].localDescription,
-          remoteDescription = self._peerConnections[peerId].remoteDescription;
+          remoteDescription = self._peerConnections[peerId].remoteDescription,
+          candidatesList = self._addedCandidates[peerId];
 
       if (!!localDescription && !!localDescription.sdp) {
         receivedLocalSDPType = localDescription.type;
@@ -1064,13 +1065,32 @@ Skylink.prototype.getConnectionStatus = function (targetPeerId, callback) {
         receivedRemoteSDPType = remoteDescription.type;
       }
 
+      if (!self._addedCandidates[peerId]) {
+        candidatesList = {
+          outgoing: [],
+          incoming: {
+            success: [],
+            failure: [],
+            queued: []
+          }
+        };
+      }
+
       listOfPeerStats[peerId] = {
         stats: stats,
         receivedRemoteSDPType: receivedRemoteSDPType,
         receivedLocalSDPType: receivedLocalSDPType,
         iceConnectionState: self._peerConnections[peerId].iceConnectionState,
         candidateGenerationState: self._peerConnections[peerId].iceGatheringState,
-        peerConnectionState: self._peerConnections[peerId].signalingState
+        peerConnectionState: self._peerConnections[peerId].signalingState,
+        candidates: {
+          outgoing: candidatesList.outgoing.splice(0),
+          incoming: {
+            success: candidatesList.incoming.success.splice(0),
+            failure: candidatesList.incoming.failure.splice(0),
+            queued: candidatesList.incoming.queued.splice(0)
+          }
+        }
       };
 
       self._trigger('getConnectionStatusStateChange', self.GET_CONNECTION_STATUS_STATE.RETRIEVE_SUCCESS,

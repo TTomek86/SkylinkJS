@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 12:05:24 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 12:15:50 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -9189,7 +9189,7 @@ if ( navigator.mozGetUserMedia
     console.warn('Opera does not support screensharing feature in getUserMedia');
   }
 })();
-/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 12:05:24 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Thu Mar 17 2016 12:15:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -14117,7 +14117,8 @@ Skylink.prototype.getConnectionStatus = function (targetPeerId, callback) {
       var receivedRemoteSDPType = null,
           receivedLocalSDPType = null,
           localDescription = self._peerConnections[peerId].localDescription,
-          remoteDescription = self._peerConnections[peerId].remoteDescription;
+          remoteDescription = self._peerConnections[peerId].remoteDescription,
+          candidatesList = self._addedCandidates[peerId];
 
       if (!!localDescription && !!localDescription.sdp) {
         receivedLocalSDPType = localDescription.type;
@@ -14127,13 +14128,32 @@ Skylink.prototype.getConnectionStatus = function (targetPeerId, callback) {
         receivedRemoteSDPType = remoteDescription.type;
       }
 
+      if (!self._addedCandidates[peerId]) {
+        candidatesList = {
+          outgoing: [],
+          incoming: {
+            success: [],
+            failure: [],
+            queued: []
+          }
+        };
+      }
+
       listOfPeerStats[peerId] = {
         stats: stats,
         receivedRemoteSDPType: receivedRemoteSDPType,
         receivedLocalSDPType: receivedLocalSDPType,
         iceConnectionState: self._peerConnections[peerId].iceConnectionState,
         candidateGenerationState: self._peerConnections[peerId].iceGatheringState,
-        peerConnectionState: self._peerConnections[peerId].signalingState
+        peerConnectionState: self._peerConnections[peerId].signalingState,
+        candidates: {
+          outgoing: candidatesList.outgoing.splice(0),
+          incoming: {
+            success: candidatesList.incoming.success.splice(0),
+            failure: candidatesList.incoming.failure.splice(0),
+            queued: candidatesList.incoming.queued.splice(0)
+          }
+        }
       };
 
       self._trigger('getConnectionStatusStateChange', self.GET_CONNECTION_STATUS_STATE.RETRIEVE_SUCCESS,
