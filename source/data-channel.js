@@ -146,8 +146,8 @@ Skylink.prototype._createDataChannel = function(peerId, channelType, dc, customC
   var channelName = (dc) ? dc.label : customChannelName;
   var pc = self._peerConnections[peerId];
 
-  var SctpSupported = 
-    !(window.webrtcDetectedBrowser === 'chrome' && window.webrtcDetectedVersion < 30 || 
+  var SctpSupported =
+    !(window.webrtcDetectedBrowser === 'chrome' && window.webrtcDetectedVersion < 30 ||
       window.webrtcDetectedBrowser === 'opera'  && window.webrtcDetectedVersion < 20 );
 
   if (!SctpSupported) {
@@ -338,11 +338,21 @@ Skylink.prototype._sendDataChannelMessage = function(peerId, data, channelKey) {
       'Sending data using this channel key'], data);
 
     if (dc.readyState === this.DATA_CHANNEL_STATE.OPEN) {
-      var dataString = (typeof data === 'object') ? JSON.stringify(data) : data;
+      var dataString = null;
+      var dataType = 'DATA';
+
+      if (typeof data === 'object' && !(data.constructor && ['Blob', 'ArrayBuffer'].indexOf(data.constructor.name) > -1)) {
+        dataString = JSON.stringify(data);
+        dataType = data.type;
+
+      } else {
+        dataString = data;
+      }
+
       log.debug([peerId, 'RTCDataChannel', channelKey + '|' + dc.label,
         'Sending to peer ->'], {
           readyState: dc.readyState,
-          type: (data.type || 'DATA'),
+          type: dataType,
           data: data
       });
       dc.send(dataString);

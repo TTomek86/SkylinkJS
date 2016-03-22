@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.11 - Mon Mar 21 2016 14:03:21 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Tue Mar 22 2016 17:48:34 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.11 - Mon Mar 21 2016 14:03:21 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Tue Mar 22 2016 17:48:34 GMT+0800 (SGT) */
 
 (function() {
 
@@ -10788,8 +10788,8 @@ Skylink.prototype._createDataChannel = function(peerId, channelType, dc, customC
   var channelName = (dc) ? dc.label : customChannelName;
   var pc = self._peerConnections[peerId];
 
-  var SctpSupported = 
-    !(window.webrtcDetectedBrowser === 'chrome' && window.webrtcDetectedVersion < 30 || 
+  var SctpSupported =
+    !(window.webrtcDetectedBrowser === 'chrome' && window.webrtcDetectedVersion < 30 ||
       window.webrtcDetectedBrowser === 'opera'  && window.webrtcDetectedVersion < 20 );
 
   if (!SctpSupported) {
@@ -10980,11 +10980,21 @@ Skylink.prototype._sendDataChannelMessage = function(peerId, data, channelKey) {
       'Sending data using this channel key'], data);
 
     if (dc.readyState === this.DATA_CHANNEL_STATE.OPEN) {
-      var dataString = (typeof data === 'object') ? JSON.stringify(data) : data;
+      var dataString = null;
+      var dataType = 'DATA';
+
+      if (typeof data === 'object' && !(data.constructor && ['Blob', 'ArrayBuffer'].indexOf(data.constructor.name) > -1)) {
+        dataString = JSON.stringify(data);
+        dataType = data.type;
+
+      } else {
+        dataString = data;
+      }
+
       log.debug([peerId, 'RTCDataChannel', channelKey + '|' + dc.label,
         'Sending to peer ->'], {
           readyState: dc.readyState,
-          type: (data.type || 'DATA'),
+          type: dataType,
           data: data
       });
       dc.send(dataString);
@@ -11726,7 +11736,8 @@ Skylink.prototype._sendBlobDataToPeer = function(data, dataInfo, targetPeerId) {
         chunkSize: binaryChunkSize,
         timeout: dataInfo.timeout,
         target: self._hasMCU ? targetPeerList : targetPeerId,
-        isPrivate: dataInfo.isPrivate
+        isPrivate: dataInfo.isPrivate,
+        blobDataMimeType: dataInfo.blobDataMimeType
       };
 
       if (self._hasMCU) {
@@ -11913,6 +11924,14 @@ Skylink.prototype._dataChannelProtocolHandler = function(dataString, peerId, cha
         data: data
       });
     }
+  } else {
+    log.debug([peerId, 'RTCDataChannel', channelName, 'Received from peer ->'], {
+      type: 'DATA',
+      data: dataString
+    });
+
+    this._DATAProtocolHandler(peerId, dataString,
+      dataString.constructor && dataString.constructor.name ? dataString.constructor.name : 'unknown', channelName);
   }
 };
 
@@ -11963,7 +11982,8 @@ Skylink.prototype._WRQProtocolHandler = function(peerId, data, channelName) {
     receivedSize: 0,
     chunkSize: expectedSize,
     timeout: timeout,
-    isPrivate: data.isPrivate
+    isPrivate: data.isPrivate,
+    blobDataMimeType: data.blobDataMimeType
   };
   this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.UPLOAD_REQUEST,
     transferId, peerId, {
@@ -12077,7 +12097,21 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       };
 
       if (transferStatus.dataType === 'blob') {
-        self._blobToBase64(self._uploadDataTransfers[channelName][ackN], sendDataFn);
+        // NOTE: For now we are prototyping sending binary types like Blob or ArrayBuffer
+        // Firefox browser support Blob interface
+        if (window.webrtcDetectedBrowser === 'firefox') {
+          sendDataFn(self._uploadDataTransfers[channelName][ackN]);
+
+        // Chrome/Opera/Safari/IE supports ArrayBuffer interface
+        } else {
+          // Convert Blob object to ArrayBuffer object
+          var fileReader = new FileReader();
+          fileReader.onload = function() {
+            sendDataFn(fileReader.result);
+          };
+          fileReader.readAsArrayBuffer(self._uploadDataTransfers[channelName][ackN]);
+        }
+        //self._blobToBase64(self._uploadDataTransfers[channelName][ackN], sendDataFn);
       } else {
         sendDataFn(self._uploadDataTransfers[channelName][ackN]);
       }
@@ -12100,7 +12134,7 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       var blob = null;
 
       if (transferStatus.dataType === 'blob') {
-        blob = new Blob(self._uploadDataTransfers[channelName]);
+        blob = new Blob(self._uploadDataTransfers[channelName], { type: transferStatus.blobDataMimeType });
       } else {
         blob = self._assembleDataURL(self._uploadDataTransfers[channelName]);
       }
@@ -12378,33 +12412,39 @@ Skylink.prototype._DATAProtocolHandler = function(peerId, dataString, dataType, 
       chunk = dataString;
       receivedSize = dataString.length;
     }
-  } else if (dataType === this.DATA_TRANSFER_DATA_TYPE.ARRAY_BUFFER) {
-    chunk = new Blob(dataString);
-  } else if (dataType === this.DATA_TRANSFER_DATA_TYPE.BLOB) {
-    chunk = dataString;
   } else {
-    error = 'Unhandled data exception: ' + dataType;
-    log.error([peerId, 'RTCDataChannel', channelName, 'Failed downloading data packets:'], {
-      dataType: dataType,
-      data: dataString,
-      type: 'DATA',
-      error: error
-    });
-    this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.ERROR,
-      transferId, peerId, {
-        name: transferStatus.name,
-        size: transferStatus.size,
-        percentage: transferStatus.percentage,
-        data: null,
-        dataType: dataTransferType,
-        senderPeerId: transferStatus.senderPeerId,
-        timeout: transferStatus.timeout,
-        isPrivate: transferStatus.isPrivate
-      }, {
-        message: error,
-        transferType: this.DATA_TRANSFER_TYPE.DOWNLOAD
-    });
-    return;
+    if (dataType === 'ArrayBuffer') {
+      chunk = new Blob([dataString]);
+      receivedSize = chunk.size * (4 / 3);
+
+    } else if (dataType === 'Blob') {
+      chunk = dataString;
+      receivedSize = chunk.size * (4 / 3);
+
+    } else {
+      error = 'Unhandled data exception: ' + dataType;
+      log.error([peerId, 'RTCDataChannel', channelName, 'Failed downloading data packets:'], {
+        dataType: dataType,
+        data: dataString,
+        type: 'DATA',
+        error: error
+      });
+      this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.ERROR,
+        transferId, peerId, {
+          name: transferStatus.name,
+          size: transferStatus.size,
+          percentage: transferStatus.percentage,
+          data: null,
+          dataType: dataTransferType,
+          senderPeerId: transferStatus.senderPeerId,
+          timeout: transferStatus.timeout,
+          isPrivate: transferStatus.isPrivate
+        }, {
+          message: error,
+          transferType: this.DATA_TRANSFER_TYPE.DOWNLOAD
+      });
+      return;
+    }
   }
 
   log.log([peerId, 'RTCDataChannel', channelName,
@@ -12478,7 +12518,7 @@ Skylink.prototype._DATAProtocolHandler = function(peerId, dataString, dataType, 
       var blob = null;
 
       if (dataTransferType === 'blob') {
-        blob = new Blob(this._downloadDataTransfers[channelName]);
+        blob = new Blob(this._downloadDataTransfers[channelName], { type: transferStatus.blobDataMimeType });
       } else {
         blob = this._assembleDataURL(this._downloadDataTransfers[channelName]);
       }
@@ -12754,6 +12794,7 @@ Skylink.prototype.sendBlobData = function(data, timeout, targetPeerId, callback)
   dataInfo.transferId = transferId;
   dataInfo.dataType = 'blob';
   dataInfo.isPrivate = isPrivate;
+  dataInfo.blobDataMimeType = data.type;
 
   // check if datachannel is enabled first or not
   if (!this._enableDataChannel) {
@@ -13625,6 +13666,7 @@ Skylink.prototype.sendURLData = function(data, timeout, targetPeerId, callback) 
   dataInfo.transferId = transferId;
   dataInfo.dataType = 'dataURL';
   dataInfo.isPrivate = isPrivate;
+  dataInfo.blobDataMimeType = null;
 
   // check if datachannel is enabled first or not
   if (!this._enableDataChannel) {

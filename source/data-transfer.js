@@ -459,7 +459,8 @@ Skylink.prototype._sendBlobDataToPeer = function(data, dataInfo, targetPeerId) {
         chunkSize: binaryChunkSize,
         timeout: dataInfo.timeout,
         target: self._hasMCU ? targetPeerList : targetPeerId,
-        isPrivate: dataInfo.isPrivate
+        isPrivate: dataInfo.isPrivate,
+        blobDataMimeType: dataInfo.blobDataMimeType
       };
 
       if (self._hasMCU) {
@@ -646,6 +647,14 @@ Skylink.prototype._dataChannelProtocolHandler = function(dataString, peerId, cha
         data: data
       });
     }
+  } else {
+    log.debug([peerId, 'RTCDataChannel', channelName, 'Received from peer ->'], {
+      type: 'DATA',
+      data: dataString
+    });
+
+    this._DATAProtocolHandler(peerId, dataString,
+      dataString.constructor && dataString.constructor.name ? dataString.constructor.name : 'unknown', channelName);
   }
 };
 
@@ -696,7 +705,8 @@ Skylink.prototype._WRQProtocolHandler = function(peerId, data, channelName) {
     receivedSize: 0,
     chunkSize: expectedSize,
     timeout: timeout,
-    isPrivate: data.isPrivate
+    isPrivate: data.isPrivate,
+    blobDataMimeType: data.blobDataMimeType
   };
   this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.UPLOAD_REQUEST,
     transferId, peerId, {
@@ -810,7 +820,21 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       };
 
       if (transferStatus.dataType === 'blob') {
-        self._blobToBase64(self._uploadDataTransfers[channelName][ackN], sendDataFn);
+        // NOTE: For now we are prototyping sending binary types like Blob or ArrayBuffer
+        // Firefox browser support Blob interface
+        if (window.webrtcDetectedBrowser === 'firefox') {
+          sendDataFn(self._uploadDataTransfers[channelName][ackN]);
+
+        // Chrome/Opera/Safari/IE supports ArrayBuffer interface
+        } else {
+          // Convert Blob object to ArrayBuffer object
+          var fileReader = new FileReader();
+          fileReader.onload = function() {
+            sendDataFn(fileReader.result);
+          };
+          fileReader.readAsArrayBuffer(self._uploadDataTransfers[channelName][ackN]);
+        }
+        //self._blobToBase64(self._uploadDataTransfers[channelName][ackN], sendDataFn);
       } else {
         sendDataFn(self._uploadDataTransfers[channelName][ackN]);
       }
@@ -833,7 +857,7 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       var blob = null;
 
       if (transferStatus.dataType === 'blob') {
-        blob = new Blob(self._uploadDataTransfers[channelName]);
+        blob = new Blob(self._uploadDataTransfers[channelName], { type: transferStatus.blobDataMimeType });
       } else {
         blob = self._assembleDataURL(self._uploadDataTransfers[channelName]);
       }
@@ -1111,33 +1135,39 @@ Skylink.prototype._DATAProtocolHandler = function(peerId, dataString, dataType, 
       chunk = dataString;
       receivedSize = dataString.length;
     }
-  } else if (dataType === this.DATA_TRANSFER_DATA_TYPE.ARRAY_BUFFER) {
-    chunk = new Blob(dataString);
-  } else if (dataType === this.DATA_TRANSFER_DATA_TYPE.BLOB) {
-    chunk = dataString;
   } else {
-    error = 'Unhandled data exception: ' + dataType;
-    log.error([peerId, 'RTCDataChannel', channelName, 'Failed downloading data packets:'], {
-      dataType: dataType,
-      data: dataString,
-      type: 'DATA',
-      error: error
-    });
-    this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.ERROR,
-      transferId, peerId, {
-        name: transferStatus.name,
-        size: transferStatus.size,
-        percentage: transferStatus.percentage,
-        data: null,
-        dataType: dataTransferType,
-        senderPeerId: transferStatus.senderPeerId,
-        timeout: transferStatus.timeout,
-        isPrivate: transferStatus.isPrivate
-      }, {
-        message: error,
-        transferType: this.DATA_TRANSFER_TYPE.DOWNLOAD
-    });
-    return;
+    if (dataType === 'ArrayBuffer') {
+      chunk = new Blob([dataString]);
+      receivedSize = chunk.size * (4 / 3);
+
+    } else if (dataType === 'Blob') {
+      chunk = dataString;
+      receivedSize = chunk.size * (4 / 3);
+
+    } else {
+      error = 'Unhandled data exception: ' + dataType;
+      log.error([peerId, 'RTCDataChannel', channelName, 'Failed downloading data packets:'], {
+        dataType: dataType,
+        data: dataString,
+        type: 'DATA',
+        error: error
+      });
+      this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.ERROR,
+        transferId, peerId, {
+          name: transferStatus.name,
+          size: transferStatus.size,
+          percentage: transferStatus.percentage,
+          data: null,
+          dataType: dataTransferType,
+          senderPeerId: transferStatus.senderPeerId,
+          timeout: transferStatus.timeout,
+          isPrivate: transferStatus.isPrivate
+        }, {
+          message: error,
+          transferType: this.DATA_TRANSFER_TYPE.DOWNLOAD
+      });
+      return;
+    }
   }
 
   log.log([peerId, 'RTCDataChannel', channelName,
@@ -1211,7 +1241,7 @@ Skylink.prototype._DATAProtocolHandler = function(peerId, dataString, dataType, 
       var blob = null;
 
       if (dataTransferType === 'blob') {
-        blob = new Blob(this._downloadDataTransfers[channelName]);
+        blob = new Blob(this._downloadDataTransfers[channelName], { type: transferStatus.blobDataMimeType });
       } else {
         blob = this._assembleDataURL(this._downloadDataTransfers[channelName]);
       }
@@ -1487,6 +1517,7 @@ Skylink.prototype.sendBlobData = function(data, timeout, targetPeerId, callback)
   dataInfo.transferId = transferId;
   dataInfo.dataType = 'blob';
   dataInfo.isPrivate = isPrivate;
+  dataInfo.blobDataMimeType = data.type;
 
   // check if datachannel is enabled first or not
   if (!this._enableDataChannel) {
@@ -2358,6 +2389,7 @@ Skylink.prototype.sendURLData = function(data, timeout, targetPeerId, callback) 
   dataInfo.transferId = transferId;
   dataInfo.dataType = 'dataURL';
   dataInfo.isPrivate = isPrivate;
+  dataInfo.blobDataMimeType = null;
 
   // check if datachannel is enabled first or not
   if (!this._enableDataChannel) {
