@@ -800,7 +800,8 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
 
         self._uploadDataSessions[channelName].percentage = percentage;
 
-        self._sendDataChannelMessage(peerId, base64BinaryString, channelName);
+        var typedAB = new Int8Array(base64BinaryString);
+        self._sendDataChannelMessage(peerId, typedAB, channelName);
         self._setDataChannelTimeout(peerId, timeout, true, channelName);
 
         // to prevent from firing upload = 100;

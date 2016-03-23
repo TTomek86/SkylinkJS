@@ -341,7 +341,9 @@ Skylink.prototype._sendDataChannelMessage = function(peerId, data, channelKey) {
       var dataString = null;
       var dataType = 'DATA';
 
-      if (typeof data === 'object' && !(data.constructor && ['Blob', 'ArrayBuffer'].indexOf(data.constructor.name) > -1)) {
+      if (typeof data === 'object' &&
+        !(data.constructor && ['Blob', 'ArrayBuffer'].indexOf(data.constructor.name) > -1) &&
+        !(data instanceof Int8Array)) {
         dataString = JSON.stringify(data);
         dataType = data.type;
 
