@@ -118,3 +118,15 @@ In this demo, you can find an example of how to utilize the privileged key conce
 
 ##### How to use
 First, open the index page of the privileged demo. Each button there when being clicked will open another browser tab for the corresponding type of user, with corresponding functionalities available. For example privileged users have getPeers() and introduce() options while the rest do not. To introduce two peers, enter the peer ID of each peer to the textbox then hit "Introduce".
+
+### demo/multi-room
+In this demo, you can find an example of how to join multiple rooms simultaneously.
+
+##### Functionalities covered
+`joinRoom()`, `init()`, 'leaveRoom()'
+
+##### Events used
+`peerJoined`, `peerLeft`, `incomingStream`
+
+##### How to use
+Simply key in the room to join (you can only join the Room with the same name at one time) and click "Create and Join Room". After that, you can leave the room by clicking "Leave" button on the Room UI. The session ID on the right identifies the session of each tab of the Peer.
