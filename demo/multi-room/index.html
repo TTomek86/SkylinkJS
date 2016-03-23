@@ -1,0 +1,286 @@
+<!DOCtype html>
+<html>
+
+<head>
+
+<style>
+  body, html {
+    margin: 0;
+    padding: 0
+  }
+
+  #selection-box {
+    background: #eee;
+    padding: 15px 30px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+
+  #session-info {
+    float: right;
+  }
+
+
+  #room-list {
+    margin-top: 75px;
+  }
+
+  .room {
+    margin: 15px;
+    border: solid 2px #aaa;
+    padding: 0;
+  }
+
+  .room h1 {
+    background: #aaa;
+    color: #444;
+    margin: 0;
+    padding: 5px 7px;
+  }
+
+  .room h1 span {
+    float: right;
+    background: #444;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+    padding: 5px 8px;
+    border: solid 2px #fff;
+    cursor: pointer;
+  }
+
+  .room .peer-list {
+    padding: 5px 7px;
+  }
+
+  .room .peer-list .peer {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .room .peer-list .peer object,
+  .room .peer-list .peer video {
+    width: 150px;
+    height: 150px;
+    background: #000;
+    display: block;
+    position: relative;
+    vertical-align: top;
+    z-index: 1;
+
+  }
+
+  .room .peer-list .peer span {
+    position: relative;
+    display: block;
+    height: 14px;
+    font-size: 10px;
+    background: #444;
+    border: solid 1px #fff;
+    color: #fff;
+    width: 134px;
+    margin: 1px 2px;
+    padding: 2px 5px;
+    margin-top: -22px;
+    z-index: 2;
+    font-weight: bold;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div id="selection-box">
+  <input id="new-room-name" type="text" placeholder="Enter new Room name">
+  <button onclick="createRoom(document.getElementById('new-room-name').value)">Create and Join Room</button>
+
+  <div id="session-info">
+    <b>Session ID:</b> <input id="session-id" type="text" disabled value="">
+  </div>
+</div>
+
+<div id="room-list"></div>
+
+
+<script src="../config.js"></script>
+<script src="../../publish/skylink.complete.js"></script>
+<script>
+  var rooms = {};
+  var appKey = config.appKey;
+  var sessionId = (new Date()).getTime();
+
+  document.getElementById('session-id').value = sessionId;
+
+  function TestRoom (name) {
+    var ref = this;
+
+    ref.name = name;
+
+    /**
+     * Append the Room UI DOM
+     */
+    ref.DOMID = {
+      room: 'room-' + ref.name,
+      peerList: 'room-' + ref.name + '-peers'
+    };
+
+    var roomUI = document.createElement('div');
+
+    roomUI.id = ref.DOMID.room;
+    roomUI.className = 'room';
+    roomUI.innerHTML = '<h1>' + ref.name + '<span id="' + ref.DOMID.room + '-remove">Leave</span></h1><div id="' +
+      ref.DOMID.peerList + '" class="peer-list"></div>';
+
+    document.getElementById('room-list').appendChild(roomUI);
+
+    document.getElementById(ref.DOMID.room + '-remove').onclick = function () {
+      ref.destroy();
+    };
+
+    ref.start();
+  }
+
+  /**
+   * Function to destroy Room connection
+   */
+  TestRoom.prototype.destroy = function () {
+    var ref = this;
+
+    ref.skylink.leaveRoom(function (error) {
+      // NOTE: Hack method to ensure socket is disconnected and user has left the room regardless
+      // This should not be done this way
+      if (error) {
+        if (ref.skylink._socket !== null) {
+          ref.skylink._socket.disconnect();
+        }
+
+        if (ref.skylink._mediaStream !== null) {
+          ref.skylink.stopStream();
+        }
+
+        if (ref.skylink._mediaScreen !== null) {
+          ref.skylink.stopScreen();
+        }
+      }
+    });
+
+    delete rooms[ref.name];
+
+    console.log('Room "' + ref.name + '" has been destroyed');
+
+    var roomUI = document.getElementById(ref.DOMID.room);
+
+    if (roomUI) {
+      document.getElementById('room-list').removeChild(roomUI);
+    }
+  };
+
+  /**
+   * Function to start Room connection
+   */
+  TestRoom.prototype.start = function () {
+    var ref = this;
+
+    ref.skylink = new Skylink();
+    ref.skylink.setLogLevel(4);
+
+    /**
+     * Listen to SkylinkJS Events
+     */
+    ref.skylink.on('peerJoined', function (peerId, peerInfo, isSelf) {
+      console.info('[' + ref.name + '] - Triggered event -> peerJoined', [peerId, isSelf, peerInfo]);
+
+      /* TODO: Bug from SkylinkJS that shares all the events which is wrong. */
+      if (peerInfo.room !== ref.name) {
+        return;
+      }
+
+      var peerUI = document.getElementById(ref.DOMID.peerList + '-' + peerId);
+
+      // Check if Peer has already been added to prevent duplicates
+      if (!peerUI) {
+        console.log('[' + ref.name + '] - Peer "' + peerInfo.userData.sessionId + '" joined');
+
+        peerUI = document.createElement('div');
+        peerUI.id = ref.DOMID.peerList + '-' + peerId;
+        peerUI.className = 'peer';
+        peerUI.innerHTML = '<video id="' + peerUI.id + '-video" autoplay="autoplay" ' +
+          (isSelf ? 'muted' : '') + '></video>' +
+          '<span>' + (isSelf ? '(You)' : peerInfo.userData.sessionId) + '</span>';
+
+        document.getElementById(ref.DOMID.peerList).appendChild(peerUI);
+      }
+    });
+
+    ref.skylink.on('incomingStream', function (peerId, stream, isSelf, peerInfo) {
+      console.info('[' + ref.name + '] - Triggered event -> incomingStream', [peerId, stream, isSelf, peerInfo]);
+
+      /* TODO: Bug from SkylinkJS that shares all the events which is wrong. */
+      if (peerInfo.room !== ref.name) {
+        return;
+      }
+
+      console.log('[' + ref.name + '] - Peer "' + peerInfo.userData.sessionId + '" stream -> ', stream);
+
+      var video = document.getElementById(ref.DOMID.peerList + '-' + peerId + '-video');
+
+      if (video) {
+        attachMediaStream(video, stream);
+      }
+    });
+
+    ref.skylink.on('peerLeft', function (peerId, peerInfo, isSelf) {
+      console.info('[' + ref.name + '] - Triggered event -> peerLeft', [peerId, isSelf, peerInfo]);
+
+      /* TODO: Bug from SkylinkJS that shares all the events which is wrong. */
+      if (peerInfo.room !== ref.name) {
+        return;
+      }
+
+      console.log('[' + ref.name + '] - Peer "' + peerInfo.userData.sessionId + '" left');
+
+      var peerUI = document.getElementById(ref.DOMID.peerList + '-' + peerId);
+
+      if (peerUI) {
+        document.getElementById(ref.DOMID.peerList).removeChild(peerUI);
+      }
+    });
+
+    /**
+     * Start SkylinkJS connection
+     */
+    ref.skylink.init({
+      appKey: appKey,
+      defaultRoom: ref.name,
+      audioFallback: true
+
+    }, function (error, success) {
+      if (error) {
+        return console.error('There is a failure trying to join Room "' + ref.name + '"', error);
+      }
+
+      ref.skylink.joinRoom({
+        audio: true,
+        video: true,
+        userData: {
+          sessionId: sessionId
+        }
+      });
+    });
+  };
+
+  function createRoom(name) {
+    // Up to user how they want to implement it to figure a logic out
+    if (rooms[name]) {
+      return console.error('There is a current session with Room "' + name + '" already');
+    }
+
+    rooms[name] = new TestRoom(name);
+  }
+</script>
+
+</body>
+
+</html>
