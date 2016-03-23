@@ -97,6 +97,18 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
   };
 
   /**
+   * Disconnects the DataChannel.
+   * @method disconnect
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype.disconnect = function () {
+    var ref = this;
+
+    /* NOTE: Should we clear all the transfers? Since it's dead */
+  };
+
+  /**
    * Handles the RTCDataChannel object.
    * @method _construct
    * @private
