@@ -608,8 +608,9 @@ Skylink.prototype._dataChannelProtocolHandler = function(dataString, peerId, cha
     useChannel = peerId;
   }*/
 
+  var data;
   if (typeof dataString === 'string') {
-    var data = {};
+    data = {};
     try {
       data = JSON.parse(dataString);
     } catch (error) {
@@ -648,13 +649,17 @@ Skylink.prototype._dataChannelProtocolHandler = function(dataString, peerId, cha
       });
     }
   } else {
+    data = dataString;
+    if (dataString.constructor && dataString.constructor.name === 'Array') {
+      // Need to re-parse on some browsers
+      data = new Int8Array(dataString);
+    }
     log.debug([peerId, 'RTCDataChannel', channelName, 'Received from peer ->'], {
       type: 'DATA',
-      data: new Int8Array(dataString)
+      data: data
     });
 
-    this._DATAProtocolHandler(peerId, dataString,
-      dataString.constructor && dataString.constructor.name ? dataString.constructor.name : 'unknown', channelName);
+    this._DATAProtocolHandler(peerId, data, 'ArrayBuffer', channelName);
   }
 };
 
