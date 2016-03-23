@@ -650,7 +650,7 @@ Skylink.prototype._dataChannelProtocolHandler = function(dataString, peerId, cha
   } else {
     log.debug([peerId, 'RTCDataChannel', channelName, 'Received from peer ->'], {
       type: 'DATA',
-      data: dataString
+      data: new Int8Array(dataString)
     });
 
     this._DATAProtocolHandler(peerId, dataString,
@@ -823,18 +823,18 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       if (transferStatus.dataType === 'blob') {
         // NOTE: For now we are prototyping sending binary types like Blob or ArrayBuffer
         // Firefox browser support Blob interface
-        if (window.webrtcDetectedBrowser === 'firefox') {
-          sendDataFn(self._uploadDataTransfers[channelName][ackN]);
+        // if (window.webrtcDetectedBrowser === 'firefox') {
+        //   sendDataFn(self._uploadDataTransfers[channelName][ackN]);
 
-        // Chrome/Opera/Safari/IE supports ArrayBuffer interface
-        } else {
+        // // Chrome/Opera/Safari/IE supports ArrayBuffer interface
+        // } else {
           // Convert Blob object to ArrayBuffer object
           var fileReader = new FileReader();
           fileReader.onload = function() {
             sendDataFn(fileReader.result);
           };
           fileReader.readAsArrayBuffer(self._uploadDataTransfers[channelName][ackN]);
-        }
+        // }
         //self._blobToBase64(self._uploadDataTransfers[channelName][ackN], sendDataFn);
       } else {
         sendDataFn(self._uploadDataTransfers[channelName][ackN]);
