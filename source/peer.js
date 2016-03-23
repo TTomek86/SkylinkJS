@@ -174,7 +174,8 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     enableDataChannel: superRef._enableDataChannel === true,
     enableIceTrickle: superRef._enableIceTrickle === true,
     enableIceRestart: false,
-    stereo: false
+    stereo: false,
+    channelKey: null
   };
 
   /**
@@ -289,7 +290,30 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       };
     }
 
-    /* TODO: Create DataChannel here? */
+    // This will ALWAYS stay consistent since there can be only one offerer and answer
+    ref._connectionSettings.channelKey = superRef._user.sid + '_' + ref.id;
+
+    // Create RTCDataChannel if enabled
+    if (ref._connectionSettings.enableDataChannel && Object.keys(ref._channels).length === 0) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Creating datachannel with ID delimiter ->'],
+        ref._connectionSettings.channelKey);
+
+      /* TODO: Move to another function ? */
+      try {
+        var channel = ref._RTCPeerConnection.createDataChannel(ref._connectionSettings.channelKey);
+
+        log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
+
+        // Construct the DataChannel object
+        ref._channels[channel.label] = superRef._createDataChannel(ref.id,
+          ref._connectionSettings.channelKey, channel);
+
+      } catch (error) {
+        log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed starting datachannel connection ->'], error);
+
+        /* NOTE: Should we trigger the dataChannelState event of error ? */
+      }
+    }
 
     log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Creating local offer with options ->'], options);
 
@@ -1087,6 +1111,24 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       var channel = evt.channel || evt;
 
       log.log([ref.id, 'Peer', 'RTCDataChannel', 'Received datachannel ->'], channel);
+
+      // Prevent using any RTCDataChannels if this connection does not allow it
+      if (!ref._connectionSettings.enableDataChannel) {
+        log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Dropping of received datachannel as ' +
+          'feature is not enabled ->'], channel);
+        return;
+      }
+
+      // Check if this is the first RTCDataChannel received, which means the main RTCDataChannel
+      if (Object.keys(ref._channels).length === 0) {
+        log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Setting ID delimiter ->'], channel.label);
+
+        ref._connectionSettings.channelKey = channel.label;
+      }
+
+      // Construct the DataChannel object
+      ref._channels[channel.label] = superRef._createDataChannel(ref.id,
+        ref._connectionSettings.channelKey, channel);
     };
   };
 
