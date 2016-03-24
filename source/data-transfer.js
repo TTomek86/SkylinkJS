@@ -794,7 +794,7 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
     // Still uploading
     if (ackN < chunksLength) {
       var sendDataFn = function (base64BinaryString) {
-        var percentage = parseFloat((((ackN + 1) / chunksLength) * 100).toFixed(2), 10);
+        var percentage = (((ackN + 1) / chunksLength)).toFixed(2);
 
         if (!self._uploadDataSessions[channelName]) {
           log.error([peerId, 'RTCDataChannel', channelName,
@@ -826,7 +826,7 @@ Skylink.prototype._ACKProtocolHandler = function(peerId, data, channelName) {
       };
 
       var sendBufferFn = function (buffer) {
-        var percentage = parseFloat((((ackN + 1) / chunksLength) * 100).toFixed(2), 10);
+        var percentage = (((ackN + 1) / chunksLength)).toFixed(2);
         var typedAB = new Int8Array(buffer);
 
         if (!self._uploadDataSessions[channelName]) {
@@ -1219,7 +1219,7 @@ Skylink.prototype._DATAProtocolHandler = function(peerId, dataString, dataType, 
     transferStatus.ackN += 1;
     transferStatus.receivedSize += receivedSize;
     var totalReceivedSize = transferStatus.receivedSize;
-    var percentage = parseFloat(((totalReceivedSize / transferStatus.size) * 100).toFixed(2), 10);
+    var percentage = ((totalReceivedSize / transferStatus.size)).toFixed(2);
 
     this._sendDataChannelMessage(peerId, {
       type: this._DC_PROTOCOL_TYPE.ACK,
