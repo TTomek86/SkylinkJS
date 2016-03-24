@@ -57,8 +57,9 @@ SkylinkDemo.on('dataTransferState', function(state, transferId, peerId, transfer
     case SkylinkDemo.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED:
       var transferStatus = document.getElementById(peerId + '_' + transferId);
       transferStatus.innerHTML = 'Completed';
-      var transferStatus = document.getElementById(transferId);
-      transferStatus.href = URL.createObjectURL(transferInfo.data);
+      transferStatus = document.getElementById(transferId);
+      var received = new window.Blob(transferInfo.data);
+      transferStatus.href = URL.createObjectURL(received);
       transferStatus.style.display = 'block';
       break;
     case SkylinkDemo.DATA_TRANSFER_STATE.UPLOAD_COMPLETED:
@@ -97,7 +98,13 @@ SkylinkDemo.init(config, function (error, success) {
 function sendFile() {
   var target = document.getElementById('target').value;
   var files = document.getElementById('file').files;
-  SkylinkDemo.sendBlobData(files[0], (target === 'group') ? null : target);
+  var file = files[0];
+  // SkylinkDemo.sendBlobData(files[0], (target === 'group') ? null : target);
+  var fileReader = new FileReader();
+  fileReader.onload = function() {
+    SkylinkDemo.sendArrayBufferData(fileReader.result, (target === 'group') ? null : target);
+  };
+  fileReader.readAsArrayBuffer(file);
 }
 
 function addMessage(message, className) {
