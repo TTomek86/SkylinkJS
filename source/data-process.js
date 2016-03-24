@@ -165,6 +165,72 @@ Skylink.prototype._chunkBlobData = function(blob, chunkSize) {
 };
 
 /**
+ * Chunks a huge Blob data object into smaller Blob data object chunks
+ *   based on the chunk sizes provided.
+ * If provided Blob data object is smaller than chunk sizes, it will return an array
+ *   length of <code>1</code> with the Blob data object.
+ * @method _chunkBlobData
+ * @param {Blob} blob The huge Blob binary data object.
+ * @param {Number} chunkSize The chunk size that the Blob binary data should be cut
+ *   into.
+ * @return {Array} The array of chunked Blob data objects based on the Blob data
+ *   object provided.
+ * @private
+ * @component DataProcess
+ * @for Skylink
+ * @since 0.5.2
+ */
+Skylink.prototype._chunkArrayBufferData = function(buffer, chunkSize) {
+  var chunksArray = [];
+  var startCount = 0;
+  var endCount = 0;
+  var bufferByteSize = buffer.byteLength;
+
+  if (bufferByteSize > chunkSize) {
+    // File Size greater than Chunk size
+    while ((bufferByteSize - 1) > endCount) {
+      endCount = startCount + chunkSize;
+      chunksArray.push(buffer.slice(startCount, endCount));
+      startCount += chunkSize;
+    }
+    if ((bufferByteSize - (startCount + 1)) > 0) {
+      chunksArray.push(buffer.slice(startCount, bufferByteSize - 1));
+    }
+  } else {
+    // File Size below Chunk size
+    chunksArray.push(buffer);
+  }
+  return chunksArray;
+};
+
+/**
+ * Assembles the data string chunks of a chunked dataURL
+ *   binary string (base64) into the original dataURL binary string (base64).
+ * @method _assembleDataURL
+ * @param {Array} dataURLArray The array of chunked dataURL binary strings
+ *   (base64) based on the dataURL string provided.
+ * @return {String} The original huge dataURL binary string (base64).
+ * @private
+ * @component DataProcess
+ * @for Skylink
+ * @since 0.6.1
+ */
+Skylink.prototype._assembleArrayBufferData = function(ArrayBufferArray) {
+  // var outputStr = '';
+
+  // for (var i = 0; i < ArrayBufferArray.length; i++) {
+  //   try {
+  //     outputStr += ArrayBufferArray[i];
+  //   } catch (error) {
+  //     console.error('Malformed', i, ArrayBufferArray[i]);
+  //   }
+  // }
+
+  // return outputStr;
+  return ArrayBufferArray;
+};
+
+/**
  * Chunks a huge dataURL binary string (base64)
  *   into smaller strings based on the chunk length provided.
  * If provided dataURL binary string (base64)
