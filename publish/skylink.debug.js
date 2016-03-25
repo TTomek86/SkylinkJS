@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:38:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:50:39 GMT+0800 (SGT) */
 
 (function() {
 
@@ -4079,6 +4079,25 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
     var ref = this;
 
     /* NOTE: Should we clear all the transfers? Since it's dead */
+
+    if (['closing', 'closed'].indexOf(ref._RTCDataChannel.readyState) > -1) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of closing datachannel as ' +
+        'connection is already closed ->'], ref._RTCDataChannel.readyState);
+      return;
+    }
+
+    // Polyfill the .onclosing event to trigger "closing".
+    //   It was removed already in the specs but the SDK has it so let's keep it.
+    var closingState = superRef.DATA_CHANNEL_STATE.CLOSING;
+
+    log.log([ref.peerId, 'DataChannel', ref.id, 'Connection ready state ->'], closingState);
+
+    superRef._trigger('dataChannelState', closingState, ref.peerId, null, ref.id, ref.type);
+
+    /**
+     * Close RTCDataChannel connection with .close()
+     */
+    ref._RTCDataChannel.close();
   };
 
   /**
