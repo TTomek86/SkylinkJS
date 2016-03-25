@@ -93,16 +93,18 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
    * Sends a message.
    * @method message
    * @param {Any} message The message object. Note that this object will be stringified.
+   * @param {Boolean} [isPrivate=false] The flag that indicates if message is targeted or not.
+   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.message = function (message, isPrivate) {
+  SkylinkDataChannel.prototype.message = function (message, isPrivate, listOfPeers) {
     var ref = this;
 
     ref._messageSend({
       type: superRef._DC_PROTOCOL_TYPE.MESSAGE,
       sender: superRef._user.sid,
-      target: ref.peerId,
+      target: Array.isArray(listOfPeers) ? listOfPeers : ref.peerId,
       data: message,
       isPrivate: isPrivate === true
     });

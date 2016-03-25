@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:50:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 17:23:13 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:50:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 17:23:13 GMT+0800 (SGT) */
 
 (function() {
 
@@ -14511,16 +14511,18 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
    * Sends a message.
    * @method message
    * @param {Any} message The message object. Note that this object will be stringified.
+   * @param {Boolean} [isPrivate=false] The flag that indicates if message is targeted or not.
+   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.message = function (message, isPrivate) {
+  SkylinkDataChannel.prototype.message = function (message, isPrivate, listOfPeers) {
     var ref = this;
 
     ref._messageSend({
       type: superRef._DC_PROTOCOL_TYPE.MESSAGE,
       sender: superRef._user.sid,
-      target: ref.peerId,
+      target: Array.isArray(listOfPeers) ? listOfPeers : ref.peerId,
       data: message,
       isPrivate: isPrivate === true
     });
@@ -15163,79 +15165,61 @@ Skylink.prototype.refreshConnection = function(passedTargetPeerId, passedCallbac
  * @component DataTransfer
  * @for Skylink
  */
-Skylink.prototype.sendP2PMessage = function(message, targetPeerId) {
-  var self = this;
+Skylink.prototype.sendP2PMessage = function(passedMessage, passedTargetPeerId) {
+  var superRef = this;
 
-  // check if datachannel is enabled first or not
-  if (!self._enableDataChannel) {
-    log.warn('Unable to send any P2P message. Datachannel is disabled');
+  // Prevent sending messages when send datachannel is not enabled
+  if (!superRef._enableDataChannel) {
+    log.warn([null, 'Skylink', 'sendP2PMessage()', 'Failed sending message as ' +
+      'datachannel functionality is not enabled ->'], passedMessage);
     return;
   }
 
-  var listOfPeers = Object.keys(self._dataChannels);
+
+  var listOfPeers = Object.keys(superRef._peers);
   var isPrivate = false;
 
-  //targetPeerId is defined -> private message
-  if (Array.isArray(targetPeerId)) {
-    listOfPeers = targetPeerId;
+  /* NOTE: Should we control "undefined" or null values being sent? */
+
+  if (Array.isArray(passedTargetPeerId)) {
+    listOfPeers = passedTargetPeerId;
     isPrivate = true;
 
-  } else if (typeof targetPeerId === 'string') {
-    listOfPeers = [targetPeerId];
+  } else if (typeof passedTargetPeerId === 'string') {
+    listOfPeers = [passedTargetPeerId];
     isPrivate = true;
   }
 
-  // sending public message to MCU to relay. MCU case only
-  if (self._hasMCU) {
-    if (isPrivate) {
-      log.log(['MCU', null, null, 'Relaying private P2P message to peers'], listOfPeers);
-      self._sendDataChannelMessage('MCU', {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: listOfPeers,
-        data: message
-      });
-    } else {
-      log.log(['MCU', null, null, 'Relaying P2P message to peers']);
-
-      self._sendDataChannelMessage('MCU', {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: 'MCU',
-        data: message
-      });
+  // Handle MCU environment method of relaying
+  if (superRef._hasMCU) {
+    if (!superRef._peers.MCU) {
+      log.error(['MCU', 'Skylink', 'sendP2PMessage()', 'Failed sending message as ' +
+        'MCU peer connection does not exists ->'], passedMessage);
+      return;
     }
-  } else {
-    for (var i = 0; i < listOfPeers.length; i++) {
-      var peerId = listOfPeers[i];
-      var useChannel = (self._hasMCU) ? 'MCU' : peerId;
 
-      // Ignore MCU peer
-      if (peerId === 'MCU') {
-        continue;
+    superRef._peers.MCU.channelMessage(passedMessage, isPrivate, listOfPeers);
+
+  // Handle P2P environment method of sending
+  } else {
+    listOfPeers.forEach(function (peerId) {
+      if (!superRef._peers[peerId]) {
+        log.error([peerId, 'Skylink', 'sendP2PMessage()', 'Failed sending message as ' +
+          'peer connection does not exists ->'], passedMessage);
+        return;
       }
 
-      log.log([peerId, null, useChannel, 'Sending P2P message to peer']);
-
-      self._sendDataChannelMessage(useChannel, {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: peerId,
-        data: message
-      });
-    }
+      superRef._peers[peerId].channelMessage(passedMessage, isPrivate);
+    });
   }
 
-  self._trigger('incomingMessage', {
-    content: message,
+  superRef._trigger('incomingMessage', {
+    content: passedMessage,
     isPrivate: isPrivate,
-    targetPeerId: targetPeerId || null,
+    targetPeerId: isPrivate ? passedTargetPeerId : null,
     isDataChannel: true,
-    senderPeerId: self._user.sid
-  }, self._user.sid, self.getPeerInfo(), true);
+    senderPeerId: superRef._user.sid
+  }, superRef._user.sid, superRef.getPeerInfo(), true);
 };
 Skylink.prototype._peerInformations = {};
 
@@ -16271,12 +16255,13 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   /**
    * Sends a P2P message to Peer.
    * @method channelMessage
-   * @param {Any} message The message object.
-   * @param {Boolean} isPrivate The flag that indicates if message is privately targeted or not.
+   * @param {Any} message The message object. Note that this object will be stringified.
+   * @param {Boolean} [isPrivate=false] The flag that indicates if message is targeted or not.
+   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
    * @for SkylinkPeer
    * @since 0.6.x
    */
-  SkylinkPeer.prototype.channelMessage = function (message, isPrivate) {
+  SkylinkPeer.prototype.channelMessage = function (message, isPrivate, listOfPeers) {
     var ref = this;
 
     // Prevent sending when RTCDataChannel feature is not enabled
@@ -16294,7 +16279,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     }
 
     // Send message to "main" RTCDataChannel
-    ref._channels.main.message(message, isPrivate === true);
+    ref._channels.main.message(message, isPrivate === true, listOfPeers);
   };
 
   /**

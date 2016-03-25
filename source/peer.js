@@ -681,12 +681,13 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   /**
    * Sends a P2P message to Peer.
    * @method channelMessage
-   * @param {Any} message The message object.
-   * @param {Boolean} isPrivate The flag that indicates if message is privately targeted or not.
+   * @param {Any} message The message object. Note that this object will be stringified.
+   * @param {Boolean} [isPrivate=false] The flag that indicates if message is targeted or not.
+   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
    * @for SkylinkPeer
    * @since 0.6.x
    */
-  SkylinkPeer.prototype.channelMessage = function (message, isPrivate) {
+  SkylinkPeer.prototype.channelMessage = function (message, isPrivate, listOfPeers) {
     var ref = this;
 
     // Prevent sending when RTCDataChannel feature is not enabled
@@ -704,7 +705,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     }
 
     // Send message to "main" RTCDataChannel
-    ref._channels.main.message(message, isPrivate === true);
+    ref._channels.main.message(message, isPrivate === true, listOfPeers);
   };
 
   /**
