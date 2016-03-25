@@ -290,15 +290,11 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       };
     }
 
-    // This will ALWAYS stay consistent since there can be only one offerer and answer
-    ref._connectionSettings.channelKey = superRef._user.sid + '_' + ref.id;
-
     // Create RTCDataChannel if enabled
-    if (ref._connectionSettings.enableDataChannel && !ref._channels[ref._connectionSettings.channelKey]) {
-      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Starting datachannel connection with ID delimiter ->'],
-        ref._connectionSettings.channelKey);
+    if (ref._connectionSettings.enableDataChannel && !ref._channels.main) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Starting datachannel connection']);
 
-      ref._channelConnect(ref._connectionSettings.channelKey);
+      ref._channelConnect('main');
     }
 
     log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Creating local offer with options ->'], options);
@@ -683,9 +679,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   };
 
   /**
-   * Sends a RTCDataChannel message to Peer.
+   * Sends a P2P message to Peer.
    * @method channelMessage
-   * @param {Any} message The message object. Note that this object will be stringified.
+   * @param {Any} message The message object.
    * @param {Boolean} isPrivate The flag that indicates if message is privately targeted or not.
    * @for SkylinkPeer
    * @since 0.6.x
@@ -695,46 +691,20 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
     // Prevent sending when RTCDataChannel feature is not enabled
     if (!ref._connectionSettings.enableDataChannel) {
-      log.error([ref.id, 'Peer', 'RTCDataChannel',
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
         'Dropping of sending message as datachannel feature is not enabled for this Peer ->'], message);
       return;
     }
 
     // Prevent sending to non-existant RTCDataChannel object
-    if (!ref._channels[ref._connectionSettings.channelKey]) {
-      log.error([ref.id, 'Peer', 'RTCDataChannel',
+    if (!ref._channels.main) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
         'Dropping of sending message as datachannel does not exists ->'], message);
       return;
     }
 
-    /* TODO: Ignore if is MCU environment and this is "P2P" Peer */
-
     // Send message to "main" RTCDataChannel
-    ref._channels[ref._connectionSettings.channelKey].sendMessage(message, isPrivate === true);
-  };
-
-  /**
-   * Starts a RTCDataChannel transfer to Peer.
-   * @method channelTransfer
-   * @param {Blob|String} data The data object.
-   * @param {Boolean} isPrivate The flag that indicates if transfer is privately targeted or not.
-   * @for SkylinkPeer
-   */
-  SkylinkPeer.prototype.channelTransfer = function (data, isPrivate) {
-    var ref = this;
-
-    // Prevent sending when RTCDataChannel feature is not enabled
-    if (!ref._connectionSettings.enableDataChannel) {
-      /* NOTE: Not logging the data as it might incurr heavy load on console logs */
-      log.error([ref.id, 'Peer', 'RTCDataChannel',
-        'Dropping of transferring data as datachannel feature is not enabled is not enabled for this Peer']);
-      return;
-    }
-
-    /* TODO: Ignore if is MCU environment and this is "P2P" Peer */
-
-    /* TODO: Use "main" RTCDataChannel for Android / iOS */
-    /* TODO: Create RTCDataChannel for multi-transfers */
+    ref._channels.main.message(message, isPrivate === true);
   };
 
   /**
@@ -945,8 +915,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
 
       // Construct the DataChannel object
-      ref._channels[channel.label] = superRef._createDataChannel(ref.id,
-        ref._connectionSettings.channelKey, channel);
+      ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);
 
     } catch (error) {
       log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed creating datachannel connection ->'], error);
@@ -1198,16 +1167,10 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         return;
       }
 
-      // Check if this is the first RTCDataChannel received, which means the main RTCDataChannel
-      if (Object.keys(ref._channels).length === 0) {
-        log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Setting datachannel ID delimiter ->'], channel.label);
-
-        ref._connectionSettings.channelKey = channel.label;
-      }
+      /* TODO: Handle Android, iOS and C++ SDK with 1 datachannel */
 
       // Construct the DataChannel object
-      ref._channels[channel.label] = superRef._createDataChannel(ref.id,
-        ref._connectionSettings.channelKey, channel);
+      ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);
     };
   };
 

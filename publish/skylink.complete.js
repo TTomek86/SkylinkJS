@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Mar 24 2016 00:29:36 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:38:39 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Thu Mar 24 2016 00:29:36 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Mar 25 2016 16:38:39 GMT+0800 (SGT) */
 
 (function() {
 
@@ -14188,106 +14188,6 @@ Skylink.prototype.cancelDataTransfer = function (peerId, transferId) {
 };
 
 /**
- * Send a message object or string using the DataChannel connection
- *   associated with the list of targeted Peers.
- * - The maximum size for the message object would be<code>16Kb</code>.<br>
- * - To send a string length longer than <code>16kb</code>, please considered
- *   to use {{#crossLink "Skylink/sendURLData:method"}}sendURLData(){{/crossLink}}
- *   to send longer strings (for that instance base64 binary strings are long).
- * - To send message objects with platform signaling socket connection, see
- *   {{#crossLink "Skylink/sendMessage:method"}}sendMessage(){{/crossLink}}.
- * @method sendP2PMessage
- * @param {String|JSON} message The message object.
- * @param {String|Array} [targetPeerId] The array of targeted Peers to
- *   transfer the message object to. Alternatively, you may provide this parameter
- *   as a string to a specific targeted Peer to transfer the message object.
- * @example
- *   // Example 1: Send to all peers
- *   SkylinkDemo.sendP2PMessage("Hi there! This is from a DataChannel connection!"");
- *
- *   // Example 2: Send to specific peer
- *   SkylinkDemo.sendP2PMessage("Hi there peer! This is from a DataChannel connection!", targetPeerId);
- * @trigger incomingMessage
- * @since 0.5.5
- * @component DataTransfer
- * @for Skylink
- */
-Skylink.prototype.sendP2PMessage = function(message, targetPeerId) {
-  var self = this;
-
-  // check if datachannel is enabled first or not
-  if (!self._enableDataChannel) {
-    log.warn('Unable to send any P2P message. Datachannel is disabled');
-    return;
-  }
-
-  var listOfPeers = Object.keys(self._dataChannels);
-  var isPrivate = false;
-
-  //targetPeerId is defined -> private message
-  if (Array.isArray(targetPeerId)) {
-    listOfPeers = targetPeerId;
-    isPrivate = true;
-
-  } else if (typeof targetPeerId === 'string') {
-    listOfPeers = [targetPeerId];
-    isPrivate = true;
-  }
-
-  // sending public message to MCU to relay. MCU case only
-  if (self._hasMCU) {
-    if (isPrivate) {
-      log.log(['MCU', null, null, 'Relaying private P2P message to peers'], listOfPeers);
-      self._sendDataChannelMessage('MCU', {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: listOfPeers,
-        data: message
-      });
-    } else {
-      log.log(['MCU', null, null, 'Relaying P2P message to peers']);
-
-      self._sendDataChannelMessage('MCU', {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: 'MCU',
-        data: message
-      });
-    }
-  } else {
-    for (var i = 0; i < listOfPeers.length; i++) {
-      var peerId = listOfPeers[i];
-      var useChannel = (self._hasMCU) ? 'MCU' : peerId;
-
-      // Ignore MCU peer
-      if (peerId === 'MCU') {
-        continue;
-      }
-
-      log.log([peerId, null, useChannel, 'Sending P2P message to peer']);
-
-      self._sendDataChannelMessage(useChannel, {
-        type: self._DC_PROTOCOL_TYPE.MESSAGE,
-        isPrivate: isPrivate,
-        sender: self._user.sid,
-        target: peerId,
-        data: message
-      });
-    }
-  }
-
-  self._trigger('incomingMessage', {
-    content: message,
-    isPrivate: isPrivate,
-    targetPeerId: targetPeerId || null,
-    isDataChannel: true,
-    senderPeerId: self._user.sid
-  }, self._user.sid, self.getPeerInfo(), true);
-};
-
-/**
  * Starts a [data URI](https://developer.mozilla.org/en-US/docs/Web/API/FileReader
  *   /readAsDataURL) transfer with Peers using the DataChannel connection.
  * - The receiving Peers have the option to accept or reject the data transfer with
@@ -14526,7 +14426,7 @@ Skylink.prototype.sendURLData = function(data, timeout, targetPeerId, callback) 
   this._startDataTransfer(data, dataInfo, listOfPeers, callback);
 };
 
-Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
+Skylink.prototype._createDataChannel = function (peerId, channel) {
   var superRef = this;
 
   /**
@@ -14537,11 +14437,24 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
    * @since 0.6.x
    */
   var SkylinkDataChannel = function () {
-    if (!channel.label.split(IDDelimiter)[1]) {
-      this.type = superRef.DATA_CHANNEL_TYPE.MESSAGING;
-    }
+    /* TODO: Handle case for Android, iOS and C++ SDK */
 
-    this._construct();
+    // Handles the .onopen event.
+    this._handleOnOpenEvent();
+
+    // Handles the .onclose event.
+    this._handleOnCloseEvent();
+
+    // Handles the .onerror event.
+    this._handleOnErrorEvent();
+
+    // Handles the .onbufferamountlow event.
+    this._handleOnBufferAmountLowEvent();
+
+    // Handles the .onmessage event.
+    this._handleOnMessageEvent();
+
+    log.log([this.peerId, 'DataChannel', this.id, 'Connection has started']);
   };
 
   /**
@@ -14569,7 +14482,8 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.type = superRef.DATA_CHANNEL_TYPE.DATA;
+  SkylinkDataChannel.prototype.type = channel.label === 'main' ?
+    superRef.DATA_CHANNEL_TYPE.MESSAGING : superRef.DATA_CHANNEL_TYPE.DATA;
 
   /**
    * Stores the DataChannel current data transfer.
@@ -14595,86 +14509,90 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
 
   /**
    * Sends a message.
-   * @method sendMessage
+   * @method message
    * @param {Any} message The message object. Note that this object will be stringified.
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.sendMessage = function (message, isPrivate) {
+  SkylinkDataChannel.prototype.message = function (message, isPrivate) {
     var ref = this;
 
-    ref._send({
+    ref._messageSend({
       type: superRef._DC_PROTOCOL_TYPE.MESSAGE,
-      isPrivate: isPrivate === true,
       sender: superRef._user.sid,
       target: ref.peerId,
-      data: message
+      data: message,
+      isPrivate: isPrivate === true
     });
   };
 
   /**
-   * Handles the RTCDataChannel object.
-   * @method _construct
-   * @private
+   * Disconnects the DataChannel.
+   * @method disconnect
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype._construct = function () {
+  SkylinkDataChannel.prototype.disconnect = function () {
     var ref = this;
 
-    // Handles the .onopen event.
-    ref._handleOnOpenEvent();
-
-    // Handles the .onclose event.
-    ref._handleOnCloseEvent();
-
-    // Handles the .onerror event.
-    ref._handleOnErrorEvent();
-
-    // Handles the .onbufferamountlow event.
-    ref._handleOnBufferAmountLowEvent();
-
-    // Handles the .onmessage event.
-    ref._handleOnMessageEvent();
-
-    log.log([ref.peerId, 'DataChannel', ref.id, 'Connection has started']);
+    /* NOTE: Should we clear all the transfers? Since it's dead */
   };
 
   /**
    * Sends data over the RTCDataChannel object.
-   * @method _send
-   * @param {Any} message The message object data to be sent over.
-   * @param {Boolean} [sendAsBinary=false] The flag that indicates if the data
-   *   should be stringified before sending the object data over.
+   * @method _messageSend
+   * @param {JSON} message The message object data.
    * @private
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype._send = function (message, sendAsBinary) {
+  SkylinkDataChannel.prototype._messageSend = function (message) {
     var ref = this;
-
-    if (ref._RTCDataChannel.readyState !== 'open') {
-      log.warn([ref.peerId, 'RTCDataChannel', ref.id,
-        'Dropping of sending data as connection state is not "open" ->'], {
-        state: ref._RTCDataChannel.readyState,
-        data: message
-      });
-      return;
-    }
-
     var dataString = null;
 
-    if (!(sendAsBinary && typeof message === 'object')) {
+    if (typeof message === 'object') {
       dataString = JSON.stringify(message);
 
     } else {
       dataString = message;
     }
 
+    // Prevent sending data when readyState is not "open"
+    if (ref._RTCDataChannel.readyState !== 'open') {
+      log.warn([ref.peerId, 'RTCDataChannel', ref.id,
+        'Dropping of sending data as connection state is not "open" ->'], dataString);
+      return;
+    }
+
     log.debug([ref.peerId, 'DataChannel', ref.id, 'Sending data ->'], dataString);
 
+    /**
+     * Sends message with .send()
+     */
     ref._RTCDataChannel.send(dataString);
   };
+
+  /**
+   * Handles the "MESSAGE" protocol.
+   * @method _messageReactToMESSAGEProtocol
+   * @param {JSON} message The message object data.
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._messageReactToMESSAGEProtocol = function (message) {
+    var ref = this;
+
+    // Trigger that message has been received
+    superRef._trigger('incomingMessage', {
+      content: message.data,
+      isPrivate: message.isPrivate,
+      isDataChannel: true,
+      targetPeerId: superRef._user.sid,
+      senderPeerId: ref.peerId
+    }, ref.peerId, superRef.getPeerInfo(ref.peerId), false);
+  };
+
 
   /**
    * Handles the RTCDataChannel.onopen event.
@@ -14789,35 +14707,18 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
   SkylinkDataChannel.prototype._handleOnMessageEvent = function () {
     var ref = this;
 
-    /* TODO: Datatransfers handling */
     ref._RTCDataChannel.onmessage = function (evt) {
-      var rawData = evt.message || evt.data || evt,
-          data = null;
+      var data = evt.message || evt.data || evt;
 
-      log.log([ref.peerId, 'DataChannel', ref.id, 'Received data ->'], rawData);
+      log.log([ref.peerId, 'DataChannel', ref.id, 'Received data ->'], data);
 
       /* TODO: Handle receiving Binary ? Like ArrayBuffer? Perhaps check typeof constructor.name */
-      /* TODO: Move to a proper handler */
-      try {
-        data = JSON.parse(rawData);
 
-        switch (data.type) {
-          case superRef._DC_PROTOCOL_TYPE.MESSAGE:
-            // Reflect received message
-            superRef._trigger('incomingMessage', {
+      var message = JSON.parse(data);
 
-              content: data.data,
-              isPrivate: data.isPrivate,
-              isDataChannel: true,
-              targetPeerId: superRef._user.sid,
-              senderPeerId: ref.peerId
-
-            }, ref.peerId, superRef.getPeerInfo(ref.peerId), false);
-            break;
-        }
-
-      } catch (error) {
-        data = rawData;
+      switch (message.type) {
+        case superRef._DC_PROTOCOL_TYPE.MESSAGE:
+          ref._messageReactToMESSAGEProtocol(message);
       }
     };
   };
@@ -15216,6 +15117,106 @@ Skylink.prototype.refreshConnection = function(passedTargetPeerId, passedCallbac
   } else {
     successCaseFn();
   }
+};
+
+/**
+ * Send a message object or string using the DataChannel connection
+ *   associated with the list of targeted Peers.
+ * - The maximum size for the message object would be<code>16Kb</code>.<br>
+ * - To send a string length longer than <code>16kb</code>, please considered
+ *   to use {{#crossLink "Skylink/sendURLData:method"}}sendURLData(){{/crossLink}}
+ *   to send longer strings (for that instance base64 binary strings are long).
+ * - To send message objects with platform signaling socket connection, see
+ *   {{#crossLink "Skylink/sendMessage:method"}}sendMessage(){{/crossLink}}.
+ * @method sendP2PMessage
+ * @param {String|JSON} message The message object.
+ * @param {String|Array} [targetPeerId] The array of targeted Peers to
+ *   transfer the message object to. Alternatively, you may provide this parameter
+ *   as a string to a specific targeted Peer to transfer the message object.
+ * @example
+ *   // Example 1: Send to all peers
+ *   SkylinkDemo.sendP2PMessage("Hi there! This is from a DataChannel connection!"");
+ *
+ *   // Example 2: Send to specific peer
+ *   SkylinkDemo.sendP2PMessage("Hi there peer! This is from a DataChannel connection!", targetPeerId);
+ * @trigger incomingMessage
+ * @since 0.5.5
+ * @component DataTransfer
+ * @for Skylink
+ */
+Skylink.prototype.sendP2PMessage = function(message, targetPeerId) {
+  var self = this;
+
+  // check if datachannel is enabled first or not
+  if (!self._enableDataChannel) {
+    log.warn('Unable to send any P2P message. Datachannel is disabled');
+    return;
+  }
+
+  var listOfPeers = Object.keys(self._dataChannels);
+  var isPrivate = false;
+
+  //targetPeerId is defined -> private message
+  if (Array.isArray(targetPeerId)) {
+    listOfPeers = targetPeerId;
+    isPrivate = true;
+
+  } else if (typeof targetPeerId === 'string') {
+    listOfPeers = [targetPeerId];
+    isPrivate = true;
+  }
+
+  // sending public message to MCU to relay. MCU case only
+  if (self._hasMCU) {
+    if (isPrivate) {
+      log.log(['MCU', null, null, 'Relaying private P2P message to peers'], listOfPeers);
+      self._sendDataChannelMessage('MCU', {
+        type: self._DC_PROTOCOL_TYPE.MESSAGE,
+        isPrivate: isPrivate,
+        sender: self._user.sid,
+        target: listOfPeers,
+        data: message
+      });
+    } else {
+      log.log(['MCU', null, null, 'Relaying P2P message to peers']);
+
+      self._sendDataChannelMessage('MCU', {
+        type: self._DC_PROTOCOL_TYPE.MESSAGE,
+        isPrivate: isPrivate,
+        sender: self._user.sid,
+        target: 'MCU',
+        data: message
+      });
+    }
+  } else {
+    for (var i = 0; i < listOfPeers.length; i++) {
+      var peerId = listOfPeers[i];
+      var useChannel = (self._hasMCU) ? 'MCU' : peerId;
+
+      // Ignore MCU peer
+      if (peerId === 'MCU') {
+        continue;
+      }
+
+      log.log([peerId, null, useChannel, 'Sending P2P message to peer']);
+
+      self._sendDataChannelMessage(useChannel, {
+        type: self._DC_PROTOCOL_TYPE.MESSAGE,
+        isPrivate: isPrivate,
+        sender: self._user.sid,
+        target: peerId,
+        data: message
+      });
+    }
+  }
+
+  self._trigger('incomingMessage', {
+    content: message,
+    isPrivate: isPrivate,
+    targetPeerId: targetPeerId || null,
+    isDataChannel: true,
+    senderPeerId: self._user.sid
+  }, self._user.sid, self.getPeerInfo(), true);
 };
 Skylink.prototype._peerInformations = {};
 
@@ -15860,29 +15861,11 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       };
     }
 
-    // This will ALWAYS stay consistent since there can be only one offerer and answer
-    ref._connectionSettings.channelKey = superRef._user.sid + '_' + ref.id;
-
     // Create RTCDataChannel if enabled
-    if (ref._connectionSettings.enableDataChannel && Object.keys(ref._channels).length === 0) {
-      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Creating datachannel with ID delimiter ->'],
-        ref._connectionSettings.channelKey);
+    if (ref._connectionSettings.enableDataChannel && !ref._channels.main) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Starting datachannel connection']);
 
-      /* TODO: Move to another function ? */
-      try {
-        var channel = ref._RTCPeerConnection.createDataChannel(ref._connectionSettings.channelKey);
-
-        log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
-
-        // Construct the DataChannel object
-        ref._channels[channel.label] = superRef._createDataChannel(ref.id,
-          ref._connectionSettings.channelKey, channel);
-
-      } catch (error) {
-        log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed starting datachannel connection ->'], error);
-
-        /* NOTE: Should we trigger the dataChannelState event of error ? */
-      }
+      ref._channelConnect('main');
     }
 
     log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Creating local offer with options ->'], options);
@@ -16267,6 +16250,35 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   };
 
   /**
+   * Sends a P2P message to Peer.
+   * @method channelMessage
+   * @param {Any} message The message object.
+   * @param {Boolean} isPrivate The flag that indicates if message is privately targeted or not.
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.channelMessage = function (message, isPrivate) {
+    var ref = this;
+
+    // Prevent sending when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of sending message as datachannel feature is not enabled for this Peer ->'], message);
+      return;
+    }
+
+    // Prevent sending to non-existant RTCDataChannel object
+    if (!ref._channels.main) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of sending message as datachannel does not exists ->'], message);
+      return;
+    }
+
+    // Send message to "main" RTCDataChannel
+    ref._channels.main.message(message, isPrivate === true);
+  };
+
+  /**
    * Destroys the RTCPeerConnection object.
    * @method disconnect
    * @for SkylinkPeer
@@ -16298,7 +16310,12 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       superRef._trigger('peerLeft', ref.id, superRef._peers[peerId].getInfo(), false);
     }
 
-    /* TODO: Close all DataChannels connection */
+    // Close all DataChannels connection
+    Object.keys(ref._channels).forEach(function (key) {
+      if (ref._channels[key]) {
+        ref._channels[key].disconnect();
+      }
+    });
 
     log.info([ref.id, 'Peer', 'RTCPeerConnection', 'Connection session has ended']);
   };
@@ -16443,6 +16460,38 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       log.warn([ref.id, 'Peer', 'MediaStream', 'Sending no stream']);
 
       updateStreamFn(null);
+    }
+  };
+
+  /**
+   * Starts the DataChannel connection for Peer.
+   * @method _channelConnect
+   * @private
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype._channelConnect = function (channelId) {
+    var ref = this;
+
+    // Prevent sending when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Dropping of creating ' +
+        logChannelType + 'datachannel feature is not enabled for this Peer']);
+      return;
+    }
+
+    try {
+      var channel = ref._RTCPeerConnection.createDataChannel(channelId);
+
+      log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
+
+      // Construct the DataChannel object
+      ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);
+
+    } catch (error) {
+      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed creating datachannel connection ->'], error);
+
+      /* NOTE: Should we trigger the dataChannelState event of error ? */
     }
   };
 
@@ -16684,21 +16733,15 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
       // Prevent using any RTCDataChannels if this connection does not allow it
       if (!ref._connectionSettings.enableDataChannel) {
-        log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Dropping of received datachannel as ' +
-          'feature is not enabled ->'], channel);
+        log.warn([ref.id, 'Peer', 'RTCDataChannel',
+          'Dropping of received datachannel as feature is not enabled ->'], channel);
         return;
       }
 
-      // Check if this is the first RTCDataChannel received, which means the main RTCDataChannel
-      if (Object.keys(ref._channels).length === 0) {
-        log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Setting ID delimiter ->'], channel.label);
-
-        ref._connectionSettings.channelKey = channel.label;
-      }
+      /* TODO: Handle Android, iOS and C++ SDK with 1 datachannel */
 
       // Construct the DataChannel object
-      ref._channels[channel.label] = superRef._createDataChannel(ref.id,
-        ref._connectionSettings.channelKey, channel);
+      ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);
     };
   };
 

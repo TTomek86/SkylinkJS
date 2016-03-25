@@ -2,15 +2,13 @@
  * Creates a DataChannel that handles the RTCDataChannel object.
  * @method _createDataChannel
  * @param {String} peerId The Peer ID.
- * @param {String} IDDelimiter The DataChannel delimiter that determines the type of DataChannel.
- * @param {JSON} channel The Peer connection RTCDataChannel object.
  * @return {SkylinkDataChannel} The DataChannel class object that handles
  *   the provided RTCDataChannel object.
  * @private
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
+Skylink.prototype._createDataChannel = function (peerId, channel) {
   var superRef = this;
 
   /**
@@ -21,11 +19,24 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
    * @since 0.6.x
    */
   var SkylinkDataChannel = function () {
-    if (!channel.label.split(IDDelimiter)[1]) {
-      this.type = superRef.DATA_CHANNEL_TYPE.MESSAGING;
-    }
+    /* TODO: Handle case for Android, iOS and C++ SDK */
 
-    this._construct();
+    // Handles the .onopen event.
+    this._handleOnOpenEvent();
+
+    // Handles the .onclose event.
+    this._handleOnCloseEvent();
+
+    // Handles the .onerror event.
+    this._handleOnErrorEvent();
+
+    // Handles the .onbufferamountlow event.
+    this._handleOnBufferAmountLowEvent();
+
+    // Handles the .onmessage event.
+    this._handleOnMessageEvent();
+
+    log.log([this.peerId, 'DataChannel', this.id, 'Connection has started']);
   };
 
   /**
@@ -53,7 +64,8 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.type = superRef.DATA_CHANNEL_TYPE.DATA;
+  SkylinkDataChannel.prototype.type = channel.label === 'main' ?
+    superRef.DATA_CHANNEL_TYPE.MESSAGING : superRef.DATA_CHANNEL_TYPE.DATA;
 
   /**
    * Stores the DataChannel current data transfer.
@@ -79,20 +91,20 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
 
   /**
    * Sends a message.
-   * @method sendMessage
+   * @method message
    * @param {Any} message The message object. Note that this object will be stringified.
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.sendMessage = function (message, isPrivate) {
+  SkylinkDataChannel.prototype.message = function (message, isPrivate) {
     var ref = this;
 
-    ref._send({
+    ref._messageSend({
       type: superRef._DC_PROTOCOL_TYPE.MESSAGE,
-      isPrivate: isPrivate === true,
       sender: superRef._user.sid,
       target: ref.peerId,
-      data: message
+      data: message,
+      isPrivate: isPrivate === true
     });
   };
 
@@ -109,68 +121,60 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
   };
 
   /**
-   * Handles the RTCDataChannel object.
-   * @method _construct
-   * @private
-   * @for SkylinkDataChannel
-   * @since 0.6.x
-   */
-  SkylinkDataChannel.prototype._construct = function () {
-    var ref = this;
-
-    // Handles the .onopen event.
-    ref._handleOnOpenEvent();
-
-    // Handles the .onclose event.
-    ref._handleOnCloseEvent();
-
-    // Handles the .onerror event.
-    ref._handleOnErrorEvent();
-
-    // Handles the .onbufferamountlow event.
-    ref._handleOnBufferAmountLowEvent();
-
-    // Handles the .onmessage event.
-    ref._handleOnMessageEvent();
-
-    log.log([ref.peerId, 'DataChannel', ref.id, 'Connection has started']);
-  };
-
-  /**
    * Sends data over the RTCDataChannel object.
-   * @method _send
-   * @param {Any} message The message object data to be sent over.
-   * @param {Boolean} [sendAsBinary=false] The flag that indicates if the data
-   *   should be stringified before sending the object data over.
+   * @method _messageSend
+   * @param {JSON} message The message object data.
    * @private
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype._send = function (message, sendAsBinary) {
+  SkylinkDataChannel.prototype._messageSend = function (message) {
     var ref = this;
-
-    if (ref._RTCDataChannel.readyState !== 'open') {
-      log.warn([ref.peerId, 'RTCDataChannel', ref.id,
-        'Dropping of sending data as connection state is not "open" ->'], {
-        state: ref._RTCDataChannel.readyState,
-        data: message
-      });
-      return;
-    }
-
     var dataString = null;
 
-    if (!(sendAsBinary && typeof message === 'object')) {
+    if (typeof message === 'object') {
       dataString = JSON.stringify(message);
 
     } else {
       dataString = message;
     }
 
+    // Prevent sending data when readyState is not "open"
+    if (ref._RTCDataChannel.readyState !== 'open') {
+      log.warn([ref.peerId, 'RTCDataChannel', ref.id,
+        'Dropping of sending data as connection state is not "open" ->'], dataString);
+      return;
+    }
+
     log.debug([ref.peerId, 'DataChannel', ref.id, 'Sending data ->'], dataString);
 
+    /**
+     * Sends message with .send()
+     */
     ref._RTCDataChannel.send(dataString);
   };
+
+  /**
+   * Handles the "MESSAGE" protocol.
+   * @method _messageReactToMESSAGEProtocol
+   * @param {JSON} message The message object data.
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._messageReactToMESSAGEProtocol = function (message) {
+    var ref = this;
+
+    // Trigger that message has been received
+    superRef._trigger('incomingMessage', {
+      content: message.data,
+      isPrivate: message.isPrivate,
+      isDataChannel: true,
+      targetPeerId: superRef._user.sid,
+      senderPeerId: ref.peerId
+    }, ref.peerId, superRef.getPeerInfo(ref.peerId), false);
+  };
+
 
   /**
    * Handles the RTCDataChannel.onopen event.
@@ -285,35 +289,18 @@ Skylink.prototype._createDataChannel = function (peerId, IDDelimiter, channel) {
   SkylinkDataChannel.prototype._handleOnMessageEvent = function () {
     var ref = this;
 
-    /* TODO: Datatransfers handling */
     ref._RTCDataChannel.onmessage = function (evt) {
-      var rawData = evt.message || evt.data || evt,
-          data = null;
+      var data = evt.message || evt.data || evt;
 
-      log.log([ref.peerId, 'DataChannel', ref.id, 'Received data ->'], rawData);
+      log.log([ref.peerId, 'DataChannel', ref.id, 'Received data ->'], data);
 
       /* TODO: Handle receiving Binary ? Like ArrayBuffer? Perhaps check typeof constructor.name */
-      /* TODO: Move to a proper handler */
-      try {
-        data = JSON.parse(rawData);
 
-        switch (data.type) {
-          case superRef._DC_PROTOCOL_TYPE.MESSAGE:
-            // Reflect received message
-            superRef._trigger('incomingMessage', {
+      var message = JSON.parse(data);
 
-              content: data.data,
-              isPrivate: data.isPrivate,
-              isDataChannel: true,
-              targetPeerId: superRef._user.sid,
-              senderPeerId: ref.peerId
-
-            }, ref.peerId, superRef.getPeerInfo(ref.peerId), false);
-            break;
-        }
-
-      } catch (error) {
-        data = rawData;
+      switch (message.type) {
+        case superRef._DC_PROTOCOL_TYPE.MESSAGE:
+          ref._messageReactToMESSAGEProtocol(message);
       }
     };
   };
