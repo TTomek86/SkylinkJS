@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:05:36 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:10:49 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1642,12 +1642,13 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       }
     }
 
-    if (!(state === superRef.UPLOAD_REQUEST && transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
+    if (!(state === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST &&
+      transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
       superRef._trigger('dataTransferState', state, transferId, ref.peerId, transferInfoWithData, transferError);
     }
 
     /* NOTE: We should add additional UPLOAD_REQUEST for uploader */
-    if (state === superRef.UPLOAD_REQUEST) {
+    if (state === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST) {
       superRef._trigger('incomingDataRequest', transferId, ref.peerId, transferInfo,
         transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD);
     }
