@@ -76,6 +76,7 @@ Demo.Methods.displayChatMessage = function (peerId, content, isPrivate) {
 *********************************************************/
 //---------------------------------------------------
 Demo.Skylink.on('incomingData', function (data, transferId, peerId, transferInfo, isSelf) {
+  console.info('incomingData', data, transferId, peerId, transferInfo, isSelf);
   if (transferInfo.dataType !== 'blob') {
     console.info('incomingData', data, transferId, peerId, transferInfo, isSelf);
     //displayChatItemHTML = function (peerId, timestamp, content, isPrivate)
@@ -83,6 +84,7 @@ Demo.Skylink.on('incomingData', function (data, transferId, peerId, transferInfo
   }
 });
 Demo.Skylink.on('incomingDataRequest', function (transferId, peerId, transferInfo, isSelf) {
+  console.info('incomingDataRequest', transferId, peerId, transferInfo, isSelf);
   if (!isSelf && transferInfo.dataType !== 'blob') {
     Demo.Skylink.acceptDataTransfer(peerId, transferId, true);
   }
@@ -97,9 +99,9 @@ Demo.Skylink.on('dataTransferState', function (state, transferId, peerId, transf
 
   switch (state) {
   case Demo.Skylink.DATA_TRANSFER_STATE.UPLOAD_REQUEST:
-    var result = confirm('Accept file "' + transferInfo.name +
-      '" from ' + peerId + '?\n\n[size: ' + transferInfo.size + ']');
-    Demo.Skylink.acceptDataTransfer(peerId, transferId, result);
+    //var result = confirm('Accept file "' + transferInfo.name +
+    //  '" from ' + peerId + '?\n\n[size: ' + transferInfo.size + ']');
+    Demo.Skylink.acceptDataTransfer(peerId, transferId, true);
     break;
   case Demo.Skylink.DATA_TRANSFER_STATE.UPLOAD_STARTED :
     var displayName = Demo.Skylink.getUserData();

@@ -199,7 +199,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       isPrivate: ref._transfer.isPrivate
     });
 
-    //ref._transferSetState(superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST);
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST);
   };
 
   /**
@@ -344,19 +344,6 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
           } else {
             transferData = ref._transfer.dataChunks.join('');
           }
-        } else {
-          // Hack to fix to ensure incomingData for uploader gets the data
-          /* TODO: We should cleanup the documentation.... */
-          if (transferSession) {
-            if (transferSession.type === 'blob') {
-              transferData = new Blob(transferSession.dataChunks, {
-                type: transferSession.dataMimeType
-              });
-
-            } else {
-              transferData = transferSession.dataChunks.join('');
-            }
-          }
         }
       }
     }
@@ -390,33 +377,43 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
     transferInfo.transferType = transferDirection;
 
-    /* NOTE: We should add additional UPLOAD_REQUEST for uploader */
-    if (state === superRef.UPLOAD_REQUEST) {
-      superRef._trigger('incomingDataRequest', transferId, transferInfo,
-        transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD);
-    }
-
     var transferInfoWithData = clone(transferInfo);
     transferInfoWithData.data = transferData;
 
     // Hack to fix to ensure UPLOAD_STARTED triggers with the transferInfo.data
     /* TODO: We should SERIOUSLY fix this states that is not in order */
     /* NOTE: Why do we append data at UPLOAD_STARTED!!??? Should not it be UPLOAD_REQUEST ? */
-    if (state === superRef.DATA_TRANSFER_STATE.UPLOAD_STARTED && transferSession) {
+    if ((state === superRef.DATA_TRANSFER_STATE.UPLOAD_STARTED ||
+      state === superRef.DATA_TRANSFER_STATE.UPLOAD_COMPLETED) && transferSession) {
+      var completedData = null;
+
       if (transferSession.type === 'blob') {
-        transferInfoWithData.data = new Blob(transferSession.dataChunks, {
+        completedData = new Blob(transferSession.dataChunks, {
           type: transferSession.dataMimeType
         });
-
       } else {
-        transferInfoWithData.data = transferSession.dataChunks.join('');
+        completedData = transferSession.dataChunks.join('');
+      }
+
+      if (state === superRef.DATA_TRANSFER_STATE.UPLOAD_STARTED) {
+        transferInfoWithData.data = completedData;
+      } else {
+        transferData = completedData;
       }
     }
 
-    superRef._trigger('dataTransferState', state, transferId, ref.peerId, transferInfoWithData, transferError);
+    if (!(state === superRef.UPLOAD_REQUEST && transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
+      superRef._trigger('dataTransferState', state, transferId, ref.peerId, transferInfoWithData, transferError);
+    }
+
+    /* NOTE: We should add additional UPLOAD_REQUEST for uploader */
+    if (state === superRef.UPLOAD_REQUEST) {
+      superRef._trigger('incomingDataRequest', transferId, ref.peerId, transferInfo,
+        transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD);
+    }
 
     if (transferData) {
-      superRef._trigger('incomingData', transferData, transferId, transferInfo,
+      superRef._trigger('incomingData', transferData, transferId, ref.peerId, transferInfo,
         transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD);
     }
   };
