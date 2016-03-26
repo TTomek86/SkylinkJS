@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:14:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:20:02 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1542,7 +1542,6 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
           name: null,
           size: 0,
           percentage: 0,
-          data: null,
           dataType: null,
           senderPeerId: null,
           timeout: 0,
@@ -1644,6 +1643,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
     if (!(state === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST &&
       transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
+      transferInfoWithData.data = transferInfoWithData.data || null;
       superRef._trigger('dataTransferState', state, transferId, ref.peerId, transferInfoWithData, transferError);
     }
 

@@ -302,7 +302,6 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
           name: null,
           size: 0,
           percentage: 0,
-          data: null,
           dataType: null,
           senderPeerId: null,
           timeout: 0,
@@ -404,6 +403,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
     if (!(state === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST &&
       transferDirection === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
+      transferInfoWithData.data = transferInfoWithData.data || null;
       superRef._trigger('dataTransferState', state, transferId, ref.peerId, transferInfoWithData, transferError);
     }
 
