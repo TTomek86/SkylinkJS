@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:10:49 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sat Mar 26 2016 19:14:39 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1559,7 +1559,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
       transferInfo.name = ref._transfer.dataName;
       transferInfo.size = ref._transfer.dataSize;
-      transferInfo.percentage = (ref._transfer.dataTransferredSize / ref._transfer.dataSize) * 100;
+      transferInfo.percentage = ((ref._transfer.dataTransferredSize / ref._transfer.dataSize) * 100).toFixed(2);
       transferInfo.dataType = ref._transfer.type;
       transferInfo.senderPeerId = ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.DOWNLOAD ?
         ref.peerId : superRef._user.sid;
