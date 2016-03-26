@@ -162,7 +162,6 @@ Skylink.prototype.sendP2PMessage = function(passedMessage, passedTargetPeerId) {
     return;
   }
 
-
   var listOfPeers = Object.keys(superRef._peers);
   var isPrivate = false;
 

@@ -13,7 +13,7 @@ var _peerId = null;
 
 var selectedPeers = [];
 
-Demo.Skylink.setLogLevel(4);
+//Demo.Skylink.setLogLevel(4);
 
 Demo.Methods.displayFileItemHTML = function (content) {
   return '<p>' + content.name + '<small style="float:right;color:#aaa;">' + content.size + ' B</small></p>' +
@@ -88,6 +88,7 @@ Demo.Skylink.on('incomingDataRequest', function (transferId, peerId, transferInf
   }
 })
 Demo.Skylink.on('dataTransferState', function (state, transferId, peerId, transferInfo, error){
+  console.info('dataTransferState', state, transferId, peerId, transferInfo, error);
   transferInfo = transferInfo || {};
 
   if (transferInfo.dataType !== 'blob') {
@@ -95,7 +96,7 @@ Demo.Skylink.on('dataTransferState', function (state, transferId, peerId, transf
   }
 
   switch (state) {
-  case Demo.Skylink.DATA_TRANSFER_STATE.UPLOAD_REQUEST :
+  case Demo.Skylink.DATA_TRANSFER_STATE.UPLOAD_REQUEST:
     var result = confirm('Accept file "' + transferInfo.name +
       '" from ' + peerId + '?\n\n[size: ' + transferInfo.size + ']');
     Demo.Skylink.acceptDataTransfer(peerId, transferId, result);
@@ -569,11 +570,14 @@ $(document).ready(function () {
     for(var i=0; i < Demo.Files.length; i++) {
       var file = Demo.Files[i];
       if(file.size <= Demo.FILE_SIZE_LIMIT) {
-        if (selectedPeers.length > 0) {
+        /*if (selectedPeers.length > 0) {
           Demo.Skylink.sendBlobData(file, selectedPeers);
         } else {
           Demo.Skylink.sendBlobData(file);
-        }
+        }*/
+        Demo.Skylink._createTransfer(file, 61, false, Object.keys(Demo.Skylink._peers), function (peerId, error) {
+          console.info('data transfer status', peerId, error);
+        });
         $('#file_input').val('');
       } else {
         alert('File "' + file.name + '"" exceeded the limit of 200MB.\n' +

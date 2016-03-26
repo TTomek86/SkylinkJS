@@ -1794,8 +1794,28 @@ Skylink.prototype.respondBlobRequest =
  * @since 0.6.1
  */
 Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
+  var superRef = this;
 
-  if (typeof transferId !== 'string' && typeof peerId !== 'string') {
+  if (typeof peerId !== 'string' || typeof transferId !== 'string') {
+    throw new Error('Invalid param provided');
+  }
+
+  if (typeof accept !== 'boolean') {
+    accept = false;
+  }
+
+  if (!superRef._peers[peerId]) {
+    throw new Error('Peer does not exists');
+  }
+
+  // Alternate for mobile SDKs
+
+  superRef._peers[peerId].channelTransferAccept(transferId, accept, function (error) {
+    log.debug('Data transfer acceptance stage ->', error);
+  });
+
+
+  /*if (typeof transferId !== 'string' && typeof peerId !== 'string') {
     log.error([peerId, 'RTCDataChannel', null, 'Aborting accept data transfer as ' +
       'transfer ID and peer ID is not provided'], {
         accept: accept,
@@ -1863,7 +1883,7 @@ Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
     }, channelName);
     delete this._downloadDataSessions[channelName];
     delete this._downloadDataTransfers[channelName];
-  }
+  }*/
 };
 
 /**

@@ -709,6 +709,128 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   };
 
   /**
+   * Starts a P2P transfer to Peer.
+   * @method channelTransferStart
+   * @param {String} transferId The transfer session ID.
+   * @param {Function} callback The callback triggered that triggers if transfer is ready to start
+   *   or if there is any errors. Signature is: (peerId, error). If error is <code>null</code>, this
+   *   means that transfer is ready and has started.
+   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.channelTransferStart = function (transferId, callback, nextPacketCallback, listOfPeers) {
+    var ref = this;
+
+    // Prevent data transfer when session does not exists
+    if (!superRef._uploadTransfers[transferId]) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of data transfer as transfer session does not exists ->'], transferId);
+
+      var noTransferSessionError = new Error('Failed data transfer as session does not exists');
+
+      if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
+        listOfPeers.forEach(function (peerId) {
+          callback(peerId, noTransferSessionError);
+        });
+
+      } else {
+        callback(ref.id, noTransferSessionError);
+      }
+      return;
+    }
+
+    // Prevent data transfer when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of data transfer as datachannel feature is not enabled for this Peer ->'], message);
+
+      var noDataChannelError = new Error('Failed data transfer as Peer datachannel feature ' +
+        'is not enabled for this Peer');
+
+      if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
+        listOfPeers.forEach(function (peerId) {
+          callback(peerId, noDataChannelError);
+        });
+
+      } else {
+        callback(ref.id, noDataChannelError);
+      }
+      return;
+    }
+
+    /* TODO: Interop with mobile SDKs */
+
+    // Start opening data channels?
+    superRef.once('dataChannelState', function (state, peerId, error) {
+      // Trigger Error state
+      if (state !== 'open') {
+        var wrongStateError = new Error('Failed data transfer as state is "' + state + '"');
+
+        if (error) {
+          wrongStateError = error;
+        }
+
+        if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
+          listOfPeers.forEach(function (peerId) {
+            callback(peerId, wrongStateError);
+          });
+
+        } else {
+          callback(ref.id, wrongStateError);
+        }
+        return;
+      }
+
+      // Trigger Success state
+      if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
+        ref._channels[transferId].transferStart(transferId, callback, nextPacketCallback, listOfPeers);
+
+      } else {
+        ref._channels[transferId].transferStart(transferId, callback, nextPacketCallback);
+      }
+
+    }, function (state, peerId, error, eventChannelId) {
+      return eventChannelId === transferId && ['closing', 'closed', 'open', 'error'].indexOf(state) > -1;
+    });
+
+    ref._channelConnect(transferId);
+  };
+
+  /**
+   * Accepts or rejects a P2P transfer from Peer.
+   * @method channelTransferStart
+   * @param {String} transferId The transfer session ID.
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.channelTransferAccept = function (transferId, accept, callback) {
+    var ref = this;
+
+    // Prevent data transfer when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of data transfer as datachannel feature is not enabled for this Peer ->'], transferId);
+
+      callback(new Error('Failed data transfer as Peer datachannel feature ' +
+        'is not enabled for this Peer'));
+      return;
+    }
+
+    /* TODO: Interop with mobile SDKs */
+
+    if (!ref._channels[transferId]) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel',
+        'Dropping of data transfer as transfer session does not exists for session ->'], transferId);
+
+      callback(new Error('Failed data transfer as transfer session does not exists for session'));
+      return;
+    }
+
+    ref._channels[transferId].transferAccept(transferId, accept, callback);
+  };
+
+  /**
    * Destroys the RTCPeerConnection object.
    * @method disconnect
    * @for SkylinkPeer
@@ -896,6 +1018,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   /**
    * Starts the DataChannel connection for Peer.
    * @method _channelConnect
+   * @param {String} channelId The DataChannel ID.
    * @private
    * @for SkylinkPeer
    * @since 0.6.x
@@ -906,23 +1029,17 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     // Prevent sending when RTCDataChannel feature is not enabled
     if (!ref._connectionSettings.enableDataChannel) {
       log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Dropping of creating ' +
-        logChannelType + 'datachannel feature is not enabled for this Peer']);
+         'datachannel feature is not enabled for this Peer']);
       return;
     }
 
-    try {
-      var channel = ref._RTCPeerConnection.createDataChannel(channelId);
+    /* TODO: Should we trigger errors here? */
+    var channel = ref._RTCPeerConnection.createDataChannel(channelId);
 
-      log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
+    log.log([ref.id, 'Peer', 'RTCDataChannel', 'Created datachannel ->'], channel);
 
-      // Construct the DataChannel object
-      ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);
-
-    } catch (error) {
-      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed creating datachannel connection ->'], error);
-
-      /* NOTE: Should we trigger the dataChannelState event of error ? */
-    }
+    // Construct the DataChannel object
+    ref._channels[channelId] = superRef._createDataChannel(ref.id, channel);
   };
 
   /**
