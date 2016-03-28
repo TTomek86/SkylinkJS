@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.11 - Mon Mar 21 2016 14:03:21 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.11 - Mon Mar 28 2016 18:45:56 GMT+0800 (SGT) */
 
 (function() {
 
@@ -179,38 +179,39 @@ function Skylink() {
   if (!(this instanceof Skylink)) {
     return new Skylink();
   }
-
-  /**
-   * The current version of Skylink Web SDK.
-   * @attribute VERSION
-   * @type String
-   * @readOnly
-   * @for Skylink
-   * @since 0.1.0
-   */
-  this.VERSION = '0.6.11';
-
-  /**
-   * Helper function that generates an Unique ID (UUID) string.
-   * @method generateUUID
-   * @return {String} Generated Unique ID (UUID) string.
-   * @example
-   *    // Get Unique ID (UUID)
-   *    var uuid = SkylinkDemo.generateUUID();
-   * @for Skylink
-   * @since 0.5.9
-   */
-  this.generateUUID = function() {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-    });
-    return uuid;
-  };
 }
+
 this.Skylink = Skylink;
+
+/**
+ * The current version of Skylink Web SDK.
+ * @attribute VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.1.0
+ */
+Skylink.prototype.VERSION = '0.6.11';
+
+/**
+ * Helper function that generates an Unique ID (UUID) string.
+ * @method generateUUID
+ * @return {String} Generated Unique ID (UUID) string.
+ * @example
+ *    // Get Unique ID (UUID)
+ *    var uuid = SkylinkDemo.generateUUID();
+ * @for Skylink
+ * @since 0.5.9
+ */
+Skylink.prototype.generateUUID = function() {
+  var d = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+  });
+  return uuid;
+};
 
 Skylink.prototype.DATA_CHANNEL_STATE = {
   CONNECTING: 'connecting',
