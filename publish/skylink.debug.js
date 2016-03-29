@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:10:13 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:15:26 GMT+0800 (SGT) */
 
 (function() {
 
@@ -2134,7 +2134,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
       superRef._trigger('dataChannelState', closedState, ref.peerId, null, ref.id, ref.type);
 
-      /* TODO: Reflect dead data transfer session */
+      ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
+        new Error('Failed data transfer as datachannel readyState is "closed"'));
     };
   };
 
@@ -2157,7 +2158,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       superRef._trigger('dataChannelState', superRef.DATA_CHANNEL_STATE.ERROR,
         ref.peerId, error, ref.id, ref.type);
 
-      /* TODO: Reflect dead data transfer session */
+      ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
+        new Error('Failed data transfer datachannel connection encountered errors'));
     };
   };
 
