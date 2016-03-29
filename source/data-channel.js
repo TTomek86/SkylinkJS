@@ -166,7 +166,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
           responseCallback(peerId, result);
         });
       } else {
-        responseCallback(ref.peerId, result);
+        responseCallback(result);
       }
     };
 
@@ -1124,7 +1124,9 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     }
 
     superRef._peers.MCU.channelTransferStart(newUploadTransfer.id, function (error) {
-      handleResponseFn(peerId, error);
+      filteredListOfPeers.forEach(function (peerId) {
+        handleResponseFn(peerId, error);
+      });
     }, nextPacketFn, filteredListOfPeers);
     return;
   }

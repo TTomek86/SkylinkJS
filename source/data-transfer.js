@@ -1810,9 +1810,9 @@ Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
 
   // Alternate for mobile SDKs
 
-  superRef._peers[peerId].channelTransferAccept(transferId, accept, function (error) {
+  superRef._peers[peerId].channelTransferStartRespond(transferId, function (error) {
     log.debug('Data transfer acceptance stage ->', error);
-  });
+  }, accept);
 
 
   /*if (typeof transferId !== 'string' && typeof peerId !== 'string') {

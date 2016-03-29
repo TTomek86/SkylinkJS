@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:18:09 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:40:21 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:18:09 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:40:21 GMT+0800 (SGT) */
 
 (function() {
 
@@ -11863,7 +11863,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
           responseCallback(peerId, result);
         });
       } else {
-        responseCallback(ref.peerId, result);
+        responseCallback(result);
       }
     };
 
@@ -12821,7 +12821,9 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     }
 
     superRef._peers.MCU.channelTransferStart(newUploadTransfer.id, function (error) {
-      handleResponseFn(peerId, error);
+      filteredListOfPeers.forEach(function (peerId) {
+        handleResponseFn(peerId, error);
+      });
     }, nextPacketFn, filteredListOfPeers);
     return;
   }
@@ -14938,9 +14940,9 @@ Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
 
   // Alternate for mobile SDKs
 
-  superRef._peers[peerId].channelTransferAccept(transferId, accept, function (error) {
+  superRef._peers[peerId].channelTransferStartRespond(transferId, function (error) {
     log.debug('Data transfer acceptance stage ->', error);
-  });
+  }, accept);
 
 
   /*if (typeof transferId !== 'string' && typeof peerId !== 'string') {
@@ -16891,9 +16893,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   /**
    * Sends a P2P message to Peer.
    * @method channelMessage
-   * @param {Any} message The message object. Note that this object will be stringified.
-   * @param {Boolean} [isPrivate=false] The flag that indicates if message is targeted or not.
-   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
+   * @param {Any} message The message object.
+   * @param {Boolean} isPrivate The flag that indicates if message is not "broadcasted" or not.
+   * @param {Array} [listOfPeers] 
    * @for SkylinkPeer
    * @since 0.6.x
    */
@@ -16907,7 +16909,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       return;
     }
 
-    // Prevent sending to non-existant RTCDataChannel object
+    // Prevent sending to non-existent RTCDataChannel object
     if (!ref._channels.main) {
       log.warn([ref.id, 'Peer', 'RTCDataChannel',
         'Dropping of sending message as datachannel does not exists ->'], message);
@@ -16922,50 +16924,52 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
    * Starts a P2P transfer to Peer.
    * @method channelTransferStart
    * @param {String} transferId The transfer session ID.
-   * @param {Function} callback The callback triggered that triggers if transfer is ready to start
-   *   or if there is any errors. Signature is: (peerId, error). If error is <code>null</code>, this
-   *   means that transfer is ready and has started.
-   * @param {Array} [listOfPeers] The list of Peers to relay connection for MCU environment.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to start a data transfer session.
+   * @param {Function} nextPacketCallback The callback function triggered when it is
+   *   requesting for the next data chunk to be sent to Peer.
+   *   The callback function signature is: (<code>ackN</code>, <code>processCallback</code>).
+   *   It should return <code>ackN</code> where the value is the index of the data chunks Array,
+   *   and <code>processCallback</code> should be invoked with the data chunk based on the <code>ackN</code>
+   *   index requested.
+   * @param {Array} [listOfPeers] The list of Peers to relay starting of data transfer used for MCU environment only.
    * @for SkylinkPeer
    * @since 0.6.x
    */
-  SkylinkPeer.prototype.channelTransferStart = function (transferId, callback, nextPacketCallback, listOfPeers) {
+  SkylinkPeer.prototype.channelTransferStart = function (transferId, responseCallback, nextPacketCallback, listOfPeers) {
     var ref = this;
+
+    /**
+     * Function that handles response callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Starting data transfer session result ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles error parsing to serve in response callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed starting data transfer session as ' +
+        errorMessage + ' ->'], transferId);
+
+      handleResponseFn(new Error('Failed starting data transfer session as ' + errorMessage));
+    };
 
     // Prevent data transfer when session does not exists
     if (!superRef._uploadTransfers[transferId]) {
-      log.warn([ref.id, 'Peer', 'RTCDataChannel',
-        'Dropping of data transfer as transfer session does not exists ->'], transferId);
-
-      var noTransferSessionError = new Error('Failed data transfer as session does not exists');
-
-      if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
-        listOfPeers.forEach(function (peerId) {
-          callback(peerId, noTransferSessionError);
-        });
-
-      } else {
-        callback(ref.id, noTransferSessionError);
-      }
+      handleErrorFn('upload session does not exists');
       return;
     }
 
     // Prevent data transfer when RTCDataChannel feature is not enabled
     if (!ref._connectionSettings.enableDataChannel) {
-      log.warn([ref.id, 'Peer', 'RTCDataChannel',
-        'Dropping of data transfer as datachannel feature is not enabled for this Peer ->'], message);
-
-      var noDataChannelError = new Error('Failed data transfer as Peer datachannel feature ' +
-        'is not enabled for this Peer');
-
-      if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
-        listOfPeers.forEach(function (peerId) {
-          callback(peerId, noDataChannelError);
-        });
-
-      } else {
-        callback(ref.id, noDataChannelError);
-      }
+      handleErrorFn('datachannel feature is not enabled for this Peer');
       return;
     }
 
@@ -16975,29 +16979,16 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     superRef.once('dataChannelState', function (state, peerId, error) {
       // Trigger Error state
       if (state !== 'open') {
-        var wrongStateError = new Error('Failed data transfer as state is "' + state + '"');
-
-        if (error) {
-          wrongStateError = error;
-        }
-
-        if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
-          listOfPeers.forEach(function (peerId) {
-            callback(peerId, wrongStateError);
-          });
-
-        } else {
-          callback(ref.id, wrongStateError);
-        }
+        handleErrorFn('datachannel state is "' + state + '"');
         return;
       }
 
       // Trigger Success state
       if (ref.id === 'MCU' && Array.isArray(listOfPeers)) {
-        ref._channels[transferId].transferStart(transferId, callback, nextPacketCallback, listOfPeers);
+        ref._channels[transferId].transferStart(transferId, handleResponseFn, nextPacketCallback, listOfPeers);
 
       } else {
-        ref._channels[transferId].transferStart(transferId, callback, nextPacketCallback);
+        ref._channels[transferId].transferStart(transferId, handleResponseFn, nextPacketCallback);
       }
 
     }, function (state, peerId, error, eventChannelId) {
@@ -17009,35 +17000,54 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
   /**
    * Accepts or rejects a P2P transfer from Peer.
-   * @method channelTransferStart
-   * @param {String} transferId The transfer session ID.
+   * @method channelTransferStartRespond
+   * @param {String} transferId The data transfer session ID.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on response to the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to response to the data transfer session.
+   * @param {Boolean} acceptTransfer The flag that indicates if Peer should continue with data transfer
+   *   session or reject which terminates the session.
    * @for SkylinkPeer
    * @since 0.6.x
    */
-  SkylinkPeer.prototype.channelTransferAccept = function (transferId, accept, callback) {
+  SkylinkPeer.prototype.channelTransferStartRespond = function (transferId, responseCallback, acceptTransfer) {
     var ref = this;
+
+    /**
+     * Function that handles response callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Response to starting data transfer session result ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles error parsing to serve in response callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed responding to starting data transfer session as ' +
+        errorMessage + ' ->'], transferId);
+
+      handleResponseFn(new Error('Failed responding to starting data transfer session as ' + errorMessage));
+    };
 
     // Prevent data transfer when RTCDataChannel feature is not enabled
     if (!ref._connectionSettings.enableDataChannel) {
-      log.warn([ref.id, 'Peer', 'RTCDataChannel',
-        'Dropping of data transfer as datachannel feature is not enabled for this Peer ->'], transferId);
-
-      callback(new Error('Failed data transfer as Peer datachannel feature ' +
-        'is not enabled for this Peer'));
+      handleErrorFn('datachannel feature is not enabled for this Peer');
       return;
     }
 
     /* TODO: Interop with mobile SDKs */
 
     if (!ref._channels[transferId]) {
-      log.warn([ref.id, 'Peer', 'RTCDataChannel',
-        'Dropping of data transfer as transfer session does not exists for session ->'], transferId);
-
-      callback(new Error('Failed data transfer as transfer session does not exists for session'));
+      handleErrorFn('datachannel does not exists');
       return;
     }
 
-    ref._channels[transferId].transferStartRespond(transferId, callback, accept);
+    ref._channels[transferId].transferStartRespond(transferId, handleResponseFn, acceptTransfer);
   };
 
   /**
