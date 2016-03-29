@@ -827,7 +827,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       return;
     }
 
-    ref._channels[transferId].transferAccept(transferId, accept, callback);
+    ref._channels[transferId].transferStartRespond(transferId, callback, accept);
   };
 
   /**
