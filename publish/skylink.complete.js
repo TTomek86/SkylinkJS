@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:01:19 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:10:13 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:01:19 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 03:10:13 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12835,6 +12835,16 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
 };
 Skylink.prototype._DataPacker = {
 
+  /**
+   * Chunks Blob object into smaller Blob data chunks.
+   * @method chunkBlob
+   * @param {Blob} blob The Blob data object.
+   * @param {Number} chunkSize The Blob data chunk size to chunk into.
+   * @return {Array} chunksArray The Array of Blob chunks.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   chunkBlob: function (blob, chunkSize) {
     var chunksArray = [];
     var startCount = 0;
@@ -12858,6 +12868,16 @@ Skylink.prototype._DataPacker = {
     return chunksArray;
   },
 
+  /**
+   * Chunks Data URI string into smaller strings.
+   * @method chunkDataURI
+   * @param {String} blob The Data URI string.
+   * @param {Number} chunkSize The Data URI string chunk size to chunk into.
+   * @return {Array} chunksArray The Array of Data URI chunks.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   chunkDataURI: function (dataURL, chunkSize) {
     var outputStr = dataURL; //encodeURIComponent(dataURL);
     var dataURLArray = [];
@@ -12883,6 +12903,15 @@ Skylink.prototype._DataPacker = {
     return dataURLArray;
   },
 
+  /**
+   * Converts the base64 encoded string into Blob data chunk object.
+   * @method base64ToBlob
+   * @param {String} base64String The base64 encoded string.
+   * @return {Blob} chunk The Blob data chunk.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   base64ToBlob: function (base64String) {
     var byteString = atob(base64String.replace(/\s\r\n/g, ''));
     // write the bytes of the string to an ArrayBuffer
@@ -12895,6 +12924,18 @@ Skylink.prototype._DataPacker = {
     return new Blob([ab]);
   },
 
+  /**
+   * Converts the Blob data chunk into base64 encoded string.
+   * @method blobToBase64
+   * @param {String} base64String The Blob data chunk.
+   * @param {Function} fn The callback function triggered when conversion is completed.
+   *   The callback function signature is: (<code>base64String</code>).
+   *   The <code>base64String</code> is the converted base64 encoded string.
+   * @return {Blob} chunk The Blob data chunk.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   blobToBase64: function (blob, fn) {
     var fileReader = new FileReader();
     fileReader.onload = function() {

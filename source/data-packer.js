@@ -8,6 +8,16 @@
  */
 Skylink.prototype._DataPacker = {
 
+  /**
+   * Chunks Blob object into smaller Blob data chunks.
+   * @method chunkBlob
+   * @param {Blob} blob The Blob data object.
+   * @param {Number} chunkSize The Blob data chunk size to chunk into.
+   * @return {Array} chunksArray The Array of Blob chunks.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   chunkBlob: function (blob, chunkSize) {
     var chunksArray = [];
     var startCount = 0;
@@ -31,6 +41,16 @@ Skylink.prototype._DataPacker = {
     return chunksArray;
   },
 
+  /**
+   * Chunks Data URI string into smaller strings.
+   * @method chunkDataURI
+   * @param {String} blob The Data URI string.
+   * @param {Number} chunkSize The Data URI string chunk size to chunk into.
+   * @return {Array} chunksArray The Array of Data URI chunks.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   chunkDataURI: function (dataURL, chunkSize) {
     var outputStr = dataURL; //encodeURIComponent(dataURL);
     var dataURLArray = [];
@@ -56,6 +76,15 @@ Skylink.prototype._DataPacker = {
     return dataURLArray;
   },
 
+  /**
+   * Converts the base64 encoded string into Blob data chunk object.
+   * @method base64ToBlob
+   * @param {String} base64String The base64 encoded string.
+   * @return {Blob} chunk The Blob data chunk.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   base64ToBlob: function (base64String) {
     var byteString = atob(base64String.replace(/\s\r\n/g, ''));
     // write the bytes of the string to an ArrayBuffer
@@ -68,6 +97,18 @@ Skylink.prototype._DataPacker = {
     return new Blob([ab]);
   },
 
+  /**
+   * Converts the Blob data chunk into base64 encoded string.
+   * @method blobToBase64
+   * @param {String} base64String The Blob data chunk.
+   * @param {Function} fn The callback function triggered when conversion is completed.
+   *   The callback function signature is: (<code>base64String</code>).
+   *   The <code>base64String</code> is the converted base64 encoded string.
+   * @return {Blob} chunk The Blob data chunk.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
   blobToBase64: function (blob, fn) {
     var fileReader = new FileReader();
     fileReader.onload = function() {
