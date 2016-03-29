@@ -337,9 +337,11 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
         // For downloads, serve the Blob object or Data URI string as it is completed
         if (state === superRef.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED) {
           if (ref._transfer.type === 'blob') {
+            /* TODO: Fixes for IE <10 support for Blob polyfill */
             transferData = new Blob(ref._transfer.dataChunks, {
               type: ref._transfer.dataMimeType
             });
+            /* TODO: Polyfill for downloading Blob in various browsers as file */
           } else {
             transferData = ref._transfer.dataChunks.join('');
           }
@@ -387,9 +389,11 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       var completedData = null;
 
       if (transferSession.type === 'blob') {
+        /* TODO: Fixes for IE <10 support for Blob polyfill */
         completedData = new Blob(transferSession.dataChunks, {
           type: transferSession.dataMimeType
         });
+        /* TODO: Polyfill for downloading Blob in various browsers as file */
       } else {
         completedData = transferSession.dataChunks.join('');
       }
@@ -843,7 +847,7 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     newUploadTransfer.dataSize = data.size; //Math.ceil(data.size * 4/3);
     /* NOTE: Because in the past, Firefox had issues with 65536 sizes, so what we switched the original chunk size.
       Before Firefox issue: (Original: 49152 | Binary Size: 65536)
-      After Firefox issue for resolution: (Original:  | Binary Size: 16384) */
+      After Firefox issue for resolution: (Original: 12288 | Binary Size: 16384) */
     newUploadTransfer.dataChunkSize = Math.ceil(12288 / 3) * 4; // 49152
     newUploadTransfer.dataChunks = superRef._DataPacker.chunkBlob(data, 12288); // 49152
     newUploadTransfer.dataMimeType = data.type || '';
