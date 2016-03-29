@@ -843,8 +843,8 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     newUploadTransfer.dataSize = data.size; //Math.ceil(data.size * 4/3);
     /* NOTE: Because in the past, Firefox had issues with 65536 sizes, so what we switched the original chunk size.
       Before Firefox issue: (Original: 49152 | Binary Size: 65536)
-      After Firefox issue for resolution: (Original: 12288 | Binary Size: 16384) */
-    newUploadTransfer.dataChunkSize = Math.ceil(12288 * 4/3); // 49152
+      After Firefox issue for resolution: (Original:  | Binary Size: 16384) */
+    newUploadTransfer.dataChunkSize = Math.ceil(12288 / 3) * 4; // 49152
     newUploadTransfer.dataChunks = superRef._DataPacker.chunkBlob(data, 12288); // 49152
     newUploadTransfer.dataMimeType = data.type || '';
     newUploadTransfer.type = 'blob';
