@@ -577,7 +577,14 @@ $(document).ready(function () {
         } else {
           Demo.Skylink.sendBlobData(file);
         }*/
-        Demo.Skylink._createTransfer(file, 61, false, Object.keys(Demo.Skylink._peers), function (peerId, error) {
+        Demo.Skylink._createTransfer(file, 61, false, (function () {
+          var peers = Object.keys(Demo.Skylink._peers);
+
+          if (peers.indexOf('MCU') > -1) {
+            peers.splice(peers.indexOf('MCU'), 1);
+          }
+          return peers;
+        })(), function (peerId, error) {
           console.info('data transfer status', peerId, error);
         });
         $('#file_input').val('');

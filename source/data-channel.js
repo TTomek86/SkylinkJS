@@ -161,13 +161,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
     var handleResponseFn = function (result) {
       log.debug([ref.peerId, 'DataChannel', ref.id, 'Data transfer request status ->'], result);
 
-      if (Array.isArray(listOfPeers)) {
-        listOfPeers.forEach(function (peerId) {
-          responseCallback(peerId, result);
-        });
-      } else {
-        responseCallback(result);
-      }
+      responseCallback(result);
     };
 
     /**
@@ -224,7 +218,9 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       // Data transfer direction. In this case, it's "upload"
       direction: superRef.DATA_TRANSFER_TYPE.UPLOAD,
       // Data transfer session next packet callback function that triggers when requesting for next data chunk
-      requestPacketFn: nextPacketCallback
+      requestPacketFn: nextPacketCallback,
+      // Data transfer list of Peers for MCU environment only relayed
+      listOfPeers: listOfPeers
     };
 
     // Send the response earlier so callee function can subscribe to dataTransferState events for errors or success
@@ -402,7 +398,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
 
     // Store the upload session. This may not be defined for download sessions.
     var uploadSession = superRef._uploadTransfers[ref._transfer.id],
-        newState = null;
+        newState = null,
+        listOfPeersToTrigger = [ref.peerId];
 
     /**
      * Function that computes the Blob
@@ -480,6 +477,11 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
       return null;
     };
 
+    // Configure to trigger for the list of Peers for MCU environment only
+    if (Array.isArray(ref._transfer.listOfPeers)) {
+      listOfPeersToTrigger = ref._transfer.listOfPeers;
+    }
+
     // Configure state as completed if matches the number
     if (ref._transfer.dataTransferredSize === ref._transfer.dataSize) {
       if (ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.DOWNLOAD) {
@@ -496,26 +498,32 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
     }
 
     // Prevent triggering of UPLOAD_REQUEST state for uploader
-    // Trigger "dataTransferState" event
+    //   Trigger "dataTransferState" event
     if (!(newState === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST &&
       ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD)) {
 
-      superRef._trigger('dataTransferState', newState, ref._transfer.id, ref.peerId,
-        transferInfoPayloadFn(false), transferErrorPayloadFn());
+      listOfPeersToTrigger.forEach(function (peerId) {
+        superRef._trigger('dataTransferState', newState, ref._transfer.id, peerId,
+          transferInfoPayloadFn(false), transferErrorPayloadFn());
+      });
     }
 
     // Trigger "incomingDataRequest" event
     if (newState === superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST) {
-      superRef._trigger('incomingDataRequest', ref._transfer.id, ref.peerId, transferInfoPayloadFn(true),
-        ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD);
+      listOfPeersToTrigger.forEach(function (peerId) {
+        superRef._trigger('incomingDataRequest', ref._transfer.id, peerId, transferInfoPayloadFn(true),
+          ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD);
+      });
     }
 
     // Trigger "incomingData" event
     if ([superRef.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED,
       superRef.DATA_TRANSFER_STATE.UPLOAD_COMPLETED].indexOf(newState) > -1) {
 
-      superRef._trigger('incomingData', transferPointToBlobFn(true), ref._transfer.id, ref.peerId,
-        transferInfoPayloadFn(true), ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD);
+      listOfPeersToTrigger.forEach(function (peerId) {
+        superRef._trigger('incomingData', transferPointToBlobFn(true), ref._transfer.id, peerId,
+          transferInfoPayloadFn(true), ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD);
+      });
     }
 
     // Clear the transfer session once it's terminated or completed
@@ -1000,16 +1008,16 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
  * @param {Number} timeout The transfer timeout in seconds.
  * @param {Boolean} isPrivate The flag that indicates if data transfer is not "broadcasted" or not.
  * @param {Array} listOfPeers The list of Peers to start transfer with.
- * @param {Function} peerResponseCallback The callback function triggered when there
+ * @param {Function} responseCallback The callback function triggered when there
  *   is a response status on the data transfer session.
- *   The callback function signature is: (<code>peerId</code>, <code>error</code>).
- *   If <code>error</code> value returned is not <code>null</code>, it
- *   means that there has been an Error while trying to start a data transfer session.
+ *   The callback function signature is: (<code>error</code>).
+ *   If <code>error</code> value returned is not <code>null</code>,
+ *   it means that there has been Errors while trying to start a data transfer session.
  * @private
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPeers, peerResponseCallback) {
+Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPeers, responseCallback) {
   var superRef = this;
   // Define the current data transfer session
   var newUploadTransfer = {
@@ -1033,21 +1041,51 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     // Data transfer session flag that indicates if transfer is not "broadcasted" or not.
     isPrivate: isPrivate
   };
+  // The Array of Peers that has been completed
+  var hasCompleted = false,
+      listOfPeersCompleted = [],
+      listOfPeersErrors = {};
 
   /**
    * Function that handles response callback
    */
   var handleResponseFn = function (peerId, result) {
-    log.debug([peerId, 'Skylink', null, 'Starting data transfer session result ->'], result);
+    log.debug([peerId, 'Skylink', newUploadTransfer.id, 'Starting data transfer session result ->'], result);
 
-    peerResponseCallback(peerId, result);
+    if (listOfPeersCompleted.indexOf(peerId) === -1) {
+      listOfPeersCompleted.push(peerId);
+
+      if (result) {
+        listOfPeersErrors[peerId] = result;
+      }
+    }
+
+    if (!hasCompleted) {
+      if (listOfPeersCompleted.length === listOfPeers.length) {
+        hasCompleted = true;
+
+        // Respond callback with Errors
+        if (Object.keys(listOfPeersErrors).length > 0) {
+          responseCallback(listOfPeersErrors);
+
+        // Respond callback with success
+        } else {
+          responseCallback(null);
+        }
+
+        log.debug([null, 'Skylink', newUploadTransfer.id, 'Clearing upload data transfer session as all Peers ' +
+          'has been responded with']);
+
+        delete superRef._uploadTransfers[newUploadTransfer.id];
+      }
+    }
   };
 
   /**
    * Function that handles error parsing to serve in response callback
    */
   var handleErrorFn = function (peerId, errorMessage) {
-    log.error([peerId, 'Skylink', null, 'Failed starting data transfer session as ' + errorMessage]);
+    log.error([peerId, 'Skylink', newUploadTransfer.id, 'Failed starting data transfer session as ' + errorMessage]);
 
     handleResponseFn(peerId, new Error('Failed starting data transfer session as ' + errorMessage));
   };
@@ -1086,6 +1124,7 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     } else if (typeof data.size === 'number') {
       newUploadTransfer.dataSize = data.size;
 
+    // Prevent parsing of invalid data size. Sanity check.
     } else {
       filteredListOfPeers.forEach(function (peerId) {
         handleErrorFn(peerId, 'provided data size is invalid');
@@ -1111,6 +1150,27 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     processCallback(newUploadTransfer.dataChunks[ackN]);
   };
 
+  /**
+   * Function that subscribes to "dataTransferState" to reflect data transfer session status
+   */
+  var handleTransferSessionStatusFn = function (peerId) {
+    /* NOTE: To check how the MCU response when a Peer rejects response */
+    superRef.once('dataTransferState', function (state, transferId, evtPeerId, transferInfo, transferError) {
+      if (transferError) {
+        handleErrorFn(peerId, transferError.message.message || transferError.message);
+        return;
+      }
+      handleResponseFn(peerId, null);
+
+    }, function (state, transferId, evtPeerId) {
+      return [superRef.DATA_TRANSFER_STATE.ERROR,
+        superRef.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED,
+        superRef.DATA_TRANSFER_STATE.UPLOAD_COMPLETED,
+        superRef.DATA_TRANSFER_STATE.CANCEL,
+        superRef.DATA_TRANSFER_STATE.REJECTED].indexOf(state) > -1 && evtPeerId === peerId;
+    });
+  };
+
   // Store the upload session
   superRef._uploadTransfers[newUploadTransfer.id] = newUploadTransfer;
 
@@ -1124,19 +1184,33 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
     }
 
     superRef._peers.MCU.channelTransferStart(newUploadTransfer.id, function (error) {
+      if (error) {
+        filteredListOfPeers.forEach(function (peerId) {
+          handleResponseFn(peerId, error);
+        });
+        return;
+      }
+
       filteredListOfPeers.forEach(function (peerId) {
-        handleResponseFn(peerId, error);
+        handleTransferSessionStatusFn(peerId);
       });
+
     }, nextPacketFn, filteredListOfPeers);
-    return;
+
+  // Send files with P2P channel
+  } else {
+    // Transfer files using P2P connections
+    filteredListOfPeers.forEach(function (peerId) {
+      superRef._peers[peerId].channelTransferStart(newUploadTransfer.id, function (error) {
+        if (error) {
+          handleErrorFn(peerId, error.message || error);
+          return;
+        }
+
+        handleTransferSessionStatusFn(peerId);
+      }, nextPacketFn);
+    });
   }
 
-  // Transfer files using P2P connections
-  filteredListOfPeers.forEach(function (peerId) {
-    superRef._peers[peerId].channelTransferStart(newUploadTransfer.id, function (error) {
-      handleResponseFn(peerId, error);
-    }, nextPacketFn);
-  });
 
-  /* TODO: Clear transfer session if all has been responded */
 };
