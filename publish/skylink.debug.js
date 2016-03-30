@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 15:24:58 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 18:17:40 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1256,7 +1256,7 @@ Skylink.prototype._uploadTransfers = {};
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'cpp'];
+Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'C++'];
 
 /**
  * Creates a DataChannel that handles the RTCDataChannel object.
@@ -1693,7 +1693,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     var transferInfoPayloadFn = function (isIncomingDataEvent) {
       var transferInfo = {
         name: ref._transfer.dataName,
-        size: ref._transfer.dataSize,
+        /* NOTE: This seems to add 1 byte to the original file size */
+        size: Math.ceil((ref._transfer.dataSize / 4) * 3),
         percentage: ((ref._transfer.dataTransferredSize / ref._transfer.dataSize) * 100).toFixed(2),
         dataType: ref._transfer.type,
         senderPeerId: ref._transfer.direction === superRef.DATA_TRANSFER_TYPE.DOWNLOAD ?
@@ -1934,7 +1935,12 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       ref._transfer.timeout = 60;
     }
 
-    /* TODO: Polyfill Android, iOS and C++ SDK */
+    // Fallback for other SDK agents
+    if (typeof ref._transfer.type !== 'string') {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Setting transfer type to "blob" as fallback']);
+
+      ref._transfer.type = 'blob';
+    }
 
     ref._transferSetState(superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST);
   };
@@ -2011,7 +2017,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       }
 
       // Increment the data chunk size to received size
-      ref._transfer.dataTransferredSize += packetSize;
+      ref._transfer.dataTransferredSize += Math.ceil(packetSize / 3) * 4;
 
       // Configure to send the data chunk directly if data chunk is a string
       if (typeof data === 'string') {
@@ -2075,7 +2081,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     }
 
     ref._transfer.dataChunks[ref._transfer.dataACKIndex] = packetData;
-    ref._transfer.dataTransferredSize += packetDataSize;
+    ref._transfer.dataTransferredSize += Math.ceil(packetDataSize / 3) * 4;
     ref._transfer.dataACKIndex += 1;
 
     // Send "ACK" message for continuous transfers
@@ -2357,7 +2363,7 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
   // Parse the Blob object data and information for chunks
   if (typeof data === 'object') {
     newUploadTransfer.dataName = data.name;
-    newUploadTransfer.dataSize = data.size; //Math.ceil(data.size * 4/3);
+    newUploadTransfer.dataSize = Math.ceil(data.size / 3) * 4; //Math.ceil(data.size * 4/3);
     /* NOTE: Because in the past, Firefox had issues with 65536 sizes, so what we switched the original chunk size.
       Before Firefox issue: (Original: 49152 | Binary Size: 65536)
       After Firefox issue for resolution: (Original: 12288 | Binary Size: 16384) */
