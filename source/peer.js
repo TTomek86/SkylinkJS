@@ -437,6 +437,14 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         return;
       }
 
+      // Prevent re-sending for unsupported SDK agents (old way of connection)
+      if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+        log.warn([ref.id, 'Peer', 'RTCSessionDescription', 'Dropping of resending local ' + sessionDescription.type +
+          ' as fallback for non-supported agents interop ->'], sessionDescription);
+        return;
+      }
+
+
       log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Resending local ' +
         sessionDescription.type + ' ->'], sessionDescription);
 
@@ -713,7 +721,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
    * @method channelMessage
    * @param {Any} message The message object.
    * @param {Boolean} isPrivate The flag that indicates if message is not "broadcasted" or not.
-   * @param {Array} [listOfPeers] 
+   * @param {Array} [listOfPeers]
    * @for SkylinkPeer
    * @since 0.6.x
    */
@@ -791,7 +799,13 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       return;
     }
 
-    /* TODO: Interop with mobile SDKs */
+    // Fallback for single RTCDataChannel connection
+    if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Fallback to support single channel connection by ' +
+        'starting transfer on single channel ->'], transferId);
+      ref._channels.main.transferStart(transferId, handleResponseFn, nextPacketCallback);
+      return;
+    }
 
     // Start opening data channels?
     superRef.once('dataChannelState', function (state, peerId, error) {
@@ -858,7 +872,13 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       return;
     }
 
-    /* TODO: Interop with mobile SDKs */
+    // Fallback for single RTCDataChannel connection
+    if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Fallback to support single channel connection by ' +
+        'starting transfer on single channel ->'], transferId);
+      ref._channels.main.transferStartRespond(transferId, handleResponseFn, acceptTransfer);
+      return;
+    }
 
     if (!ref._channels[transferId]) {
       handleErrorFn('datachannel does not exists');
@@ -1323,7 +1343,13 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         return;
       }
 
-      /* TODO: Handle Android, iOS and C++ SDK with 1 datachannel */
+      // Fallback for non-Web SDK agents
+      if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+        log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Fallback to support single channel connection ->'], channel);
+
+        ref._channels.main = superRef._createDataChannel(ref.id, channel, true);
+        return;
+      }
 
       // Construct the DataChannel object
       ref._channels[channel.label] = superRef._createDataChannel(ref.id, channel);

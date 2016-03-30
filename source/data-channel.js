@@ -9,16 +9,28 @@
 Skylink.prototype._uploadTransfers = {};
 
 /**
+ * Stores the list of agents that do not support multi-transfers.
+ * @attribute _FALLBACK_INTEROP_AGENTS
+ * @type JSON
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'cpp'];
+
+/**
  * Creates a DataChannel that handles the RTCDataChannel object.
  * @method _createDataChannel
  * @param {String} peerId The Peer ID.
+ * @param {RTCDataChannel} channel The RTCDataChannel object created or received in RTCPeerConnection.
+ * @param {Boolean} [fallbackAsMain=false] The flag that indicates if RTCPeerConnection will only support one RTCDataChannel connection.
  * @return {SkylinkDataChannel} The DataChannel class object that handles
  *   the provided RTCDataChannel object.
  * @private
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._createDataChannel = function (peerId, channel) {
+Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain) {
   var superRef = this;
 
   /**
@@ -29,8 +41,6 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
    * @since 0.6.x
    */
   var SkylinkDataChannel = function () {
-    /* TODO: Handle case for Android, iOS and C++ SDK */
-
     // Handles the .onopen event.
     this._handleOnOpenEvent();
 
@@ -76,7 +86,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel) {
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype.type = channel.label === 'main' ?
+  SkylinkDataChannel.prototype.type = channel.label === 'main' || fallbackAsMain === true ?
     superRef.DATA_CHANNEL_TYPE.MESSAGING : superRef.DATA_CHANNEL_TYPE.DATA;
 
   /**
