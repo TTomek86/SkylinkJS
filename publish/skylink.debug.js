@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 07 2016 02:30:37 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 12:56:28 GMT+0800 (SGT) */
 
 (function() {
 
@@ -4900,6 +4900,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       this.weight = peerData.weight;
     }
 
+    // Configure the SDK platform information. This field may be empty
+    //   Examples: "web", "iOS", "Android"
+    if (typeof peerData.skylinkSDKPlatform === 'string') {
+      this.sdk.name = peerData.skylinkSDKPlatform;
+    }
+
+    // Configure the SDK version information. This field may be empty
+    //   Examples: "0.6.11", "0.9.5"
+    if (typeof peerData.skylinkSDKVersion === 'string') {
+      this.sdk.version = peerData.skylinkSDKVersion;
+    }
+
     // Update the new streaming information
     this.update(peerData);
 
@@ -4944,6 +4956,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     name: 'Unknown',
     version: 0,
     os: ''
+  };
+
+  /**
+   * Stores the Peer connecting SDK information.
+   * @attribute sdk
+   * @type JSON
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.sdk = {
+    name: 'Unknown',
+    version: 0
   };
 
   /**
@@ -5277,7 +5301,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         receiveOnly: superRef._hasMCU && ref.id !== 'MCU',
         enableIceTrickle: superRef._enableIceTrickle,
         enableDataChannel: superRef._enableDataChannel,
-        enableIceRestart: superRef._enableIceRestart
+        enableIceRestart: superRef._enableIceRestart,
+        skylinkSDKPlatform: 'web',
+        skylinkSDKVersion: superRef.VERSION
       });
 
       // Peer has restarted connection (another set of handshaking)
@@ -11560,7 +11586,9 @@ Skylink.prototype._approachEventHandler = function(message){
     enableIceTrickle: self._enableIceTrickle,
     enableDataChannel: self._enableDataChannel,
     enableIceRestart: self._enableIceRestart,
-    target: message.target
+    target: message.target,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -11920,7 +11948,9 @@ Skylink.prototype._inRoomHandler = function(message) {
     receiveOnly: self._receiveOnly,
     enableIceTrickle: self._enableIceTrickle,
     enableDataChannel: self._enableDataChannel,
-    enableIceRestart: self._enableIceRestart
+    enableIceRestart: self._enableIceRestart,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -12042,7 +12072,9 @@ Skylink.prototype._enterHandler = function(message) {
     os: window.navigator.platform,
     userInfo: self.getPeerInfo(),
     target: peerId,
-    weight: self._peerPriorityWeight
+    weight: self._peerPriorityWeight,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -12183,7 +12215,9 @@ Skylink.prototype._restartHandler = function(message){
       receiveOnly: self._hasMCU && peerId !== 'MCU',
       enableIceTrickle: self._enableIceTrickle,
       enableDataChannel: self._enableDataChannel,
-      enableIceRestart: self._enableIceRestart
+      enableIceRestart: self._enableIceRestart,
+      skylinkSDKPlatform: 'web',
+      skylinkSDKVersion: self.VERSION
     });
   }
 
@@ -12322,7 +12356,9 @@ Skylink.prototype._welcomeHandler = function(message) {
       os: window.navigator.platform,
       userInfo: self.getPeerInfo(),
       target: peerId,
-      weight: self._peerPriorityWeight
+      weight: self._peerPriorityWeight,
+      skylinkSDKPlatform: 'web',
+      skylinkSDKVersion: self.VERSION
     });
   }
 };

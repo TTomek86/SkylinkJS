@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 07 2016 02:30:37 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 12:56:28 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Thu Apr 07 2016 02:30:37 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 12:56:28 GMT+0800 (SGT) */
 
 (function() {
 
@@ -15357,6 +15357,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       this.weight = peerData.weight;
     }
 
+    // Configure the SDK platform information. This field may be empty
+    //   Examples: "web", "iOS", "Android"
+    if (typeof peerData.skylinkSDKPlatform === 'string') {
+      this.sdk.name = peerData.skylinkSDKPlatform;
+    }
+
+    // Configure the SDK version information. This field may be empty
+    //   Examples: "0.6.11", "0.9.5"
+    if (typeof peerData.skylinkSDKVersion === 'string') {
+      this.sdk.version = peerData.skylinkSDKVersion;
+    }
+
     // Update the new streaming information
     this.update(peerData);
 
@@ -15401,6 +15413,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     name: 'Unknown',
     version: 0,
     os: ''
+  };
+
+  /**
+   * Stores the Peer connecting SDK information.
+   * @attribute sdk
+   * @type JSON
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.sdk = {
+    name: 'Unknown',
+    version: 0
   };
 
   /**
@@ -15734,7 +15758,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         receiveOnly: superRef._hasMCU && ref.id !== 'MCU',
         enableIceTrickle: superRef._enableIceTrickle,
         enableDataChannel: superRef._enableDataChannel,
-        enableIceRestart: superRef._enableIceRestart
+        enableIceRestart: superRef._enableIceRestart,
+        skylinkSDKPlatform: 'web',
+        skylinkSDKVersion: superRef.VERSION
       });
 
       // Peer has restarted connection (another set of handshaking)
@@ -22017,7 +22043,9 @@ Skylink.prototype._approachEventHandler = function(message){
     enableIceTrickle: self._enableIceTrickle,
     enableDataChannel: self._enableDataChannel,
     enableIceRestart: self._enableIceRestart,
-    target: message.target
+    target: message.target,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -22377,7 +22405,9 @@ Skylink.prototype._inRoomHandler = function(message) {
     receiveOnly: self._receiveOnly,
     enableIceTrickle: self._enableIceTrickle,
     enableDataChannel: self._enableDataChannel,
-    enableIceRestart: self._enableIceRestart
+    enableIceRestart: self._enableIceRestart,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -22499,7 +22529,9 @@ Skylink.prototype._enterHandler = function(message) {
     os: window.navigator.platform,
     userInfo: self.getPeerInfo(),
     target: peerId,
-    weight: self._peerPriorityWeight
+    weight: self._peerPriorityWeight,
+    skylinkSDKPlatform: 'web',
+    skylinkSDKVersion: self.VERSION
   });
 };
 
@@ -22640,7 +22672,9 @@ Skylink.prototype._restartHandler = function(message){
       receiveOnly: self._hasMCU && peerId !== 'MCU',
       enableIceTrickle: self._enableIceTrickle,
       enableDataChannel: self._enableDataChannel,
-      enableIceRestart: self._enableIceRestart
+      enableIceRestart: self._enableIceRestart,
+      skylinkSDKPlatform: 'web',
+      skylinkSDKVersion: self.VERSION
     });
   }
 
@@ -22779,7 +22813,9 @@ Skylink.prototype._welcomeHandler = function(message) {
       os: window.navigator.platform,
       userInfo: self.getPeerInfo(),
       target: peerId,
-      weight: self._peerPriorityWeight
+      weight: self._peerPriorityWeight,
+      skylinkSDKPlatform: 'web',
+      skylinkSDKVersion: self.VERSION
     });
   }
 };

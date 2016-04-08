@@ -85,6 +85,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       this.weight = peerData.weight;
     }
 
+    // Configure the SDK platform information. This field may be empty
+    //   Examples: "web", "iOS", "Android"
+    if (typeof peerData.skylinkSDKPlatform === 'string') {
+      this.sdk.name = peerData.skylinkSDKPlatform;
+    }
+
+    // Configure the SDK version information. This field may be empty
+    //   Examples: "0.6.11", "0.9.5"
+    if (typeof peerData.skylinkSDKVersion === 'string') {
+      this.sdk.version = peerData.skylinkSDKVersion;
+    }
+
     // Update the new streaming information
     this.update(peerData);
 
@@ -129,6 +141,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     name: 'Unknown',
     version: 0,
     os: ''
+  };
+
+  /**
+   * Stores the Peer connecting SDK information.
+   * @attribute sdk
+   * @type JSON
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.sdk = {
+    name: 'Unknown',
+    version: 0
   };
 
   /**
@@ -462,7 +486,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         receiveOnly: superRef._hasMCU && ref.id !== 'MCU',
         enableIceTrickle: superRef._enableIceTrickle,
         enableDataChannel: superRef._enableDataChannel,
-        enableIceRestart: superRef._enableIceRestart
+        enableIceRestart: superRef._enableIceRestart,
+        skylinkSDKPlatform: 'web',
+        skylinkSDKVersion: superRef.VERSION
       });
 
       // Peer has restarted connection (another set of handshaking)
