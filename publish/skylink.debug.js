@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Wed Mar 30 2016 18:17:40 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 18:03:55 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1256,7 +1256,7 @@ Skylink.prototype._uploadTransfers = {};
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'C++'];
+Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'cpp'];
 
 /**
  * Creates a DataChannel that handles the RTCDataChannel object.

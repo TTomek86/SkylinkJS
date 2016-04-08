@@ -16,7 +16,7 @@ Skylink.prototype._uploadTransfers = {};
  * @for Skylink
  * @since 0.6.x
  */
-Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'C++'];
+Skylink.prototype._FALLBACK_INTEROP_AGENTS = ['Android', 'iOS', 'cpp'];
 
 /**
  * Creates a DataChannel that handles the RTCDataChannel object.
