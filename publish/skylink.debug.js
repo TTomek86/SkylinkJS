@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 12:56:28 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 12:59:42 GMT+0800 (SGT) */
 
 (function() {
 
@@ -980,7 +980,7 @@ Skylink.prototype.HANDSHAKE_PROGRESS = {
  * - This is not a feature for developers to use but rather for SDK developers to
  *   see the Protocol version used in this Skylink version.
  * - In some cases, this information may be used for reporting issues with Skylink.
- * - SM_PROTOCOL VERSION: <code>0.1.</code>.
+ * - SM_PROTOCOL VERSION: <code>0.1.2</code>.
  * @attribute SM_PROTOCOL_VERSION
  * @type String
  * @required
@@ -988,7 +988,7 @@ Skylink.prototype.HANDSHAKE_PROGRESS = {
  * @for Skylink
  * @since 0.6.0
  */
-Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.1';
+Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.2';
 
 
 /**
@@ -4948,6 +4948,19 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   /**
    * Stores the Peer connecting agent information.
    * @attribute agent
+   * @type JSON
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.agent = {
+    name: 'Unknown',
+    version: 0,
+    os: ''
+  };
+
+  /**
+   * Stores the Peer connecting plugin information.
+   * @attribute plugin
    * @type JSON
    * @for SkylinkPeer
    * @since 0.6.x

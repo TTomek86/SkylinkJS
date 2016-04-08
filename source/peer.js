@@ -144,6 +144,18 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   };
 
   /**
+   * Stores the Peer connecting plugin information.
+   * @attribute plugin
+   * @type JSON
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.plugin = {
+    version: 0,
+    os: ''
+  };
+
+  /**
    * Stores the Peer connecting SDK information.
    * @attribute sdk
    * @type JSON

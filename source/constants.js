@@ -739,7 +739,7 @@ Skylink.prototype.HANDSHAKE_PROGRESS = {
  * - This is not a feature for developers to use but rather for SDK developers to
  *   see the Protocol version used in this Skylink version.
  * - In some cases, this information may be used for reporting issues with Skylink.
- * - SM_PROTOCOL VERSION: <code>0.1.</code>.
+ * - SM_PROTOCOL VERSION: <code>0.1.2</code>.
  * @attribute SM_PROTOCOL_VERSION
  * @type String
  * @required
@@ -747,7 +747,7 @@ Skylink.prototype.HANDSHAKE_PROGRESS = {
  * @for Skylink
  * @since 0.6.0
  */
-Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.1';
+Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.2';
 
 
 /**
