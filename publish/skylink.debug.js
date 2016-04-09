@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Fri Apr 08 2016 18:03:55 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sat Apr 09 2016 20:53:22 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1365,22 +1365,15 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
    */
   SkylinkDataChannel.prototype.message = function (message, isPrivate, listOfPeers) {
     var ref = this;
+    var target = ref.peerId;
+
+    // Prevent sending message "target" as Array if is not "MCU" and listOfPeers parameter provided is an Array
+    if (ref.peerId === 'MCU' && Array.isArray(listOfPeers)) {
+      target = listOfPeers;
+    }
 
     // Send "MESSAGE" message to send message object to other Peer's end
-    ref._messageSend({
-      type: superRef._DC_PROTOCOL_TYPE.MESSAGE,
-      sender: superRef._user.sid,
-      /* NOTE: If target returned is "MCU", handle it to reflect as the actual receiving Peer ID instead of "MCU" as target */
-      target: (function () {
-        // Prevent sending message "target" as Array if is not "MCU" and listOfPeers parameter provided is an Array
-        if (ref.peerId === 'MCU' && Array.isArray(listOfPeers)) {
-          return listOfPeers;
-        }
-        return ref.peerId;
-      })(),
-      data: message,
-      isPrivate: isPrivate === true
-    });
+    ref._messageSend(superRef._constructDTProtocolMESSAGE(message, isPrivate, target));
   };
 
   /**
@@ -1477,19 +1470,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     handleResponseFn(null);
 
     // Send "WRQ" message to start data transfer session on the other Peer's end
-    ref._messageSend({
-      type: superRef._DC_PROTOCOL_TYPE.WRQ,
-      sender: superRef._user.sid,
-      target: (Array.isArray(listOfPeers)) ? listOfPeers : null,
-      transferId: ref._transfer.id,
-      name: ref._transfer.dataName,
-      size: ref._transfer.dataSize,
-      mimeType: ref._transfer.dataMimeType,
-      chunkSize: ref._transfer.dataChunkSize,
-      timeout: ref._transfer.timeout,
-      isPrivate: ref._transfer.isPrivate,
-      dataType: ref._transfer.type
-    });
+    ref._messageSend(superRef._constructDTProtocolWRQ(ref._transfer));
 
     // Reflect the current state as UPLOAD_REQUEST
     ref._transferSetState(superRef.DATA_TRANSFER_STATE.UPLOAD_REQUEST);
@@ -1557,22 +1538,14 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
 
       // Send "ACK" message to start data transfer session to start sending the first data chunk from Peer's end
       //  0 = first index of data chunk Array
-      ref._messageSend({
-        type: superRef._DC_PROTOCOL_TYPE.ACK,
-        sender: superRef._user.sid,
-        ackN: 0
-      });
+      ref._messageSend(superRef._constructDTProtocolACK(0));
 
       // Reflect the current state as DOWNLOAD_STARTED since it has been accepted
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.DOWNLOAD_STARTED);
 
     } else {
       // Send "ACK" message to start data transfer session to terminate data transfer session request from Peer's end
-      ref._messageSend({
-        type: superRef._DC_PROTOCOL_TYPE.ACK,
-        sender: superRef._user.sid,
-        ackN: -1
-      });
+      ref._messageSend(superRef._constructDTProtocolACK(-1));
 
       // Reflect the current state as REJECTED since it has been rejected
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.REJECTED);
@@ -2085,11 +2058,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._transfer.dataACKIndex += 1;
 
     // Send "ACK" message for continuous transfers
-    ref._messageSend({
-      type: superRef._DC_PROTOCOL_TYPE.ACK,
-      sender: superRef._user.sid,
-      ackN: ref._transfer.dataACKIndex
-    });
+    ref._messageSend(superRef._constructDTProtocolACK(ref._transfer.dataACKIndex));
 
     // Reflect DOWNLOADING state
     ref._transferSetState(superRef.DATA_TRANSFER_STATE.DOWNLOADING);
@@ -2467,8 +2436,117 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
       }, nextPacketFn);
     });
   }
+};
 
+/**
+ * Constructs DTProtocol "WRQ" message.
+ * @method _constructDTProtocolWRQ
+ * @param {JSON} transfer The transfer information object.
+ * @return {JSON} The WRQ message signature object.
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._constructDTProtocolWRQ = function (transfer) {
+  var superRef = this;
 
+  return JSON.stringify({
+    type: 'WRQ',
+    transferId: transfer.id,
+    agent: window.webrtcDetectedBrowser, // Deprecated
+    version: window.webrtcDetectedVersion, // Deprecated
+    name: transfer.dataName,
+    mimeType: transfer.dataMimeType,
+    dataType: transfer.type,
+    size: transfer.dataSize,
+    chunkSize: transfer.dataChunkSize,
+    timeout: transfer.timeout,
+    isPrivate: transfer.isPrivate,
+    target: (Array.isArray(transfer.listOfPeers)) ? transfer.listOfPeers : null,
+    sender: superRef._user.sid
+  });
+};
+
+/**
+ * Constructs DTProtocol "ACK" message.
+ * @method _constructDTProtocolACK
+ * @param {Number} packetIndex The packet request index.
+ * @return {JSON} The ACK message signature object.
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._constructDTProtocolACK = function (packetIndex) {
+  var superRef = this;
+
+  return JSON.stringify({
+    type: 'ACK',
+    sender: superRef._user.sid,
+    ackN: packetIndex
+  });
+};
+
+/**
+ * Constructs DTProtocol "CANCEL" message.
+ * @method _constructDTProtocolCANCEL
+ * @param {JSON} transfer The transfer information object.
+ * @return {JSON} The CANCEL message signature object.
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._constructDTProtocolCANCEL = function (transfer) {
+  var superRef = this;
+
+  return JSON.stringify({
+    type: 'CANCEL',
+    name: transfer.name,
+    content: 'Peer has terminated transfer'
+  });
+};
+
+/**
+ * Constructs DTProtocol "ERROR" message.
+ * @method _constructDTProtocolERROR
+ * @param {JSON} transfer The transfer information object.
+ * @param {Error} error The error object.
+ * @return {JSON} The ERROR message signature object.
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._constructDTProtocolERROR = function (transfer, error) {
+  var superRef = this;
+
+  return JSON.stringify({
+    type: 'ERROR',
+    name: transfer.name,
+    content: (error.message || error).toString(),
+    isUploadError: transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD,
+    sender: superRef._user.sid
+  });
+};
+
+/**
+ * Constructs DTProtocol "MESSAGE" message.
+ * @method _constructDTProtocolMESSAGE
+ * @param {JSON} transfer The transfer information object.
+ * @param {Error} error The error object.
+ * @return {JSON} The MESSAGE message signature object.
+ * @private
+ * @for Skylink
+ * @since 0.6.x
+ */
+Skylink.prototype._constructDTProtocolMESSAGE = function (message, isPrivate, target) {
+  var superRef = this;
+
+  return JSON.stringify({
+    type: 'MESSAGE',
+    target: target,
+    isPrivate: isPrivate,
+    data: message,
+    sender: superRef._user.sid
+  });
 };
 Skylink.prototype._DataPacker = {
 
