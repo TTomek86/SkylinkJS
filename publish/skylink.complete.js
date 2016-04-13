@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:41:33 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:53:14 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:41:33 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:53:14 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12217,6 +12217,13 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       log.debug([ref.peerId, 'DataChannel', ref.id, 'Setting data transfer session state as completed ->'],
         ref._transfer.id);
 
+      // Send ERROR message
+      if (newState === superRef.DATA_TRANSFER_STATE.ERROR) {
+        log.debug([ref.peerId, 'DataChannel', ref.id, 'Reporting error message to Peer']);
+
+        ref._messageSend(superRef._constructDTProtocolERROR(ref._transfer, error));
+      }
+
       // Clear the data transfer session
       ref._transfer = null;
 
@@ -12564,6 +12571,27 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
   };
 
   /**
+   * Handles the "ERROR" protocol.
+   * @method _messageReactToERRORProtocol
+   * @param {JSON} message The message object data.
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._messageReactToERRORProtocol = function (message) {
+    var ref = this;
+
+    // Prevent processing request if there is no request going on
+    if (!ref._transfer) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of data transfer (ERROR) stage as ' +
+        'there is no existing transfer session ->'], message);
+      return;
+    }
+
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR, new Error(message.content || 'Unknown Error'));
+  };
+
+  /**
    * Handles the RTCDataChannel.onclose event.
    * @method _handleOnCloseEvent
    * @private
@@ -12712,7 +12740,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._transfer.checker = setTimeout(function () {
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
         new Error('Failed transfer response timeout has expired'));
-    }, ref._transfer.timeout * 1000);
+    }, ref._transfer.timeout * 1);
   };
 
   return new SkylinkDataChannel();
@@ -12993,7 +13021,7 @@ Skylink.prototype._constructDTProtocolCANCEL = function (transfer) {
 
   return JSON.stringify({
     type: 'CANCEL',
-    name: transfer.name,
+    name: transfer.dataName,
     content: 'Peer has terminated transfer'
   });
 };
@@ -13013,7 +13041,7 @@ Skylink.prototype._constructDTProtocolERROR = function (transfer, error) {
 
   return JSON.stringify({
     type: 'ERROR',
-    name: transfer.name,
+    name: transfer.dataName,
     content: (error.message || error).toString(),
     isUploadError: transfer.direction === superRef.DATA_TRANSFER_TYPE.UPLOAD,
     sender: superRef._user.sid
