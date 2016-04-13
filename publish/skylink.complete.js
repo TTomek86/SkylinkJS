@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:05:49 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:11:50 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:05:49 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:11:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12593,6 +12593,27 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
   };
 
   /**
+   * Handles the "CANCEL" protocol.
+   * @method _messageReactToCANCELProtocol
+   * @param {JSON} message The message object data.
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._messageReactToCANCELProtocol = function (message) {
+    var ref = this;
+
+    // Prevent processing request if there is no request going on
+    if (!ref._transfer) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of data transfer (CANCEL) stage as ' +
+        'there is no existing transfer session ->'], message);
+      return;
+    }
+
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.CANCEL, new Error(message.content));
+  };
+
+  /**
    * Handles the RTCDataChannel.onclose event.
    * @method _handleOnCloseEvent
    * @private
@@ -12707,6 +12728,14 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
               clearTimeout(ref._transfer.checker);
             }
             ref._messageReactToERRORProtocol(message);
+            break;
+
+          case superRef._DC_PROTOCOL_TYPE.CANCEL:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
+            ref._messageReactToCANCELProtocol(message);
             break;
 
           default:

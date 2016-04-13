@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:05:49 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:11:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -2136,6 +2136,27 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
   };
 
   /**
+   * Handles the "CANCEL" protocol.
+   * @method _messageReactToCANCELProtocol
+   * @param {JSON} message The message object data.
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._messageReactToCANCELProtocol = function (message) {
+    var ref = this;
+
+    // Prevent processing request if there is no request going on
+    if (!ref._transfer) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of data transfer (CANCEL) stage as ' +
+        'there is no existing transfer session ->'], message);
+      return;
+    }
+
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.CANCEL, new Error(message.content));
+  };
+
+  /**
    * Handles the RTCDataChannel.onclose event.
    * @method _handleOnCloseEvent
    * @private
@@ -2250,6 +2271,14 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
               clearTimeout(ref._transfer.checker);
             }
             ref._messageReactToERRORProtocol(message);
+            break;
+
+          case superRef._DC_PROTOCOL_TYPE.CANCEL:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
+            ref._messageReactToCANCELProtocol(message);
             break;
 
           default:
