@@ -315,6 +315,61 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     handleResponseFn(null);
   };
 
+  /**
+   * Cancels a data transfer session.
+   * @method transferCancel
+   * @param {String} transferId The data transfer session ID.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on response to the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to cancel the data transfer session.
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype.transferCancel = function (transferId, responseCallback) {
+    var ref = this;
+
+    /**
+     * Function that handles the response for callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.peerId, 'DataChannel', ref.id, 'Data transfer termination response status ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles the Error object to response in the callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of termination of data transfer request as ' +
+        errorMessage + ' ->'], [transferId, acceptTransfer]);
+
+      handleResponseFn(new Error('Failed termination of data transfer as ' + errorMessage));
+    };
+
+    // Prevent responding to data transfer session if there is no transfer session at all
+    if (!ref._transfer) {
+      handleErrorFn('there is no transfer sessions currently');
+      return;
+    }
+
+    // Prevent responding to data transfer session if the current data transfer session does not match
+    //   provided data transfer session ID in parameter
+    if (ref._transfer.id !== transferId) {
+      handleErrorFn('transfer session ID does not match existing one');
+      return;
+    }
+
+    ref._messageSend(superRef._constructDTProtocolCANCEL(ref._transfer));
+
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.CANCEL, new Error('Terminated transfer'));
+
+    // Response to callee function
+    handleResponseFn(null);
+  };
+
   /* TODO: Cancel transfer */
 
   /**

@@ -889,6 +889,62 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   };
 
   /**
+   * Cancels a P2P transfer from or to Peer.
+   * @method channelTransferCancel
+   * @param {String} transferId The data transfer session ID.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on termination of the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to terminate the data transfer session.
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.channelTransferCancel = function (transferId, responseCallback) {
+    var ref = this;
+
+    /**
+     * Function that handles response callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Response to terminating data transfer session result ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles error parsing to serve in response callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed terminating data transfer session as ' +
+        errorMessage + ' ->'], transferId);
+
+      handleResponseFn(new Error('Failed terminating data transfer session as ' + errorMessage));
+    };
+
+    // Prevent data transfer when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      handleErrorFn('datachannel feature is not enabled for this Peer');
+      return;
+    }
+
+    // Fallback for single RTCDataChannel connection
+    if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Fallback to support single channel connection by ' +
+        'terminating transfer on single channel ->'], transferId);
+      ref._channels.main.transferCancel(transferId, handleResponseFn);
+      return;
+    }
+
+    if (!ref._channels[transferId]) {
+      handleErrorFn('datachannel does not exists');
+      return;
+    }
+
+    ref._channels[transferId].transferCancel(transferId, handleResponseFn);
+  };
+
+  /**
    * Destroys the RTCPeerConnection object.
    * @method disconnect
    * @for SkylinkPeer

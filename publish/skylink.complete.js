@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:15:01 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:26:59 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:15:01 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:26:59 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12007,6 +12007,61 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       // Reflect the current state as REJECTED since it has been rejected
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.REJECTED);
     }
+
+    // Response to callee function
+    handleResponseFn(null);
+  };
+
+  /**
+   * Cancels a data transfer session.
+   * @method transferCancel
+   * @param {String} transferId The data transfer session ID.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on response to the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to cancel the data transfer session.
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype.transferCancel = function (transferId, responseCallback) {
+    var ref = this;
+
+    /**
+     * Function that handles the response for callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.peerId, 'DataChannel', ref.id, 'Data transfer termination response status ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles the Error object to response in the callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of termination of data transfer request as ' +
+        errorMessage + ' ->'], [transferId, acceptTransfer]);
+
+      handleResponseFn(new Error('Failed termination of data transfer as ' + errorMessage));
+    };
+
+    // Prevent responding to data transfer session if there is no transfer session at all
+    if (!ref._transfer) {
+      handleErrorFn('there is no transfer sessions currently');
+      return;
+    }
+
+    // Prevent responding to data transfer session if the current data transfer session does not match
+    //   provided data transfer session ID in parameter
+    if (ref._transfer.id !== transferId) {
+      handleErrorFn('transfer session ID does not match existing one');
+      return;
+    }
+
+    ref._messageSend(superRef._constructDTProtocolCANCEL(ref._transfer));
+
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.CANCEL, new Error('Terminated transfer'));
 
     // Response to callee function
     handleResponseFn(null);
@@ -17344,6 +17399,62 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     }
 
     ref._channels[transferId].transferStartRespond(transferId, handleResponseFn, acceptTransfer);
+  };
+
+  /**
+   * Cancels a P2P transfer from or to Peer.
+   * @method channelTransferCancel
+   * @param {String} transferId The data transfer session ID.
+   * @param {Function} responseCallback The callback function triggered when there
+   *   is a response status on termination of the data transfer session.
+   *   The callback function signature is: (<code>error</code>).
+   *   If <code>error</code> value returned is not <code>null</code>, it
+   *   means that there has been an Error while trying to terminate the data transfer session.
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype.channelTransferCancel = function (transferId, responseCallback) {
+    var ref = this;
+
+    /**
+     * Function that handles response callback
+     */
+    var handleResponseFn = function (result) {
+      log.debug([ref.id, 'Peer', 'RTCDataChannel', 'Response to terminating data transfer session result ->'], result);
+
+      responseCallback(result);
+    };
+
+    /**
+     * Function that handles error parsing to serve in response callback
+     */
+    var handleErrorFn = function (errorMessage) {
+      log.error([ref.id, 'Peer', 'RTCDataChannel', 'Failed terminating data transfer session as ' +
+        errorMessage + ' ->'], transferId);
+
+      handleResponseFn(new Error('Failed terminating data transfer session as ' + errorMessage));
+    };
+
+    // Prevent data transfer when RTCDataChannel feature is not enabled
+    if (!ref._connectionSettings.enableDataChannel) {
+      handleErrorFn('datachannel feature is not enabled for this Peer');
+      return;
+    }
+
+    // Fallback for single RTCDataChannel connection
+    if (superRef._FALLBACK_INTEROP_AGENTS.indexOf(ref.agent.name) > -1) {
+      log.warn([ref.id, 'Peer', 'RTCDataChannel', 'Fallback to support single channel connection by ' +
+        'terminating transfer on single channel ->'], transferId);
+      ref._channels.main.transferCancel(transferId, handleResponseFn);
+      return;
+    }
+
+    if (!ref._channels[transferId]) {
+      handleErrorFn('datachannel does not exists');
+      return;
+    }
+
+    ref._channels[transferId].transferCancel(transferId, handleResponseFn);
   };
 
   /**
