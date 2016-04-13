@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:57:52 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:04:05 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1594,10 +1594,11 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
    * @method _transferSetState
    * @param {String} state The current data transfer state.
    * @param {Error} [error] The Error exception object received in terminated states.
+   * @param {Boolean} [isErrorReceived=false] The flag that indicates if Error message is received from Peer.
    * @for SkylinkDataChannel
    * @since 0.6.x
    */
-  SkylinkDataChannel.prototype._transferSetState = function (state, error) {
+  SkylinkDataChannel.prototype._transferSetState = function (state, error, isErrorReceived) {
     var ref = this;
 
     // Prevent triggering of event states if data transfer session is empty
@@ -1761,7 +1762,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
         ref._transfer.id);
 
       // Send ERROR message
-      if (newState === superRef.DATA_TRANSFER_STATE.ERROR) {
+      if (newState === superRef.DATA_TRANSFER_STATE.ERROR && !isErrorReceived) {
         log.debug([ref.peerId, 'DataChannel', ref.id, 'Reporting error message to Peer']);
 
         ref._messageSend(superRef._constructDTProtocolERROR(ref._transfer, error));
@@ -1805,9 +1806,9 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
         'Dropping of sending data as connection state is not "open" ->'], dataString);
 
       // Inform and reflect that data transfer failed due to RTCDataChannel readyState is not ready yet
-      if (typeof message === 'object' && message.type !== superRef._DC_PROTOCOL_TYPE.MESSAGE) {
+      if (typeof message === 'object' && [superRef._DC_PROTOCOL_TYPE.MESSAGE, superRef._DC_PROTOCOL_TYPE.ERROR].indexOf(message.type) > -1) {
         ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-          new Error('Failed data transfer as datachannel readyState is not "open"'));
+          new Error('Failed data transfer as datachannel readyState is not "open"'), false);
       }
       return;
     }
@@ -1984,7 +1985,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       // Prevent continuation of data transfer session if invalid data chunk is received
       if (!data) {
         ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-          new Error('Failed data transfer as invalid data packet is received'));
+          new Error('Failed data transfer as invalid data packet is received'), false);
         return;
       }
 
@@ -2056,7 +2057,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
 
     } else {
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-        new Error('Failed downloading transfer as packet received size is incorrect'));
+        new Error('Failed downloading transfer as packet received size is incorrect'), false);
       return;
     }
 
@@ -2131,7 +2132,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       return;
     }
 
-    ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR, new Error(message.content || 'Unknown Error'));
+    ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR, new Error(message.content || 'Unknown Error'), true);
   };
 
   /**
@@ -2156,7 +2157,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       superRef._trigger('dataChannelState', closedState, ref.peerId, null, ref.id, ref.type);
 
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-        new Error('Failed data transfer as datachannel readyState is "closed"'));
+        new Error('Failed data transfer as datachannel readyState is "closed"'), false);
     };
   };
 
@@ -2180,7 +2181,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
         ref.peerId, error, ref.id, ref.type);
 
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-        new Error('Failed data transfer datachannel connection encountered errors'));
+        new Error('Failed data transfer datachannel connection encountered errors'), false);
     };
   };
 
@@ -2243,6 +2244,14 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
             ref._messageReactToACKProtocol(message);
             break;
 
+          case superRef._DC_PROTOCOL_TYPE.ERROR:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
+            ref._messageReactToERRORProtocol(message);
+            break;
+
           default:
             log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of unknown protocol received ->'], message);
         }
@@ -2282,7 +2291,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
 
     ref._transfer.checker = setTimeout(function () {
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
-        new Error('Failed transfer response timeout has expired'));
+        new Error('Failed transfer response timeout has expired'), false);
     }, ref._transfer.timeout * 1);
   };
 
