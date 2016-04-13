@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sat Apr 09 2016 20:53:22 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:41:33 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1813,9 +1813,9 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._RTCDataChannel.send(dataString);
 
     // Start setting timeouts
-    //if (!(typeof message === 'object' && message.type === superRef._DC_PROTOCOL_TYPE.MESSAGE)) {
-      /* TODO: Timeouts */
-    //}
+    if (!(typeof message === 'object' && message.type === superRef._DC_PROTOCOL_TYPE.MESSAGE)) {
+      ref._monitorTransferStatus();
+    }
   };
 
 
@@ -2200,10 +2200,18 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
             break;
 
           case superRef._DC_PROTOCOL_TYPE.WRQ:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
             ref._messageReactToWRQProtocol(message);
             break;
 
           case superRef._DC_PROTOCOL_TYPE.ACK:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
             ref._messageReactToACKProtocol(message);
             break;
 
@@ -2216,10 +2224,38 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
         if (data.indexOf('{') > -1) {
           log.error([ref.peerId, 'DataChannel', ref.id, 'Failed parsing message object received ->'], error);
         } else {
+          if (ref._transfer && ref._transfer.checker) {
+            log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+            clearTimeout(ref._transfer.checker);
+          }
           ref._messageReactToDATAProtocol(data);
         }
       }
     };
+  };
+
+  /**
+   * Starts the transfer timer
+   * @method _monitorTransferStatus
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._monitorTransferStatus = function () {
+    var ref = this;
+
+    if (!ref._transfer) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of monitoring transfer status as ' +
+        'there is no transfer status present']);
+      return;
+    }
+
+    log.debug([ref.peerId, 'DataChannel', ref.id, 'Monitoring transfer response']);
+
+    ref._transfer.checker = setTimeout(function () {
+      ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
+        new Error('Failed transfer response timeout has expired'));
+    }, ref._transfer.timeout * 1000);
   };
 
   return new SkylinkDataChannel();

@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sat Apr 09 2016 20:53:22 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:41:33 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Sat Apr 09 2016 20:53:22 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:41:33 GMT+0800 (SGT) */
 
 (function() {
 
@@ -12270,9 +12270,9 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._RTCDataChannel.send(dataString);
 
     // Start setting timeouts
-    //if (!(typeof message === 'object' && message.type === superRef._DC_PROTOCOL_TYPE.MESSAGE)) {
-      /* TODO: Timeouts */
-    //}
+    if (!(typeof message === 'object' && message.type === superRef._DC_PROTOCOL_TYPE.MESSAGE)) {
+      ref._monitorTransferStatus();
+    }
   };
 
 
@@ -12657,10 +12657,18 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
             break;
 
           case superRef._DC_PROTOCOL_TYPE.WRQ:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
             ref._messageReactToWRQProtocol(message);
             break;
 
           case superRef._DC_PROTOCOL_TYPE.ACK:
+            if (ref._transfer && ref._transfer.checker) {
+              log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+              clearTimeout(ref._transfer.checker);
+            }
             ref._messageReactToACKProtocol(message);
             break;
 
@@ -12673,10 +12681,38 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
         if (data.indexOf('{') > -1) {
           log.error([ref.peerId, 'DataChannel', ref.id, 'Failed parsing message object received ->'], error);
         } else {
+          if (ref._transfer && ref._transfer.checker) {
+            log.debug([ref.peerId, 'DataChannel', ref.id, 'Clearing timeout']);
+            clearTimeout(ref._transfer.checker);
+          }
           ref._messageReactToDATAProtocol(data);
         }
       }
     };
+  };
+
+  /**
+   * Starts the transfer timer
+   * @method _monitorTransferStatus
+   * @private
+   * @for SkylinkDataChannel
+   * @since 0.6.x
+   */
+  SkylinkDataChannel.prototype._monitorTransferStatus = function () {
+    var ref = this;
+
+    if (!ref._transfer) {
+      log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of monitoring transfer status as ' +
+        'there is no transfer status present']);
+      return;
+    }
+
+    log.debug([ref.peerId, 'DataChannel', ref.id, 'Monitoring transfer response']);
+
+    ref._transfer.checker = setTimeout(function () {
+      ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
+        new Error('Failed transfer response timeout has expired'));
+    }, ref._transfer.timeout * 1000);
   };
 
   return new SkylinkDataChannel();
