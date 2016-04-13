@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:26:59 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:32:11 GMT+0800 (SGT) */
 
 (function() {
 
@@ -6331,9 +6331,9 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     var options = {
       mandatory: {
         OfferToReceiveAudio: true,
-        OfferToReceiveVideo: true,
-        iceRestart: restartICE
-      }
+        OfferToReceiveVideo: true
+      },
+      iceRestart: restartICE
     };
 
     // Fallback to the older mandatory format as Safari / IE does not support the new format yet
@@ -6344,6 +6344,14 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         /* NOTE: Is this flag standard in mandatory ? */
         iceRestart: restartICE
       };
+
+      // Fallback to only receive audio for Edge to other browsers case
+      if (window.webrtcDetectedBrowser === 'edge' && ref.agent.name !== 'edge') {
+        log.warn([ref.id, 'Peer', 'RTCSessionDescription', 'Fallback to only receive audio for connection ' +
+          'for Edge with other browsers']);
+
+        options.offerToReceiveVideo = false;
+      }
     }
 
     // Create RTCDataChannel if enabled
@@ -6361,13 +6369,6 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     // RTCPeerConnection.createOffer() success
     var createOfferSuccessFn = function (offer) {
       log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Created local offer ->'], offer);
-
-      if (superRef._SDPParser.detectICERestart(ref._RTCPeerConnection.localDescription, offer)) {
-        log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Restarting the ICE gathered flag as ' +
-          'ICE restart is detected']);
-
-        ref._connectionStatus.candidatesGathered = false;
-      }
 
       // Sets the local offer RTCSessionDescription
       ref._handshakeSetLocal(offer);
@@ -6417,13 +6418,6 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       // RTCPeerConnection.createAnswer() success
       var createAnswerSuccessFn = function (answer) {
         log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Created local answer ->'], answer);
-
-        if (superRef._SDPParser.detectICERestart(ref._RTCPeerConnection.localDescription, answer)) {
-          log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Restarting the ICE gathered flag as ' +
-            'ICE restart is detected']);
-
-          ref._connectionStatus.candidatesGathered = false;
-        }
 
         // Set the local answer
         ref._handshakeSetLocal(answer);
@@ -6500,6 +6494,8 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         return;
       }
 
+      // Configure required configurations before the sending local RTCSessionDescription first
+      ref._handshakeConfigureLocal(sessionDescription);
 
       log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Resending local ' +
         sessionDescription.type + ' ->'], sessionDescription);
@@ -6683,6 +6679,14 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       return;
     }
 
+    // Prevent adding Edge's RTCIceCandidate.candidate "endOfCandidates" in other browsers
+    if (window.webrtcDetectedBrowser !== 'edge' && candidate.candidate.indexOf('endOfCandidates') > 0) {
+      log.warn([ref.id, 'Peer', 'RTCIceCandidate',
+        'Dropping of adding remote candidate as it is type of "endOfCandidates" ' +
+        'and is only used for Edge ->'], candidate);
+      return;
+    }
+
     // Prevent adding remote RTCIceCandidate if RTCPeerConnection object does not have remote RTCSessionDescription
     if (!(!!ref._RTCPeerConnection.remoteDescription && !!ref._RTCPeerConnection.remoteDescription.sdp)) {
       log.debug([ref.id, 'Peer', 'RTCIceCandidate',
@@ -6751,15 +6755,6 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       // Configure the streaming settings information
       if (typeof peerData.userInfo.settings === 'object' && peerData.userInfo.settings !== null) {
         ref.streamingInfo.settings = peerData.userInfo.settings;
-
-        // Configure for streaming settings audio stereo (for OPUS codec connection) setting
-        if (typeof peerData.userInfo.settings.audio === 'object') {
-          /* NOTE: Perhaps we actually need not to have both Peers connected to have OPUS streaming since
-             it is not the decoding part for the self Peer only? */
-          // Both Peers has to have audio.stereo option enabled
-          ref._connectionSettings.stereo = peerData.userInfo.settings.audio.stereo === true &&
-            (superRef._streamSettings.audio && superRef._streamSettings.audio.stereo === true);
-        }
       }
     }
 
@@ -7068,6 +7063,15 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       configuration.iceServers = superRef._room.connection.peerConfig.iceServers;
     }
 
+    // Enforce TURN connections for Edge.
+    /* NOTE: This fails for some reason. Edge interop is beta */
+    if (superRef._forceTURN && window.webrtcDetectedBrowser === 'edge') {
+      log.warn([ref.id, 'Peer', 'RTCPeerConnection', 'Configurating Edge ICE transport policy to ' +
+        'gather TURN candidates only. This is an experimental feature and may not work.']);
+
+      configuration.iceTransportPolicy = 'relay';
+    }
+
     /**
      * Construct the RTCPeerConnection object
      */
@@ -7158,7 +7162,34 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
       if (!hasAlreadyAdded && updatedStream !== null) {
         log.debug([ref.id, 'Peer', 'MediaStream', 'Adding local stream ->'], updatedStream);
-        ref._RTCPeerConnection.addStream(updatedStream);
+
+        // Fallback to only receive audio for Edge to other browsers case
+        if (window.webrtcDetectedBrowser === 'edge' && ref.agent.name !== 'edge') {
+          log.warn([ref.id, 'Peer', 'MediaStream', 'Fallback to only send audio for connection ' +
+            'for Edge with other browsers']);
+
+          try {
+            var audioOnlyStream = updatedStream.clone();
+
+            audioOnlyStream.getVideoTracks().forEach(function (track) {
+              log.warn([ref.id, 'Peer', 'MediaStreamTrack', 'Removing video track from stream ->'], track);
+
+              audioOnlyStream.removeTrack(track);
+            });
+
+            ref._RTCPeerConnection.addStream(audioOnlyStream);
+
+          } catch (error) {
+            log.error([ref.id, 'Peer', 'MediaStream', 'Dropping of adding stream due to lack of ' +
+              'stream .clone() support ->'], {
+              stream: updatedStream,
+              error: error
+            });
+          }
+
+        } else {
+          ref._RTCPeerConnection.addStream(updatedStream);
+        }
       }
     };
 
@@ -7251,16 +7282,8 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
             return;
           }
 
-          /**
-           * Parse SDP: Configure for the use-case of switching of streams for the Firefox local RTCSessionDescription
-           *   during re-negotiation. Firefox is always the answerer with other Peers
-           */
-          if (window.webrtcDetectedBrowser === 'firefox' && ref.agent.name !== 'firefox') {
-            /* NOTE: Should we check if the sessionDescription.type is "answer" before implementing the logic? */
-            log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating Firefox local answer with SSRC lines ' +
-              'to interop with other browsers']);
-            sessionDescription.sdp = superRef._SDPParser.configureFirefoxAnswerSSRC(sessionDescription.sdp);
-          }
+          // Configure required configurations before the sending local RTCSessionDescription first
+          ref._handshakeConfigureLocal(sessionDescription);
 
           log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Sending delayed local ' +
             sessionDescription.type + ' ->'], sessionDescription);
@@ -7269,6 +7292,29 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
           superRef._sendChannelMessage({
             type: sessionDescription.type,
             sdp: sessionDescription.sdp,
+            mid: superRef._user.sid,
+            target: ref.id,
+            rid: superRef._room.id
+          });
+        }
+
+        // Spoof "endOfCandidates" for Edge
+        if (window.webrtcDetectedBrowser !== 'edge' && ref.agent.name === 'edge') {
+          /**
+           * Parse SDP: Create the "spoof" "endOfCandidates" local RTCIceCandidates to tell
+           *   Edge that ICE gathering has completed.
+           */
+          var edgeEndOfCandidate = superRef._SDPParser.configureEdgeEndOfCandidates(
+            ref._RTCPeerConnection.localDescription);
+
+          log.debug([ref.id, 'Peer', 'RTCIceCandidate', 'Spoofing end of candidates for Edge browser ->'],
+            edgeEndOfCandidate);
+
+          superRef._sendChannelMessage({
+            type: superRef._SIG_MESSAGE_TYPE.CANDIDATE,
+            label: edgeEndOfCandidate.sdpMLineIndex,
+            id: edgeEndOfCandidate.sdpMid,
+            candidate: edgeEndOfCandidate.candidate,
             mid: superRef._user.sid,
             target: ref.id,
             rid: superRef._room.id
@@ -7479,6 +7525,16 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
   SkylinkPeer.prototype._handshakeSetLocal = function (sessionDescription) {
     var ref = this;
 
+    /**
+     * Parse SDP: Detect ICE restart and restart candidates gathered flag for disabled trickle ICE state.
+     */
+    if (superRef._SDPParser.detectICERestart(ref._RTCPeerConnection.localDescription, sessionDescription)) {
+      log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Restarting the ICE gathered flag as ' +
+        'ICE restart is detected']);
+
+      ref._connectionStatus.candidatesGathered = false;
+    }
+
     // Prevent setting the local offer RTCSessionDescription if
     //   RTCPeerConnection.signalingState is not "stable"
     if (sessionDescription.type === 'offer') {
@@ -7500,6 +7556,14 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     /**
      * Parse SDP: Configure OPUS codec stereo modification
      */
+    /*
+       NOTE: We will not make stereo option enabled for where both peers has to enable the option for
+         stereo to work. We will configure it just as sending stream for the peer.
+         Configuring at here to re-update with current audio stereo status always
+     */
+    ref._connectionSettings.stereo = superRef._streamSettings.audio &&
+      superRef._streamSettings.audio.stereo === true;
+
     log.info([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating OPUS stereo enabled option ->'],
       ref._connectionSettings.stereo);
 
@@ -7582,7 +7646,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     sessionDescription.sdp = superRef._SDPParser.removeFirefoxH264Pref(sessionDescription.sdp);
 
     /**
-     * Configure the audio codec to use in connection when available
+     * Parse SDP: Configure the audio codec to use in connection when available
      */
     if (superRef._selectedAudioCodec !== superRef.AUDIO_CODEC.AUTO) {
       log.info([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating to select audio codec if available ->'],
@@ -7607,6 +7671,17 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
     } else {
       log.warn([ref.id, 'Peer', 'RTCSessionDescription', 'Using browser\'s selected default video codec']);
+    }
+
+    /**
+     * Parse SDP: Prefer OPUS codec for Edge to other browsers connection
+     */
+    if (window.webrtcDetectedBrowser === 'edge' && ref.agent.name !== 'edge') {
+      log.info([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating to select OPUS audio codec for ' +
+        'interopability with Edge to other browsers ->'], superRef.AUDIO_CODEC.OPUS);
+
+      sessionDescription.sdp = superRef._SDPParser.configureCodec(sessionDescription.sdp, 'audio',
+        superRef.AUDIO_CODEC.OPUS);
     }
 
     log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Setting local ' +
@@ -7644,19 +7719,11 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
         return;
       }
 
+      // Configure required configurations before the sending local RTCSessionDescription first
+      ref._handshakeConfigureLocal(sessionDescription);
+
       log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Sending local ' +
         sessionDescription.type + ' ->'], sessionDescription);
-
-      /**
-       * Parse SDP: Configure for the use-case of switching of streams for the Firefox local RTCSessionDescription
-       *   during re-negotiation. Firefox is always the answerer with other Peers
-       */
-      if (window.webrtcDetectedBrowser === 'firefox' && ref.agent.name !== 'firefox') {
-        /* NOTE: Should we check if the sessionDescription.type is "answer" before implementing the logic? */
-        log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating Firefox local answer with SSRC lines ' +
-          'to interop with other browsers']);
-        sessionDescription.sdp = superRef._SDPParser.configureFirefoxAnswerSSRC(sessionDescription.sdp);
-      }
 
       // Send the local RTCSessionDescription
       superRef._sendChannelMessage({
@@ -7791,6 +7858,45 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
       ref._RTCPeerConnection.setRemoteDescription(sessionDescription).then(setRemoteDescriptionSuccessFn).catch(setRemoteDescriptionFailureFn);
     } else {
       ref._RTCPeerConnection.setRemoteDescription(sessionDescription, setRemoteDescriptionSuccessFn, setRemoteDescriptionFailureFn);
+    }
+  };
+
+  /**
+   * Configures the local RTCSessionDescription object to be sent.
+   * @method _handshakeConfigureLocal
+   * @param {RTCSessionDescription} sessionDescription The local RTCSessionDescription generated.
+   * @private
+   * @for SkylinkPeer
+   * @since 0.6.x
+   */
+  SkylinkPeer.prototype._handshakeConfigureLocal = function (sessionDescription) {
+    var ref = this;
+
+    /**
+     * Parse SDP: Configure for the use-case of switching of streams for the Firefox local RTCSessionDescription
+     *   during re-negotiation. Firefox is always the answerer with other Peers
+     */
+    if (window.webrtcDetectedBrowser === 'firefox' && ref.agent.name !== 'firefox') {
+      /* NOTE: Should we check if the sessionDescription.type is "answer" before implementing the logic? */
+      log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Configurating Firefox local answer with SSRC lines ' +
+        'to interop with other browsers']);
+      sessionDescription.sdp = superRef._SDPParser.configureFirefoxAnswerSSRC(sessionDescription.sdp);
+    }
+
+    // Fallback for Edge browsers with other browsers (non-Edge)
+    if (window.webrtcDetectedBrowser === 'edge' && ref.agent.name !== 'edge') {
+      log.debug([ref.id, 'Peer', 'RTCSessionDescription', 'Removing SILK codec references for ' +
+        'Edge interopability with other browsers']);
+
+      /**
+       * Parse SDP: Remove the SILK codec preference from Edge browsers connecting to other browsers
+       */
+      sessionDescription.sdp = superRef._SDPParser.removeEdgeSILKCodec(sessionDescription.sdp);
+
+      /**
+       * Parse SDP: Configure connection issues with Edge and other browsers
+       */
+      sessionDescription.sdp = superRef._SDPParser.configureEdgeToOtherBrowsers(sessionDescription.sdp);
     }
   };
 
@@ -10069,7 +10175,8 @@ Skylink.prototype._SDPParser = {
       var rtpmapLine = sdpLines[i];
 
       if (rtpmapLine.indexOf('a=rtpmap:') === 0) {
-        if (rtpmapLine.indexOf(codec) > 0) {
+        if (rtpmapLine.indexOf(codec) > 0 || (window.webrtcDetectedBrowser === 'edge' &&
+          codec === 'opus' && rtpmapLine.indexOf('OPUS') > 0)) {
           codecFound = true;
           codecPayload = rtpmapLine.split(':')[1].split(' ')[0];
         }
@@ -10200,6 +10307,106 @@ Skylink.prototype._SDPParser = {
 
     return currentSdpCreds.username !== newSdpCreds.username ||
       currentSdpCreds.password !== newSdpCreds.password;
+  },
+
+  /**
+   * Creates the "spoofed" Edge's "endOfCandidate" RTCIceCandidate
+   *   required for interopability by parsing the audio mid ID
+   *   from the local RTCSessionDescription.
+   * @method configureEdgeEndOfCandidates
+   * @param {RTCSessionDescription} currentSdp The current local RTCSessionDescription.
+   * @return {RTCIceCandidate} endOfCandidate The local "endOfCandidates" candidate
+   *   to be returned to Edge for interopability.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
+  configureEdgeEndOfCandidates: function (currentSdp) {
+    var candidate = new RTCIceCandidate({
+      sdpMLineIndex: 0,
+      sdpMid: '',
+      candidate: 'candidate:1 1 udp 1 0.0.0.0 9 typ endOfCandidates'
+    });
+
+    if (!!currentSdp && !!currentSdp.sdp) {
+      var sdpLines = currentSdp.sdp.split('\r\n');
+
+      // Parse and find that one a:mid line since we are only sending and receiving audio only.
+      for (var i = 0; i < sdpLines.length; i++) {
+        if (sdpLines[i].indexOf('a=mid:') === 0) {
+          candidate.sdpMid = sdpLines[i].split(':')[1] || '';
+          break;
+        }
+      }
+    }
+
+    return candidate;
+  },
+
+  /**
+   * Removes the SILK codec from Edge to other browsers connection
+   *   as other browsers do not support the SILK codec.
+   * @method removeEdgeSILKCodec
+   * @param {String} sdpString The local offer RTCSessionDescription.sdp.
+   * @return {String} updatedSdpString The modified local offer RTCSessionDescription.sdp
+   *   with removed SILK codec references.
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
+  removeEdgeSILKCodec: function (sdpString) {
+    var sdpLines = sdpString.split('\r\n'),
+        codecPayload = null;
+
+    // Find the SILK codec reference first
+    for (var i = 0; i < sdpLines.length; i++) {
+      if (sdpLines[i].indexOf('a=rtpmap:') === 0 && sdpLines[i].indexOf('SILK') > 0) {
+        codecPayload = (sdpLines[i].split(':')[1] || '').split(' ')[0];
+        break;
+      }
+    }
+
+    if (codecPayload) {
+      for (var j = 0; j < sdpLines.length; j++) {
+        if (sdpLines[j].indexOf('m=audio') === 0) {
+          var parts = sdpLines[j].split(' ');
+
+          for (var p = 0; p < parts.length; p++) {
+            if (parts[p] === codecPayload) {
+              parts.splice(p, 1);
+              break;
+            }
+          }
+
+          sdpLines[j] = parts.join(' ');
+          break;
+        }
+      }
+    }
+
+    // Return modified RTCSessionDescription.sdp
+    return sdpLines.join('\r\n');
+  },
+
+  /**
+   * Handles the connection issues with Edge browsers with other browsers (non-Edge).
+   * @method configureEdgeToOtherBrowsers
+   * @param {String} sdpString The local offer RTCSessionDescription.sdp.
+   * @return {String} updatedSdpString The modified local offer RTCSessionDescription.sdp
+   *   with connection interopability from Edge with other browsers (non-Edge).
+   * @private
+   * @for Skylink
+   * @since 0.6.x
+   */
+  configureEdgeToOtherBrowsers: function (sdpString) {
+    var newSdpString = '';
+
+    // Remove all rtcp-fb lines with this reference -> x-message app send:dsh recv:dsh
+    //   This somehow causes connectivity issues with other browsers (non-Edge)
+    newSdpString = sdpString.replace(/a=rtcp-fb:.*\r\n/g, '');
+
+    // Return modified RTCSessionDescription.sdp
+    return newSdpString;
   }
 };
 var _LOG_KEY = 'SkylinkJS';
@@ -13431,6 +13638,11 @@ Skylink.prototype._inRoomHandler = function(message) {
   // Append a lower weight for Firefox because setting as answerer always causes less problems with other agents
   if (window.webrtcDetectedBrowser === 'firefox') {
     self._peerPriorityWeight -= 100000000;
+  }
+
+  // Append a higher weight for Edge because setting as offerer allows it to receive audio only with other agents
+  if (window.webrtcDetectedBrowser === 'edge') {
+    self._peerPriorityWeight += 200000000000;
   }
 
   if (self._mediaScreen && self._mediaScreen !== null) {
