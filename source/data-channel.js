@@ -1052,7 +1052,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._transfer.checker = setTimeout(function () {
       ref._transferSetState(superRef.DATA_TRANSFER_STATE.ERROR,
         new Error('Failed transfer response timeout has expired'), false);
-    }, ref._transfer.timeout * 1);
+    }, ref._transfer.timeout * 1000);
   };
 
   return new SkylinkDataChannel();
