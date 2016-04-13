@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:11:50 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 02:15:01 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1760,6 +1760,12 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
 
       log.debug([ref.peerId, 'DataChannel', ref.id, 'Setting data transfer session state as completed ->'],
         ref._transfer.id);
+
+      if (ref._transfer.checker) {
+        log.warn([ref.peerId, 'DataChannel', ref.id, 'Clearing transfer session timeout as transfer session has ended']);
+
+        clearTimeout(ref._transfer.checker);
+      }
 
       // Send ERROR message
       if (newState === superRef.DATA_TRANSFER_STATE.ERROR && !isErrorReceived) {
