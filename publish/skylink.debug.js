@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:53:14 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Thu Apr 14 2016 01:57:52 GMT+0800 (SGT) */
 
 (function() {
 
@@ -1820,7 +1820,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     ref._RTCDataChannel.send(dataString);
 
     // Start setting timeouts
-    if (!(typeof message === 'object' && message.type === superRef._DC_PROTOCOL_TYPE.MESSAGE)) {
+    if (!(typeof message === 'object' && [superRef._DC_PROTOCOL_TYPE.MESSAGE, superRef._DC_PROTOCOL_TYPE.WRQ].indexOf(message.type) > -1)) {
       ref._monitorTransferStatus();
     }
   };
