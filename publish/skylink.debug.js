@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:33:19 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:38:50 GMT+0800 (SGT) */
 
 (function() {
 
@@ -5510,27 +5510,21 @@ Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTarget
     callback = passedCallback;
   }
 
-  var handleErrorFn = function (error, transferInfo) {
+  var handleErrorFn = function (transferErrors, transferInfo) {
+    log.error([null, 'Skylink', 'sendBlobData()', 'Failed data transfer ->'], transferErrors);
+
     callback({
       state: null,
-      error: isPrivate && listOfPeers.length === 1 ? error : null,
+      error: isPrivate && listOfPeers.length === 1 ? transferErrors[listOfPeers[0]] : null,
       transferId: transferInfo.id || null,
       peerId: isPrivate && listOfPeers.length === 1 ? listOfPeers[0] : null,
-      transferErrors: (function () {
-        var list = {};
-
-        listOfPeers.forEach(function (peerId) {
-          list[peerId] = error;
-        });
-
-        return list;
-      })(),
+      transferErrors: transferErrors,
       isPrivate: isPrivate,
       transferInfo: {
         name: transferInfo.dataName || null,
         size: transferInfo.dataSize || null,
         transferId: transferInfo.id || null,
-        dataType: 'dataURL',
+        dataType: 'blob',
         timeout: timeout,
         isPrivate: isPrivate
       }
@@ -5547,7 +5541,7 @@ Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTarget
         name: transferInfo.dataName || null,
         size: transferInfo.dataSize || null,
         transferId: transferInfo.id || null,
-        dataType: 'dataURL',
+        dataType: 'blob',
         timeout: timeout,
         isPrivate: isPrivate
       }
@@ -5555,20 +5549,32 @@ Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTarget
   };
 
   if (!(typeof passedData === 'string' && !!passedData)) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as invalid data URL string data is provided'), {});
+    var invalidURLDataErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      invalidURLDataErrorsList[peerId] =
+        new Error('Failed to start data transfer session as invalid data URL string data is provided');
+    });
+
+    handleErrorFn(invalidURLDataErrorsList, {});
     return;
   }
 
   if (listOfPeers.length === 0) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as there is no peers to send data to'), {});
+    var noPeersErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      noPeersErrorsList[peerId] =
+        new Error('Failed to start data transfer session as there is no peers to send data to');
+    });
+
+    handleErrorFn(noPeersErrorsList, {});
     return;
   }
 
-  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (error, transferInfo) {
-    if (error) {
-      handleErrorFn(error, transferInfo);
+  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (transferErrors, transferInfo) {
+    if (transferErrors) {
+      handleErrorFn(transferErrors, transferInfo);
       return;
     }
 
