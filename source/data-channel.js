@@ -1158,7 +1158,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
  * @param {Array} listOfPeers The list of Peers to start transfer with.
  * @param {Function} responseCallback The callback function triggered when there
  *   is a response status on the data transfer session.
- *   The callback function signature is: (<code>error</code>).
+ *   The callback function signature is: (<code>error</code>, <code>success</code>).
  *   If <code>error</code> value returned is not <code>null</code>,
  *   it means that there has been Errors while trying to start a data transfer session.
  * @private
@@ -1214,11 +1214,11 @@ Skylink.prototype._createTransfer = function (data, timeout, isPrivate, listOfPe
 
         // Respond callback with Errors
         if (Object.keys(listOfPeersErrors).length > 0) {
-          responseCallback(listOfPeersErrors);
+          responseCallback(listOfPeersErrors, newUploadTransfer);
 
         // Respond callback with success
         } else {
-          responseCallback(null);
+          responseCallback(null, newUploadTransfer);
         }
 
         log.debug([null, 'Skylink', newUploadTransfer.id, 'Clearing upload data transfer session as all Peers ' +
