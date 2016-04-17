@@ -427,3 +427,67 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
     handleSuccessFn(transferInfo);
   });
 };
+
+/**
+ * Terminates a current data transfer with Peer.
+ * @method cancelBlobTransfer
+ * @param {String} peerId The Peer ID associated with the data transfer.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to terminate the request.
+ * @trigger dataTransferState
+ * @component DataTransfer
+ * @deprecated Use .cancelDataTransfer()
+ * @for Skylink
+ * @since 0.5.7
+ */
+Skylink.prototype.cancelBlobTransfer =
+/**
+ * Terminates a current data transfer with Peer.
+ * @method cancelDataTransfer
+ * @param {String} peerId The Peer ID associated with the data transfer.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to terminate the request.
+ * @trigger dataTransferState
+ * @component DataTransfer
+ * @for Skylink
+ * @since 0.6.1
+ */
+Skylink.prototype.cancelDataTransfer = function (peerId, transferId) {
+  var superRef = this;
+
+  var handleErrorFn = function (error) {
+    log.error([peerId, 'Skylink', 'cancelDataTransfer()',
+      'Failed terminating data transfer session ->'], {
+      transferId: transferId,
+      error: error
+    });
+  };
+
+  var handleSuccessFn = function () {
+    log.info([peerId, 'Skylink', 'cancelDataTransfer()',
+      'Terminated data transfer session ->'], transferId);
+  };
+
+  if (!peerId) {
+    handleErrorFn(new Error('Failed terminating data transfer session as invalid peer ID is provided'));
+    return;
+  }
+
+  if (!transferId) {
+    handleErrorFn(new Error('Failed terminating data transfer session as invalid transfer session ID is provided'));
+    return;
+  }
+
+  if (!superRef._peers[peerId]) {
+    handleErrorFn(new Error('Failed terminating data transfer session as peer session does not exists'));
+    return;
+  }
+
+  superRef._peers[peerId].channelTransferCancel(transferId, function (error) {
+    if (error) {
+      handleErrorFn(error);
+      return;
+    }
+    handleSuccessFn();
+  });
+};

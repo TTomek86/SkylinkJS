@@ -344,7 +344,7 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
      */
     var handleErrorFn = function (errorMessage) {
       log.warn([ref.peerId, 'DataChannel', ref.id, 'Dropping of termination of data transfer request as ' +
-        errorMessage + ' ->'], [transferId, acceptTransfer]);
+        errorMessage + ' ->'], transferId);
 
       handleResponseFn(new Error('Failed termination of data transfer as ' + errorMessage));
     };
