@@ -491,3 +491,81 @@ Skylink.prototype.cancelDataTransfer = function (peerId, transferId) {
     handleSuccessFn();
   });
 };
+
+/**
+ * Responds to a data transfer request by a Peer.
+ * @method respondBlobRequest
+ * @param {String} peerId The sender Peer ID.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to accept or reject.
+ * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
+ *   to accept the data transfer and <code>false</code> as a response to reject the
+ *   data transfer request.
+ * @trigger dataTransferState, incomingDataRequest, incomingData
+ * @component DataTransfer
+ * @deprecated Use .acceptDataTransfer()
+ * @for Skylink
+ * @since 0.5.0
+ */
+Skylink.prototype.respondBlobRequest =
+/**
+ * Responds to a data transfer request by a Peer.
+ * @method acceptDataTransfer
+ * @param {String} peerId The sender Peer ID.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to accept or reject.
+ * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
+ *   to accept the data transfer and <code>false</code> as a response to reject the
+ *   data transfer request.
+ * @trigger dataTransferState, incomingDataRequest, incomingData
+ * @component DataTransfer
+ * @for Skylink
+ * @since 0.6.1
+ */
+Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
+  var superRef = this;
+
+  var handleErrorFn = function (error) {
+    log.error([peerId, 'Skylink', 'acceptDataTransfer()',
+      'Failed responding to data transfer session ->'], {
+      transferId: transferId,
+      error: error,
+      accept: accept
+    });
+  };
+
+  var handleSuccessFn = function () {
+    log.info([peerId, 'Skylink', 'acceptDataTransfer()',
+      'Response to data transfer session ->'], {
+      transferId: transferId,
+      accept: accept
+    });
+  };
+
+  if (!(typeof peerId === 'string' && !!peerId)) {
+    handleErrorFn(new Error('Failed responding to data transfer session as invalid peer ID is provided'));
+    return;
+  }
+
+  if (!(typeof transferId === 'string' && !!transferId)) {
+    handleErrorFn(new Error('Failed responding to data transfer session as invalid transfer session ID is provided'));
+    return;
+  }
+
+  if (!superRef._peers[peerId]) {
+    handleErrorFn(new Error('Failed responding to data transfer session as peer session does not exists'));
+    return;
+  }
+
+  if (typeof accept !== 'boolean') {
+    accept = false;
+  }
+
+  superRef._peers[peerId].channelTransferStartRespond(transferId, function (error) {
+    if (error) {
+      handleErrorFn(error);
+      return;
+    }
+    handleSuccessFn();
+  }, accept);
+};

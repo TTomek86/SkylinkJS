@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:06:56 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:15:48 GMT+0800 (SGT) */
 
 (function() {
 
@@ -4520,130 +4520,6 @@ Skylink.prototype._startDataTransfer = function(data, dataInfo, listOfPeers, cal
   }
 };
 
-
-/**
- * Responds to a data transfer request by a Peer.
- * @method respondBlobRequest
- * @param {String} peerId The sender Peer ID.
- * @param {String} transferId The data transfer ID of the data transfer request
- *   to accept or reject.
- * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
- *   to accept the data transfer and <code>false</code> as a response to reject the
- *   data transfer request.
- * @trigger dataTransferState, incomingDataRequest, incomingData
- * @component DataTransfer
- * @deprecated Use .acceptDataTransfer()
- * @for Skylink
- * @since 0.5.0
- */
-Skylink.prototype.respondBlobRequest =
-/**
- * Responds to a data transfer request by a Peer.
- * @method acceptDataTransfer
- * @param {String} peerId The sender Peer ID.
- * @param {String} transferId The data transfer ID of the data transfer request
- *   to accept or reject.
- * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
- *   to accept the data transfer and <code>false</code> as a response to reject the
- *   data transfer request.
- * @trigger dataTransferState, incomingDataRequest, incomingData
- * @component DataTransfer
- * @for Skylink
- * @since 0.6.1
- */
-Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
-  var superRef = this;
-
-  if (typeof peerId !== 'string' || typeof transferId !== 'string') {
-    throw new Error('Invalid param provided');
-  }
-
-  if (typeof accept !== 'boolean') {
-    accept = false;
-  }
-
-  if (!superRef._peers[peerId]) {
-    throw new Error('Peer does not exists');
-  }
-
-  // Alternate for mobile SDKs
-
-  superRef._peers[peerId].channelTransferStartRespond(transferId, function (error) {
-    log.debug('Data transfer acceptance stage ->', error);
-  }, accept);
-
-
-  /*if (typeof transferId !== 'string' && typeof peerId !== 'string') {
-    log.error([peerId, 'RTCDataChannel', null, 'Aborting accept data transfer as ' +
-      'transfer ID and peer ID is not provided'], {
-        accept: accept,
-        peerId: peerId,
-        transferId: transferId
-    });
-    return;
-  }
-
-  if (transferId.indexOf(this._TRANSFER_DELIMITER) === -1) {
-    log.error([peerId, 'RTCDataChannel', null, 'Aborting accept data transfer as ' +
-      'invalid transfer ID is provided'], {
-        accept: accept,
-        transferId: transferId
-    });
-    return;
-  }
-  var channelName = transferId.split(this._TRANSFER_DELIMITER)[0];
-
-  if (accept) {
-
-    log.info([peerId, 'RTCDataChannel', channelName, 'User accepted peer\'s request'], {
-      accept: accept,
-      transferId: transferId
-    });
-
-    if (!this._peerInformations[peerId] && !this._peerInformations[peerId].agent) {
-      log.error([peerId, 'RTCDataChannel', channelName, 'Aborting accept data transfer as ' +
-        'Peer informations for peer is missing'], {
-          accept: accept,
-          transferId: transferId
-      });
-      return;
-    }
-
-    this._downloadDataTransfers[channelName] = [];
-
-    var data = this._downloadDataSessions[channelName];
-    this._sendDataChannelMessage(peerId, {
-      type: this._DC_PROTOCOL_TYPE.ACK,
-      sender: this._user.sid,
-      ackN: 0,
-      agent: window.webrtcDetectedBrowser
-    }, channelName);
-    this._trigger('dataTransferState', this.DATA_TRANSFER_STATE.DOWNLOAD_STARTED,
-      data.transferId, peerId, {
-        name: data.name,
-        size: data.size,
-        data: null,
-        dataType: data.dataType,
-        percentage: 0,
-        senderPeerId: peerId,
-        timeout: data.timeout,
-        isPrivate: data.isPrivate
-    });
-  } else {
-    log.info([peerId, 'RTCDataChannel', channelName, 'User rejected peer\'s request'], {
-      accept: accept,
-      transferId: transferId
-    });
-    this._sendDataChannelMessage(peerId, {
-      type: this._DC_PROTOCOL_TYPE.ACK,
-      sender: this._user.sid,
-      ackN: -1
-    }, channelName);
-    delete this._downloadDataSessions[channelName];
-    delete this._downloadDataTransfers[channelName];
-  }*/
-};
-
 /**
  * Starts a [data URI](https://developer.mozilla.org/en-US/docs/Web/API/FileReader
  *   /readAsDataURL) transfer with Peers using the DataChannel connection.
@@ -5640,6 +5516,84 @@ Skylink.prototype.cancelDataTransfer = function (peerId, transferId) {
     }
     handleSuccessFn();
   });
+};
+
+/**
+ * Responds to a data transfer request by a Peer.
+ * @method respondBlobRequest
+ * @param {String} peerId The sender Peer ID.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to accept or reject.
+ * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
+ *   to accept the data transfer and <code>false</code> as a response to reject the
+ *   data transfer request.
+ * @trigger dataTransferState, incomingDataRequest, incomingData
+ * @component DataTransfer
+ * @deprecated Use .acceptDataTransfer()
+ * @for Skylink
+ * @since 0.5.0
+ */
+Skylink.prototype.respondBlobRequest =
+/**
+ * Responds to a data transfer request by a Peer.
+ * @method acceptDataTransfer
+ * @param {String} peerId The sender Peer ID.
+ * @param {String} transferId The data transfer ID of the data transfer request
+ *   to accept or reject.
+ * @param {Boolean} [accept=false] The flag that indicates <code>true</code> as a response
+ *   to accept the data transfer and <code>false</code> as a response to reject the
+ *   data transfer request.
+ * @trigger dataTransferState, incomingDataRequest, incomingData
+ * @component DataTransfer
+ * @for Skylink
+ * @since 0.6.1
+ */
+Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
+  var superRef = this;
+
+  var handleErrorFn = function (error) {
+    log.error([peerId, 'Skylink', 'acceptDataTransfer()',
+      'Failed responding to data transfer session ->'], {
+      transferId: transferId,
+      error: error,
+      accept: accept
+    });
+  };
+
+  var handleSuccessFn = function () {
+    log.info([peerId, 'Skylink', 'acceptDataTransfer()',
+      'Response to data transfer session ->'], {
+      transferId: transferId,
+      accept: accept
+    });
+  };
+
+  if (!(typeof peerId === 'string' && !!peerId)) {
+    handleErrorFn(new Error('Failed responding to data transfer session as invalid peer ID is provided'));
+    return;
+  }
+
+  if (!(typeof transferId === 'string' && !!transferId)) {
+    handleErrorFn(new Error('Failed responding to data transfer session as invalid transfer session ID is provided'));
+    return;
+  }
+
+  if (!superRef._peers[peerId]) {
+    handleErrorFn(new Error('Failed responding to data transfer session as peer session does not exists'));
+    return;
+  }
+
+  if (typeof accept !== 'boolean') {
+    accept = false;
+  }
+
+  superRef._peers[peerId].channelTransferStartRespond(transferId, function (error) {
+    if (error) {
+      handleErrorFn(error);
+      return;
+    }
+    handleSuccessFn();
+  }, accept);
 };
 Skylink.prototype._peerInformations = {};
 
