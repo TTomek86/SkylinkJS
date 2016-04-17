@@ -362,21 +362,15 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
     callback = passedCallback;
   }
 
-  var handleErrorFn = function (error, transferInfo) {
+  var handleErrorFn = function (transferErrors, transferInfo) {
+    log.error([null, 'Skylink', 'sendBlobData()', 'Failed data transfer ->'], transferErrors);
+
     callback({
       state: null,
-      error: isPrivate && listOfPeers.length === 1 ? error : null,
+      error: isPrivate && listOfPeers.length === 1 ? transferErrors[listOfPeers[0]] : null,
       transferId: transferInfo.id || null,
       peerId: isPrivate && listOfPeers.length === 1 ? listOfPeers[0] : null,
-      transferErrors: (function () {
-        var list = {};
-
-        listOfPeers.forEach(function (peerId) {
-          list[peerId] = error;
-        });
-
-        return list;
-      })(),
+      transferErrors: transferErrors,
       isPrivate: isPrivate,
       transferInfo: {
         name: transferInfo.dataName || null,
@@ -407,20 +401,32 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
   };
 
   if (!(typeof passedData === 'object' && passedData instanceof Blob)) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as invalid Blob data object is provided'), {});
+    var invalidBlobDataObjectErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      invalidBlobDataObjectErrorsList[peerId] =
+        new Error('Failed to start data transfer session as invalid Blob data object is provided');
+    });
+
+    handleErrorFn(invalidBlobDataObjectErrorsList, {});
     return;
   }
 
   if (listOfPeers.length === 0) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as there is no peers to send data to'), {});
+    var noPeersErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      noPeersErrorsList[peerId] =
+        new Error('Failed to start data transfer session as there is no peers to send data to');
+    });
+
+    handleErrorFn(noPeersErrorsList, {});
     return;
   }
 
-  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (error, transferInfo) {
-    if (error) {
-      handleErrorFn(error, transferInfo);
+  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (transferErrors, transferInfo) {
+    if (transferErrors) {
+      handleErrorFn(transferErrors, transferInfo);
       return;
     }
 

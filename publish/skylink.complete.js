@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:25:55 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:33:19 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10455,7 +10455,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:25:55 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:33:19 GMT+0800 (SGT) */
 
 (function() {
 
@@ -15608,21 +15608,15 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
     callback = passedCallback;
   }
 
-  var handleErrorFn = function (error, transferInfo) {
+  var handleErrorFn = function (transferErrors, transferInfo) {
+    log.error([null, 'Skylink', 'sendBlobData()', 'Failed data transfer ->'], transferErrors);
+
     callback({
       state: null,
-      error: isPrivate && listOfPeers.length === 1 ? error : null,
+      error: isPrivate && listOfPeers.length === 1 ? transferErrors[listOfPeers[0]] : null,
       transferId: transferInfo.id || null,
       peerId: isPrivate && listOfPeers.length === 1 ? listOfPeers[0] : null,
-      transferErrors: (function () {
-        var list = {};
-
-        listOfPeers.forEach(function (peerId) {
-          list[peerId] = error;
-        });
-
-        return list;
-      })(),
+      transferErrors: transferErrors,
       isPrivate: isPrivate,
       transferInfo: {
         name: transferInfo.dataName || null,
@@ -15653,20 +15647,32 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
   };
 
   if (!(typeof passedData === 'object' && passedData instanceof Blob)) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as invalid Blob data object is provided'), {});
+    var invalidBlobDataObjectErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      invalidBlobDataObjectErrorsList[peerId] =
+        new Error('Failed to start data transfer session as invalid Blob data object is provided');
+    });
+
+    handleErrorFn(invalidBlobDataObjectErrorsList, {});
     return;
   }
 
   if (listOfPeers.length === 0) {
-    handleErrorFn(
-      new Error('Failed to start data transfer session as there is no peers to send data to'), {});
+    var noPeersErrorsList = {};
+
+    listOfPeers.forEach(function (peerId) {
+      noPeersErrorsList[peerId] =
+        new Error('Failed to start data transfer session as there is no peers to send data to');
+    });
+
+    handleErrorFn(noPeersErrorsList, {});
     return;
   }
 
-  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (error, transferInfo) {
-    if (error) {
-      handleErrorFn(error, transferInfo);
+  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (transferErrors, transferInfo) {
+    if (transferErrors) {
+      handleErrorFn(transferErrors, transferInfo);
       return;
     }
 
