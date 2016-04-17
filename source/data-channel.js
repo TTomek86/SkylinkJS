@@ -819,7 +819,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       }
 
       // Increment the data chunk size to received size
-      ref._transfer.dataTransferredSize += Math.ceil(packetSize / 3) * 4;
+      ref._transfer.dataTransferredSize += ref._transfer.type === 'blob' ?
+        Math.ceil(packetSize / 3) * 4 : packetSize;
 
       // Configure to send the data chunk directly if data chunk is a string
       if (typeof data === 'string') {
@@ -883,7 +884,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     }
 
     ref._transfer.dataChunks[ref._transfer.dataACKIndex] = packetData;
-    ref._transfer.dataTransferredSize += Math.ceil(packetDataSize / 3) * 4;
+    ref._transfer.dataTransferredSize += ref._transfer.type === 'blob' ?
+      Math.ceil(packetDataSize / 3) * 4 : packetDataSize;
     ref._transfer.dataACKIndex += 1;
 
     // Send "ACK" message for continuous transfers

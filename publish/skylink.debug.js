@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:15:48 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:25:55 GMT+0800 (SGT) */
 
 (function() {
 
@@ -2059,7 +2059,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
       }
 
       // Increment the data chunk size to received size
-      ref._transfer.dataTransferredSize += Math.ceil(packetSize / 3) * 4;
+      ref._transfer.dataTransferredSize += ref._transfer.type === 'blob' ?
+        Math.ceil(packetSize / 3) * 4 : packetSize;
 
       // Configure to send the data chunk directly if data chunk is a string
       if (typeof data === 'string') {
@@ -2123,7 +2124,8 @@ Skylink.prototype._createDataChannel = function (peerId, channel, fallbackAsMain
     }
 
     ref._transfer.dataChunks[ref._transfer.dataACKIndex] = packetData;
-    ref._transfer.dataTransferredSize += Math.ceil(packetDataSize / 3) * 4;
+    ref._transfer.dataTransferredSize += ref._transfer.type === 'blob' ?
+      Math.ceil(packetDataSize / 3) * 4 : packetDataSize;
     ref._transfer.dataACKIndex += 1;
 
     // Send "ACK" message for continuous transfers
@@ -4520,245 +4522,6 @@ Skylink.prototype._startDataTransfer = function(data, dataInfo, listOfPeers, cal
   }
 };
 
-/**
- * Starts a [data URI](https://developer.mozilla.org/en-US/docs/Web/API/FileReader
- *   /readAsDataURL) transfer with Peers using the DataChannel connection.
- * - The receiving Peers have the option to accept or reject the data transfer with
- *   <a href="#method_acceptDataTransfer">acceptDataTransfer()</a>.
- * - For Peers connecting from our mobile platforms
- *   (<a href="http://skylink.io/ios/">iOS</a> / <a href="http://skylink.io/android/">Android</a>),
- *   the DataChannel connection channel type would be <code>DATA_CHANNEL_TYPE.MESSAGING</code>.<br>
- *   For Peers connecting from the Web platform, the DataChannel connection channel type would be
- *  <code>DATA_CHANNEL_TYPE.DATA</code>.
- * @method sendURLData
- * @param {String} data The dataURL (base64 binary string) string to transfer to Peers.
- * @param {Number} [timeout=60] The waiting timeout in seconds that the DataChannel connection
- *   data transfer should wait before throwing an exception and terminating the data transfer.
- * @param {String|Array} [targetPeerId] The array of targeted Peers to transfer the
- *   data object to. Alternatively, you may provide this parameter as a string to a specific
- *   targeted Peer to transfer the data object.
- * @param {Function} [callback] The callback fired after all the data transfers is completed
- *   successfully or met with an exception. The callback signature is <code>function (error, success)</code>.
- * @param {JSON} callback.error The error object received in the callback.
- *   If received as <code>null</code>, it means that there is no errors.
- * @param {String} [callback.error.state=null] <i>Deprecated</i>. The
- *   <a href="#event_dataTransferState">dataTransferState</a>
- *   when the error has occurred. This only triggers for a single targeted Peer data transfer.
- * @param {Object|String} [callback.error.error=null] <i>Deprecated</i>. The error received when the
- *   data transfer fails. This only triggers for single targeted Peer data transfer.
- * @param {String} callback.error.transferId The transfer ID of the failed data transfer.
- * @param {String} [callback.error.peerId=null] The single targeted Peer ID for the data transfer.
- *   This only triggers for single targeted Peer data transfer.
- * @param {Array} callback.error.listOfPeers The list of Peer that the data transfer has been
- *   initiated with.
- * @param {Boolean} callback.error.isPrivate The flag to indicate if the data transfer is a private
- *   transfer to the Peer directly and not broadcasted to all Peers.
- * @param {JSON} callback.error.transferErrors The list of errors occurred based on per Peer
- *   basis.
- * @param {Object|String} callback.error.transferErrors.(#peerId) The error that occurred when having
- *   a DataChannel connection data transfer with associated Peer.
- * @param {JSON} callback.error.transferInfo The transfer data object information.
- * @param {String} [callback.error.transferInfo.name=transferId] The data transfer ID.
- * @param {Number} callback.error.transferInfo.size The transfer data size.
- * @param {String} callback.error.transferInfo.transferId The data transfer ID.
- * @param {String} callback.error.transferInfo.dataType The type of data transfer initiated.
- *   The received type would be <code>"dataURL"</code>.
- * @param {String} callback.error.transferInfo.timeout The waiting timeout in seconds that the DataChannel
- *   connection data transfer should wait before throwing an exception and terminating the data transfer.
- * @param {Boolean} callback.error.transferInfo.isPrivate The flag to indicate if the data transfer is a private
- *   transfer to the Peer directly and not broadcasted to all Peers.
- * @param {JSON} callback.success The success object received in the callback.
- *   If received as <code>null</code>, it means that there are errors.
- * @param {String} [callback.success.state=null] <i>Deprecated</i>. The
- *   <a href="#method_dataTransferState">dataTransferState</a>
- *   when the data transfer has been completed successfully.
- *   This only triggers for a single targeted Peer data transfer.
- * @param {String} callback.success.transferId The transfer ID of the successful data transfer.
- * @param {String} [callback.success.peerId=null] The single targeted Peer ID for the data transfer.
- *   This only triggers for single targeted Peer data transfer.
- * @param {Array} callback.success.listOfPeers The list of Peer that the data transfer has been
- *   initiated with.
- * @param {Boolean} callback.success.isPrivate The flag to indicate if the data transfer is a private
- *   transfer to the Peer directly and not broadcasted to all Peers.
- * @param {JSON} callback.success.transferInfo The transfer data object information.
- * @param {String} [callback.success.transferInfo.name=transferId] The data transfer ID.
- * @param {Number} callback.success.transferInfo.size The transfer data size.
- * @param {String} callback.success.transferInfo.transferId The data transfer ID.
- * @param {String} callback.success.transferInfo.dataType The type of data transfer initiated.
- *   The received type would be <code>"dataURL"</code>.
- * @param {String} callback.success.transferInfo.timeout The waiting timeout in seconds that the DataChannel
- *   connection data transfer should wait before throwing an exception and terminating the data transfer.
- * @param {Boolean} callback.success.transferInfo.isPrivate The flag to indicate if the data transfer is a private
- *   transfer to the Peer directly and not broadcasted to all Peers.
- * @example
- *
- *   // Example 1: Send dataURL to all peers connected
- *   SkylinkDemo.sendURLData(dataURL, 67);
- *
- *   // Example 2: Send dataURL to individual peer
- *   SkylinkDemo.sendURLData(dataURL, 87, targetPeerId);
- *
- *   // Example 3: Send dataURL with callback
- *   SkylinkDemo.sendURLData(dataURL, 87, function(error, success){
- *     if (error){
- *       console.error("Error happened. Could not send dataURL", error);
- *     }
- *     else{
- *       console.info("Successfully sent dataURL");
- *     }
- *   });
- *
- * @trigger incomingData, incomingDataRequest, dataTransferState, dataChannelState
- * @since 0.6.1
- * @component DataTransfer
- * @for Skylink
- */
-Skylink.prototype.sendURLData = function(data, timeout, targetPeerId, callback) {
-  var listOfPeers = Object.keys(this._peerConnections);
-  var isPrivate = false;
-  var dataInfo = {};
-  var transferId = this._user.sid + this.DATA_TRANSFER_TYPE.UPLOAD +
-    (((new Date()).toISOString().replace(/-/g, '').replace(/:/g, ''))).replace('.', '');
-  // for error case
-  var errorMsg, errorPayload, i, peerId; // for jshint
-  var singleError = null;
-  var transferErrors = {};
-  var stateError = null;
-  var singlePeerId = null;
-
-  //Shift parameters
-  // timeout
-  if (typeof timeout === 'function') {
-    callback = timeout;
-
-  } else if (typeof timeout === 'string') {
-    listOfPeers = [timeout];
-    isPrivate = true;
-
-  } else if (Array.isArray(timeout)) {
-    listOfPeers = timeout;
-    isPrivate = true;
-  }
-
-  // targetPeerId
-  if (typeof targetPeerId === 'function'){
-    callback = targetPeerId;
-
-  // data, timeout, target [array], callback
-  } else if(Array.isArray(targetPeerId)) {
-    listOfPeers = targetPeerId;
-    isPrivate = true;
-
-  // data, timeout, target [string], callback
-  } else if (typeof targetPeerId === 'string') {
-    listOfPeers = [targetPeerId];
-    isPrivate = true;
-  }
-
-  //state: String, Deprecated. But for consistency purposes. Null if not a single peer
-  //error: Object, Deprecated. But for consistency purposes. Null if not a single peer
-  //transferId: String,
-  //peerId: String, Deprecated. But for consistency purposes. Null if not a single peer
-  //listOfPeers: Array, NEW!!
-  //isPrivate: isPrivate, NEW!!
-  //transferErrors: JSON, NEW!! - Array of errors
-  //transferInfo: JSON The same payload as dataTransferState transferInfo payload
-
-  // check if it's blob data
-  if (typeof data !== 'string') {
-    errorMsg = 'Provided data is not a dataURL';
-
-    if (listOfPeers.length === 0) {
-      transferErrors.self = errorMsg;
-
-    } else {
-      for (i = 0; i < listOfPeers.length; i++) {
-        peerId = listOfPeers[i];
-        transferErrors[peerId] = errorMsg;
-      }
-
-      // Deprecated but for consistency purposes. Null if not a single peer.
-      if (listOfPeers.length === 1 && isPrivate) {
-        stateError = self.DATA_TRANSFER_STATE.ERROR;
-        singleError = errorMsg;
-        singlePeerId = listOfPeers[0];
-      }
-    }
-
-    errorPayload = {
-      state: stateError,
-      error: singleError,
-      transferId: transferId,
-      peerId: singlePeerId,
-      listOfPeers: listOfPeers,
-      transferErrors: transferErrors,
-      transferInfo: dataInfo,
-      isPrivate: isPrivate
-    };
-
-    log.error(errorMsg, errorPayload);
-
-    if (typeof callback === 'function'){
-      log.log([null, 'RTCDataChannel', null, 'Error occurred. Firing callback ' +
-        'with error -> '],errorPayload);
-      callback(errorPayload, null);
-    }
-    return;
-  }
-
-  // populate data
-  dataInfo.name = data.name || transferId;
-  dataInfo.size = data.size || data.length;
-  dataInfo.timeout = typeof timeout === 'number' ? timeout : 60;
-  dataInfo.transferId = transferId;
-  dataInfo.dataType = 'dataURL';
-  dataInfo.isPrivate = isPrivate;
-
-  // check if datachannel is enabled first or not
-  if (!this._enableDataChannel) {
-    errorMsg = 'Unable to send any dataURL. Datachannel is disabled';
-
-    if (listOfPeers.length === 0) {
-      transferErrors.self = errorMsg;
-
-    } else {
-      for (i = 0; i < listOfPeers.length; i++) {
-        peerId = listOfPeers[i];
-        transferErrors[peerId] = errorMsg;
-      }
-
-      // Deprecated but for consistency purposes. Null if not a single peer.
-      if (listOfPeers.length === 1 && isPrivate) {
-        stateError = self.DATA_TRANSFER_STATE.ERROR;
-        singleError = errorMsg;
-        singlePeerId = listOfPeers[0];
-      }
-    }
-
-    errorPayload = {
-      state: stateError,
-      error: singleError,
-      transferId: transferId,
-      peerId: singlePeerId,
-      listOfPeers: listOfPeers,
-      transferErrors: transferErrors,
-      transferInfo: dataInfo,
-      isPrivate: isPrivate
-    };
-
-    log.error(errorMsg, errorPayload);
-
-    if (typeof callback === 'function'){
-      log.log([null, 'RTCDataChannel', null, 'Error occurred. Firing callback ' +
-        'with error -> '], errorPayload);
-      callback(errorPayload, null);
-    }
-    return;
-  }
-
-  this._startDataTransfer(data, dataInfo, listOfPeers, callback);
-};
-
 Skylink.prototype._enableIceTrickle = true;
 
 /**
@@ -5594,6 +5357,217 @@ Skylink.prototype.acceptDataTransfer = function (peerId, transferId, accept) {
     }
     handleSuccessFn();
   }, accept);
+};
+
+/**
+ * Starts a [data URI](https://developer.mozilla.org/en-US/docs/Web/API/FileReader
+ *   /readAsDataURL) transfer with Peers using the DataChannel connection.
+ * - The receiving Peers have the option to accept or reject the data transfer with
+ *   <a href="#method_acceptDataTransfer">acceptDataTransfer()</a>.
+ * - For Peers connecting from our mobile platforms
+ *   (<a href="http://skylink.io/ios/">iOS</a> / <a href="http://skylink.io/android/">Android</a>),
+ *   the DataChannel connection channel type would be <code>DATA_CHANNEL_TYPE.MESSAGING</code>.<br>
+ *   For Peers connecting from the Web platform, the DataChannel connection channel type would be
+ *  <code>DATA_CHANNEL_TYPE.DATA</code>.
+ * @method sendURLData
+ * @param {String} data The dataURL (base64 binary string) string to transfer to Peers.
+ * @param {Number} [timeout=60] The waiting timeout in seconds that the DataChannel connection
+ *   data transfer should wait before throwing an exception and terminating the data transfer.
+ * @param {String|Array} [targetPeerId] The array of targeted Peers to transfer the
+ *   data object to. Alternatively, you may provide this parameter as a string to a specific
+ *   targeted Peer to transfer the data object.
+ * @param {Function} [callback] The callback fired after all the data transfers is completed
+ *   successfully or met with an exception. The callback signature is <code>function (error, success)</code>.
+ * @param {JSON} callback.error The error object received in the callback.
+ *   If received as <code>null</code>, it means that there is no errors.
+ * @param {String} [callback.error.state=null] <i>Deprecated</i>. The
+ *   <a href="#event_dataTransferState">dataTransferState</a>
+ *   when the error has occurred. This only triggers for a single targeted Peer data transfer.
+ * @param {Object|String} [callback.error.error=null] <i>Deprecated</i>. The error received when the
+ *   data transfer fails. This only triggers for single targeted Peer data transfer.
+ * @param {String} callback.error.transferId The transfer ID of the failed data transfer.
+ * @param {String} [callback.error.peerId=null] The single targeted Peer ID for the data transfer.
+ *   This only triggers for single targeted Peer data transfer.
+ * @param {Array} callback.error.listOfPeers The list of Peer that the data transfer has been
+ *   initiated with.
+ * @param {Boolean} callback.error.isPrivate The flag to indicate if the data transfer is a private
+ *   transfer to the Peer directly and not broadcasted to all Peers.
+ * @param {JSON} callback.error.transferErrors The list of errors occurred based on per Peer
+ *   basis.
+ * @param {Object|String} callback.error.transferErrors.(#peerId) The error that occurred when having
+ *   a DataChannel connection data transfer with associated Peer.
+ * @param {JSON} callback.error.transferInfo The transfer data object information.
+ * @param {String} [callback.error.transferInfo.name=transferId] The data transfer ID.
+ * @param {Number} callback.error.transferInfo.size The transfer data size.
+ * @param {String} callback.error.transferInfo.transferId The data transfer ID.
+ * @param {String} callback.error.transferInfo.dataType The type of data transfer initiated.
+ *   The received type would be <code>"dataURL"</code>.
+ * @param {String} callback.error.transferInfo.timeout The waiting timeout in seconds that the DataChannel
+ *   connection data transfer should wait before throwing an exception and terminating the data transfer.
+ * @param {Boolean} callback.error.transferInfo.isPrivate The flag to indicate if the data transfer is a private
+ *   transfer to the Peer directly and not broadcasted to all Peers.
+ * @param {JSON} callback.success The success object received in the callback.
+ *   If received as <code>null</code>, it means that there are errors.
+ * @param {String} [callback.success.state=null] <i>Deprecated</i>. The
+ *   <a href="#method_dataTransferState">dataTransferState</a>
+ *   when the data transfer has been completed successfully.
+ *   This only triggers for a single targeted Peer data transfer.
+ * @param {String} callback.success.transferId The transfer ID of the successful data transfer.
+ * @param {String} [callback.success.peerId=null] The single targeted Peer ID for the data transfer.
+ *   This only triggers for single targeted Peer data transfer.
+ * @param {Array} callback.success.listOfPeers The list of Peer that the data transfer has been
+ *   initiated with.
+ * @param {Boolean} callback.success.isPrivate The flag to indicate if the data transfer is a private
+ *   transfer to the Peer directly and not broadcasted to all Peers.
+ * @param {JSON} callback.success.transferInfo The transfer data object information.
+ * @param {String} [callback.success.transferInfo.name=transferId] The data transfer ID.
+ * @param {Number} callback.success.transferInfo.size The transfer data size.
+ * @param {String} callback.success.transferInfo.transferId The data transfer ID.
+ * @param {String} callback.success.transferInfo.dataType The type of data transfer initiated.
+ *   The received type would be <code>"dataURL"</code>.
+ * @param {String} callback.success.transferInfo.timeout The waiting timeout in seconds that the DataChannel
+ *   connection data transfer should wait before throwing an exception and terminating the data transfer.
+ * @param {Boolean} callback.success.transferInfo.isPrivate The flag to indicate if the data transfer is a private
+ *   transfer to the Peer directly and not broadcasted to all Peers.
+ * @example
+ *
+ *   // Example 1: Send dataURL to all peers connected
+ *   SkylinkDemo.sendURLData(dataURL, 67);
+ *
+ *   // Example 2: Send dataURL to individual peer
+ *   SkylinkDemo.sendURLData(dataURL, 87, targetPeerId);
+ *
+ *   // Example 3: Send dataURL with callback
+ *   SkylinkDemo.sendURLData(dataURL, 87, function(error, success){
+ *     if (error){
+ *       console.error("Error happened. Could not send dataURL", error);
+ *     }
+ *     else{
+ *       console.info("Successfully sent dataURL");
+ *     }
+ *   });
+ *
+ * @trigger incomingData, incomingDataRequest, dataTransferState, dataChannelState
+ * @since 0.6.1
+ * @component DataTransfer
+ * @for Skylink
+ */
+Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTargetPeerId, passedCallback) {
+  var superRef = this;
+  var timeout = 60,
+      listOfPeers = Object.keys(superRef._peers),
+      isPrivate = false,
+      callback = function () {};
+
+  if (listOfPeers.indexOf('MCU') > -1) {
+    listOfPeers.splice(listOfPeers.indexOf('MCU'), 1);
+  }
+
+  // sendBlobData(.., 60)
+  if (typeof passedTimeout === 'number') {
+    if (passedTimeout > 0) {
+      timeout = passedTimeout;
+    }
+
+  // sendBlobData(.., ['teste', 'erser'])
+  } else if (Array.isArray(passedTimeout)) {
+    listOfPeers = passedTimeout;
+    isPrivate = true;
+
+  // sendBlobData(.., 'ererer')
+  } else if (typeof passedTimeout === 'string') {
+    listOfPeers = [passedTimeout];
+    isPrivate = true;
+
+  // sendBlobData(.., function () {})
+  } else if (typeof passedTimeout === 'function') {
+    callback = passedTimeout;
+  }
+
+  // sendBlobData(.., .., ['ererer', 'ererer'])
+  if (Array.isArray(passedTargetPeerId)) {
+    listOfPeers = passedTargetPeerId;
+    isPrivate = true;
+
+  // sendBlobData(.., .., 'ererere')
+  } else if (typeof passedTargetPeerId === 'string') {
+    listOfPeers = [passedTargetPeerId];
+    isPrivate = true;
+
+  // sendBlobData(.., .., function () {})
+  } else if (typeof passedTargetPeerId === 'function') {
+    callback = passedTargetPeerId;
+  }
+
+  // sendBlobData(.., .., .., function () {})
+  if (passedCallback === 'function') {
+    callback = passedCallback;
+  }
+
+  var handleErrorFn = function (error, transferInfo) {
+    callback({
+      state: null,
+      error: isPrivate && listOfPeers.length === 1 ? error : null,
+      transferId: transferInfo.id || null,
+      peerId: isPrivate && listOfPeers.length === 1 ? listOfPeers[0] : null,
+      transferErrors: (function () {
+        var list = {};
+
+        listOfPeers.forEach(function (peerId) {
+          list[peerId] = error;
+        });
+
+        return list;
+      })(),
+      isPrivate: isPrivate,
+      transferInfo: {
+        name: transferInfo.dataName || null,
+        size: transferInfo.dataSize || null,
+        transferId: transferInfo.id || null,
+        dataType: 'dataURL',
+        timeout: timeout,
+        isPrivate: isPrivate
+      }
+    }, null);
+  };
+
+  var handleSuccessFn = function (transferInfo) {
+    callback({
+      state: null,
+      transferId: transferInfo.id || null,
+      peerId: isPrivate && listOfPeers.length === 1 ? listOfPeers[0] : null,
+      isPrivate: isPrivate,
+      transferInfo: {
+        name: transferInfo.dataName || null,
+        size: transferInfo.dataSize || null,
+        transferId: transferInfo.id || null,
+        dataType: 'dataURL',
+        timeout: timeout,
+        isPrivate: isPrivate
+      }
+    });
+  };
+
+  if (!(typeof passedData === 'string' && !!passedData)) {
+    handleErrorFn(
+      new Error('Failed to start data transfer session as invalid data URL string data is provided'), {});
+    return;
+  }
+
+  if (listOfPeers.length === 0) {
+    handleErrorFn(
+      new Error('Failed to start data transfer session as there is no peers to send data to'), {});
+    return;
+  }
+
+  superRef._createTransfer(passedData, timeout, isPrivate, listOfPeers, function (error, transferInfo) {
+    if (error) {
+      handleErrorFn(error, transferInfo);
+      return;
+    }
+
+    handleSuccessFn(transferInfo);
+  });
 };
 Skylink.prototype._peerInformations = {};
 
