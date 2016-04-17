@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:38:50 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:45:39 GMT+0800 (SGT) */
 
 (function() {
 
@@ -5173,6 +5173,8 @@ Skylink.prototype.sendBlobData = function(passedData, passedTimeout, passedTarge
   };
 
   var handleSuccessFn = function (transferInfo) {
+    log.info([null, 'Skylink', 'sendBlobData()', 'Data transfer completed ->'], transferInfo);
+
     callback({
       state: null,
       transferId: transferInfo.id || null,
@@ -5511,7 +5513,7 @@ Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTarget
   }
 
   var handleErrorFn = function (transferErrors, transferInfo) {
-    log.error([null, 'Skylink', 'sendBlobData()', 'Failed data transfer ->'], transferErrors);
+    log.error([null, 'Skylink', 'sendURLData()', 'Failed data transfer ->'], transferErrors);
 
     callback({
       state: null,
@@ -5532,6 +5534,8 @@ Skylink.prototype.sendURLData = function(passedData, passedTimeout, passedTarget
   };
 
   var handleSuccessFn = function (transferInfo) {
+    log.info([null, 'Skylink', 'sendURLData()', 'Data transfer completed ->'], transferInfo);
+
     callback({
       state: null,
       transferId: transferInfo.id || null,
