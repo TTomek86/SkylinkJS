@@ -1834,11 +1834,11 @@ Skylink.prototype.sendStream = function(stream, callback) {
 
     if (self._inRoom) {
       self.once('mediaAccessSuccess', function (stream) {
+        self._trigger('incomingStream', self._user.sid, self._mediaStream,
+          true, self.getPeerInfo(), false);
         if (self._hasMCU) {
-          self._restartMCUConnection();
+          self._restartPeerConnection('MCU', true, false, null, true);
         } else {
-          self._trigger('incomingStream', self._user.sid, self._mediaStream,
-            true, self.getPeerInfo(), false);
           for (var peer in self._peerConnections) {
             if (self._peerConnections.hasOwnProperty(peer)) {
               self._restartPeerConnection(peer, true, false, null, true);
@@ -1900,11 +1900,11 @@ Skylink.prototype.sendStream = function(stream, callback) {
 
     if (self._inRoom) {
       self.once('mediaAccessSuccess', function (stream) {
+        self._trigger('incomingStream', self._user.sid, self._mediaStream,
+          true, self.getPeerInfo(), false);
         if (self._hasMCU) {
-          self._restartMCUConnection();
+          self._restartPeerConnection('MCU', true, false, null, true);
         } else {
-          self._trigger('incomingStream', self._user.sid, self._mediaStream,
-            true, self.getPeerInfo(), false);
           for (var peer in self._peerConnections) {
             if (self._peerConnections.hasOwnProperty(peer)) {
               self._restartPeerConnection(peer, true, false, null, true);
@@ -2250,11 +2250,11 @@ Skylink.prototype.shareScreen = function (enableAudio, callback) {
       window.getUserMedia(settings, function (stream) {
         self.once('mediaAccessSuccess', function (stream) {
           if (self._inRoom) {
+            self._trigger('incomingStream', self._user.sid, stream,
+              true, self.getPeerInfo(), false);
             if (self._hasMCU) {
-              self._restartMCUConnection();
+              self._restartPeerConnection('MCU', true, false, null, true);
             } else {
-              self._trigger('incomingStream', self._user.sid, stream,
-                true, self.getPeerInfo(), false);
               for (var peer in self._peerConnections) {
                 if (self._peerConnections.hasOwnProperty(peer)) {
                   self._restartPeerConnection(peer, true, false, null, true);
@@ -2345,13 +2345,14 @@ Skylink.prototype.stopScreen = function () {
     }*/
 
     if (this._inRoom) {
+      if (!!this._mediaStream && this._mediaStream !== null) {
+        this._trigger('incomingStream', this._user.sid, this._mediaStream, true,
+          this.getPeerInfo(), false);
+      }
+
       if (this._hasMCU) {
-        this._restartMCUConnection();
+        this._restartPeerConnection('MCU', true, false, null, true);
       } else {
-        if (!!this._mediaStream && this._mediaStream !== null) {
-          this._trigger('incomingStream', this._user.sid, this._mediaStream, true,
-            this.getPeerInfo(), false);
-        }
         for (var peer in this._peerConnections) {
           if (this._peerConnections.hasOwnProperty(peer)) {
             this._restartPeerConnection(peer, true, false, null, true);

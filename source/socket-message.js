@@ -997,11 +997,7 @@ Skylink.prototype._restartHandler = function(message){
   // Make peer with highest weight do the offer
   if (self._peerPriorityWeight > message.weight) {
     log.debug([targetMid, 'RTCPeerConnection', null, 'Restarting negotiation'], agent);
-    self._doOffer(targetMid, {
-      agent: agent.name,
-      version: agent.version,
-      os: agent.os
-    }, true);
+    self._doOffer(targetMid, true);
 
   } else {
     log.debug([targetMid, 'RTCPeerConnection', null, 'Waiting for peer to start re-negotiation'], agent);
@@ -1180,7 +1176,7 @@ Skylink.prototype._welcomeHandler = function(message) {
 
   if (beOfferer) {
     log.debug([targetMid, 'RTCPeerConnection', null, 'Starting negotiation'], agent);
-    this._doOffer(targetMid, agent);
+    this._doOffer(targetMid);
 
   } else {
     log.debug([targetMid, 'RTCPeerConnection', null, 'Peer has to start the connection. Resending message'], beOfferer);
@@ -1282,7 +1278,7 @@ Skylink.prototype._offerHandler = function(message) {
     pc.processingRemoteSDP = false;
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.OFFER, targetMid);
     self._addIceCandidateFromQueue(targetMid);
-    self._doAnswer(targetMid);
+    self._doAnswer(targetMid, message.isRenego === true);
   }, function(error) {
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
 

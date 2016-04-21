@@ -168,11 +168,11 @@ Skylink.prototype._peerPriorityWeight = 0;
  * @component Peer
  * @since 0.5.2
  */
-Skylink.prototype._doOffer = function(targetMid, peerBrowser) {
+Skylink.prototype._doOffer = function(targetMid, isRenego) {
   var self = this;
-  var pc = self._peerConnections[targetMid] || self._addPeer(targetMid, peerBrowser);
+  var pc = self._peerConnections[targetMid]; // || self._addPeer(targetMid, peerBrowser);
 
-  log.log([targetMid, null, null, 'Checking caller status'], peerBrowser);
+  //log.log([targetMid, null, null, 'Checking caller status'], peerBrowser);
 
   // Added checks to ensure that connection object is defined first
   if (!pc) {
@@ -201,7 +201,7 @@ Skylink.prototype._doOffer = function(targetMid, peerBrowser) {
   }*/
 
   // Prevent undefined OS errors
-  peerBrowser.os = peerBrowser.os || '';
+  //peerBrowser.os = peerBrowser.os || '';
 
   /*
     Ignoring these old codes as Firefox 39 and below is no longer supported
@@ -246,7 +246,7 @@ Skylink.prototype._doOffer = function(targetMid, peerBrowser) {
   pc.createOffer(function(offer) {
     log.debug([targetMid, null, null, 'Created offer'], offer);
 
-    self._setLocalAndSendMessage(targetMid, offer);
+    self._setLocalAndSendMessage(targetMid, offer, isRenego);
 
   }, function(error) {
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -267,7 +267,7 @@ Skylink.prototype._doOffer = function(targetMid, peerBrowser) {
  * @component Peer
  * @since 0.1.0
  */
-Skylink.prototype._doAnswer = function(targetMid) {
+Skylink.prototype._doAnswer = function(targetMid, isRenego) {
   var self = this;
   log.log([targetMid, null, null, 'Creating answer with config:'],
     self._room.connection.sdpConstraints);
@@ -292,7 +292,7 @@ Skylink.prototype._doAnswer = function(targetMid) {
   // { iceRestart: true }
   pc.createAnswer(function(answer) {
     log.debug([targetMid, null, null, 'Created answer'], answer);
-    self._setLocalAndSendMessage(targetMid, answer);
+    self._setLocalAndSendMessage(targetMid, answer, isRenego);
   }, function(error) {
     log.error([targetMid, null, null, 'Failed creating an answer:'], error);
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -435,7 +435,7 @@ Skylink.prototype._stopPeerConnectionHealthCheck = function (peerId) {
  * @for Skylink
  * @since 0.5.2
  */
-Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription) {
+Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription, isRenego) {
   var self = this;
   var pc = self._peerConnections[targetMid];
 
@@ -609,7 +609,8 @@ Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescripti
       sdp: sessionDescription.sdp,
       mid: self._user.sid,
       target: targetMid,
-      rid: self._room.id
+      rid: self._room.id,
+      isRego: isRenego === true
     });
 
   }, function(error) {

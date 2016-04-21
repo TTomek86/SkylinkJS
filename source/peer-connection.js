@@ -224,25 +224,29 @@ Skylink.prototype._restartPeerConnection = function (peerId, isSelfInitiatedRest
 
       var lastRestart = Date.now() || function() { return +new Date(); };
 
-      self._sendChannelMessage({
-        type: self._SIG_MESSAGE_TYPE.RESTART,
-        mid: self._user.sid,
-        rid: self._room.id,
-        agent: window.webrtcDetectedBrowser,
-        version: window.webrtcDetectedVersion,
-        os: window.navigator.platform,
-        userInfo: self.getPeerInfo(),
-        target: peerId,
-        isConnectionRestart: !!isConnectionRestart,
-        lastRestart: lastRestart,
-        // This will not be used based off the logic in _restartHandler
-        weight: self._peerPriorityWeight,
-        receiveOnly: self._peerConnections[peerId] && self._peerConnections[peerId].receiveOnly,
-        enableIceTrickle: self._enableIceTrickle,
-        enableDataChannel: self._enableDataChannel,
-        sessionType: !!self._mediaScreen ? 'screensharing' : 'stream',
-        explicit: !!explicit
-      });
+      if (!self._hasMCU) {
+        self._sendChannelMessage({
+          type: self._SIG_MESSAGE_TYPE.RESTART,
+          mid: self._user.sid,
+          rid: self._room.id,
+          agent: window.webrtcDetectedBrowser,
+          version: window.webrtcDetectedVersion,
+          os: window.navigator.platform,
+          userInfo: self.getPeerInfo(),
+          target: peerId,
+          isConnectionRestart: !!isConnectionRestart,
+          lastRestart: lastRestart,
+          // This will not be used based off the logic in _restartHandler
+          weight: self._peerPriorityWeight,
+          receiveOnly: self._peerConnections[peerId] && self._peerConnections[peerId].receiveOnly,
+          enableIceTrickle: self._enableIceTrickle,
+          enableDataChannel: self._enableDataChannel,
+          sessionType: !!self._mediaScreen ? 'screensharing' : 'stream',
+          explicit: !!explicit
+        });
+      } else {
+        self._doOffer('MCU', true);
+      }
 
       self._trigger('peerRestart', peerId, self.getPeerInfo(peerId), false);
 
@@ -717,7 +721,7 @@ Skylink.prototype.refreshConnection = function(targetPeerId, callback) {
         }
       }
     } else {
-      self._restartMCUConnection(callback);
+      self._restartPeerConnection('MCU', true, false, callback, true);
     }
   };
 
