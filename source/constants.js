@@ -1,245 +1,56 @@
 /**
- * The current version of Skylink Web SDK.
- * @attribute VERSION
- * @type String
- * @readOnly
- * @for Skylink
- * @since 0.1.0
- */
-Skylink.prototype.VERSION = '@@version';
-
-/**
- * These are the list of Peer connection signaling states that Skylink would trigger.
- * - Some of the state references the [w3c WebRTC Specification Draft](http://www.w3.org/TR/webrtc/#idl-def-RTCSignalingState).
- * @attribute PEER_CONNECTION_STATE
+ * <div class="panel-warning">
+ *   Note that configuring these options might not necessarily result in the audio codec connection
+ *   as it is depends on the browser supports.
+ * </div>
+ * Contains the list of audio codec configuration options to use during connection with audio streams.
+ * @attribute AUDIO_CODEC
+ * @param {String} AUTO <small><b>DEFAULT</b> | Value <code>"auto"</code></small>
+ *   The option to use the browser selected audio codec.
+ * @param {String} OPUS <small>Value <code>"opus"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/Opus_(audio_format)">opus</a> audio codec.<br>
+ *   This is the commonly supported audio codec.
+ * @param {String} ISAC <small>Value <code>"ISAC"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/Internet_Speech_Audio_Codec">iSAC</a> audio codec.
+ * @param {String} SILK <small>Value <code>"SILK"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/SILK">SILK</a> audio codec.
+ * @param {String} ILBC <small>Value <code>"iLBC"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/Internet_Low_Bitrate_Codec">iLBC</a> audio codec.
+ * @param {String} G722 <small>Value <code>"G722"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/G.722">G722</a> audio codec.<br>
+ *   <small>This is experimental, so try this at your own risk.</small>
+ * @param {String} G711 <small>Value <code>"G711"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/G.711">G711</a> audio codec.<br>
+ *   <small>This is experimental, so try this at your own risk.</small>
  * @type JSON
- * @param {String} STABLE <small>Value <code>"stable"</code></small>
- *   The state when there is no handshaking in progress and when
- *   handshaking has just started or close.<br>
- * This state occurs when Peer connection has just been initialised and after
- *   <code>HAVE_LOCAL_OFFER</code> or <code>HAVE_REMOTE_OFFER</code>.
- * @param {String} HAVE_LOCAL_OFFER <small>Value <code>"have-local-offer"</code></small>
- *   The state when the local session description <code>"offer"</code> is generated and to be sent.<br>
- * This state occurs after <code>STABLE</code> state.
- * @param {String} HAVE_REMOTE_OFFER <small>Value <code>"have-remote-offer"</code></small>
- *   The state when the remote session description <code>"offer"</code> is received.<br>
- * At this stage, this indicates that the Peer connection signaling handshaking has been completed, and
- *   likely would go back to <code>STABLE</code> after local <code>"answer"</code> is received by Peer.
- * @param {String} CLOSED <small>Value <code>"closed"</code></small>
- *   The state when the Peer connection is closed.<br>
- * This state occurs when connection with Peer has been closed, usually when Peer leaves the room.
  * @readOnly
- * @component Peer
  * @for Skylink
- * @since 0.5.0
+ * @since 0.7.0
  */
-Skylink.prototype.PEER_CONNECTION_STATE = {
-  STABLE: 'stable',
-  HAVE_LOCAL_OFFER: 'have-local-offer',
-  HAVE_REMOTE_OFFER: 'have-remote-offer',
-  CLOSED: 'closed'
+Skylink.prototype.AUDIO_CODEC = {
+  AUTO: 'auto',
+  ISAC: 'ISAC',
+  OPUS: 'opus',
+  SILK: 'SILK',
+  ILBC: 'iLBC',
+  G722: 'G722',
+  G711: 'G711'
 };
 
 /**
- * These are the types of server Peers that Skylink would connect with.
- * - Different server Peers that serves different functionalities.
- * - The server Peers functionalities are only available depending on the
- *   Application Key configuration.
- * - Eventually, this list will be populated as there are more server Peer
- *   functionalities provided by the Skylink platform.
- * @attribute SERVER_PEER_TYPE
- * @param {String} MCU <small>Value <code>"mcu"</code></small>
- *   This server Peer is a MCU server connection.
- * @type JSON
- * @readOnly
- * @component Peer
- * @for Skylink
- * @since 0.6.1
- */
-Skylink.prototype.SERVER_PEER_TYPE = {
-  MCU: 'mcu'
-  //SIP: 'sip'
-};
-
-/**
- * These are the list of Peer list retrieval states that Skylink would trigger.
- * - This relates to and requires the Privileged Key feature where Peers using
- *   that Privileged alias Key becomes a privileged Peer with privileged functionalities.
- * @attribute GET_PEERS_STATE
- * @type JSON
- * @param {String} ENQUIRED <small>Value <code>"enquired"</code></small>
- *   The state when the privileged Peer already enquired signaling for list of peers.
- * @param {String} RECEIVED <small>Value <code>"received"</code></small>
- *   The state when the privileged Peer received list of peers from signaling.
- * @readOnly
- * @component Peer
- * @for Skylink
- * @since 0.6.1
- */
-Skylink.prototype.GET_PEERS_STATE = {
-  ENQUIRED: 'enquired',
-  RECEIVED: 'received'
-};
-
-/**
- * These are the list of Peer introduction states that Skylink would trigger.
- * - This relates to and requires the Privileged Key feature where Peers using
- *   that Privileged alias Key becomes a privileged Peer with privileged functionalities.
- * @attribute INTRODUCE_STATE
- * @type JSON
- * @param {String} INTRODUCING <small>Value <code>"enquired"</code></small>
- *   The state when the privileged Peer have sent the introduction signal.
- * @param {String} ERROR <small>Value <code>"error"</code></small>
- *   The state when the Peer introduction has occurred an exception.
- * @readOnly
- * @component Peer
- * @for Skylink
- * @since 0.6.1
- */
-Skylink.prototype.INTRODUCE_STATE = {
-  INTRODUCING: 'introducing',
-  ERROR: 'error'
-};
-
-/**
- * These are the list of Peer connection ICE connection states that Skylink would trigger.
- * - These states references the [w3c WebRTC Specification Draft](http://www.w3.org/TR/webrtc/#idl-def-RTCIceConnectionState),
- *   except the <code>TRICKLE_FAILED</code> state, which is an addition provided state by Skylink
- *   to inform that trickle ICE has failed.
- * @attribute ICE_CONNECTION_STATE
- * @type JSON
- * @param {String} STARTING <small>Value <code>"starting"</code></small>
- *   The state when the ICE agent is gathering addresses and/or waiting
- *   for remote candidates to be supplied.<br>
- * This state occurs when Peer connection has just been initialised.
- * @param {String} CHECKING <small>Value <code>"checking"</code></small>
- *   The state when the ICE agent has received remote candidates
- *   on at least one component, and is checking candidate pairs but has
- *   not yet found a connection. In addition to checking, it may also
- *   still be gathering.<br>
- * This state occurs after <code>STARTING</code> state.
- * @param {String} CONNECTED <small>Value <code>"connected"</code></small>
- *  The state when the ICE agent has found a usable connection
- *   for all components but is still checking other candidate pairs to see
- *   if there is a better connection. It may also still be gathering.<br>
- * This state occurs after <code>CHECKING</code>.
- * @param {String} COMPLETED <small>Value <code>"completed"</code></small>
- *   The state when the ICE agent has finished gathering and
- *   checking and found a connection for all components.<br>
- * This state occurs after <code>CONNECTED</code> (or sometimes after <code>CHECKING</code>).
- * @param {String} FAILED <small>Value <code>"failed"</code></small>
- *   The state when the ICE agent is finished checking all
- *   candidate pairs and failed to find a connection for at least one
- *   component.<br>
- * This state occurs during the ICE connection attempt after <code>STARTING</code> state.
- * @param {String} DISCONNECTED <small>Value <code>"disconnected"</code></small>
- *   The state when liveness checks have failed for one or
- *   more components. This is more aggressive than "failed", and may
- *   trigger intermittently (and resolve itself without action) on
- *   a flaky network.<br>
- * This state occurs after <code>CONNECTED</code> or <code>COMPLETED</code> state.
- * @param {String} CLOSED <small>Value <code>"closed"</code></small>
- *   The state when the ICE agent has shut down and is no
- *   longer responding to STUN requests.<br>
- * This state occurs after Peer connection has been disconnected <em>(closed)</em>.
- * @param {String} TRICKLE_FAILED <small>Value <code>"trickeFailed"</code></small>
- *   The state when attempting to connect successfully with ICE connection fails
- *    with trickle ICE connections.<br>
- * Trickle ICE would be disabled after <code>3</code> attempts to have a better
- *   successful ICE connection.
- * @readOnly
- * @since 0.1.0
- * @component ICE
- * @for Skylink
- */
-Skylink.prototype.ICE_CONNECTION_STATE = {
-  STARTING: 'starting',
-  CHECKING: 'checking',
-  CONNECTED: 'connected',
-  COMPLETED: 'completed',
-  CLOSED: 'closed',
-  FAILED: 'failed',
-  TRICKLE_FAILED: 'trickleFailed',
-  DISCONNECTED: 'disconnected'
-};
-
-/**
- * These are the list of available transports that
- *   Skylink would use to connect to the TURN servers with.
- * - For example as explanation how these options works below, let's take that
- *   these are list of TURN servers given by the platform signaling:<br>
- *   <small><code>turn:turnurl:123?transport=tcp</code><br>
- *   <code>turn:turnurl?transport=udp</code><br>
- *   <code>turn:turnurl:1234</code><br>
- *   <code>turn:turnurl</code></small>
- * @attribute TURN_TRANSPORT
- * @type JSON
- * @param {String} TCP <small>Value <code>"tcp"</code></small>
- *   The option to connect using only TCP transports.
- *   <small>EXAMPLE OUTPUT<br>
- *   <code>turn:turnurl:123?transport=tcp</code><br>
- *   <code>turn:turnurl?transport=tcp</code><br>
- *   <code>turn:turnurl:1234?transport=tcp</code></small>
- * @param {String} UDP <small>Value <code>"udp"</code></small>
- *   The option to connect using only UDP transports.
- *   <small>EXAMPLE OUTPUT<br>
- *   <code>turn:turnurl:123?transport=udp</code><br>
- *   <code>turn:turnurl?transport=udp</code><br>
- *   <code>turn:turnurl:1234?transport=udp</code></small>
- * @param {String} ANY <small><b>DEFAULT</b> | Value <code>"any"</code></small>
- *   This option to use any transports that is preconfigured by provided by the platform signaling.
- *   <small>EXAMPLE OUTPUT<br>
- *   <code>turn:turnurl:123?transport=tcp</code><br>
- *   <code>turn:turnurl?transport=udp</code><br>
- *   <code>turn:turnurl:1234</code><br>
- *   <code>turn:turnurl</code></small>
- * @param {String} NONE <small>Value <code>"none"</code></small>
- *   This option to set no transports.
- *   <small>EXAMPLE OUTPUT<br>
- *   <code>turn:turnurl:123</code><br>
- *   <code>turn:turnurl</code><br>
- *   <code>turn:turnurl:1234</code></small>
- * @param {String} ALL <small>Value <code>"all"</code></small>
- *   This option to use both TCP and UDP transports.
- *   <small>EXAMPLE OUTPUT<br>
- *   <code>turn:turnurl:123?transport=tcp</code><br>
- *   <code>turn:turnurl:123?transport=udp</code><br>
- *   <code>turn:turnurl?transport=tcp</code><br>
- *   <code>turn:turnurl?transport=udp</code><br>
- *   <code>turn:turnurl:1234?transport=tcp</code><br>
- *   <code>turn:turnurl:1234?transport=udp</code></small>
- * @readOnly
- * @since 0.5.4
- * @component ICE
- * @for Skylink
- */
-Skylink.prototype.TURN_TRANSPORT = {
-  UDP: 'udp',
-  TCP: 'tcp',
-  ANY: 'any',
-  NONE: 'none',
-  ALL: 'all'
-};
-
-/**
- * The list of Peer connection ICE candidate generation states that Skylink would trigger.
- * - These states references the [w3c WebRTC Specification Draft](http://www.w3.org/TR/webrtc/#idl-def-RTCIceGatheringState).
+ * Contains the list of ICE gathering states of a Peer connection.
  * @attribute CANDIDATE_GENERATION_STATE
- * @type JSON
  * @param {String} NEW <small>Value <code>"new"</code></small>
- *   The state when the object was just created, and no networking has occurred yet.<br>
- * This state occurs when Peer connection has just been initialised.
+ *   The state at the beginning before any ICE gathering.
  * @param {String} GATHERING <small>Value <code>"gathering"</code></small>
- *   The state when the ICE engine is in the process of gathering candidates for connection.<br>
- * This state occurs after <code>NEW</code> state.
+ *   The state when ICE gathering has started.
  * @param {String} COMPLETED <small>Value <code>"completed"</code></small>
- *   The ICE engine has completed gathering. Events such as adding a
- *   new interface or a new TURN server will cause the state to go back to gathering.<br>
- * This state occurs after <code>GATHERING</code> state and means ICE gathering has been done.
+ *   The state when ICE gathering has completed.
+ * @link <a href="#x">What is ICE and how it works</a>
+ * @type JSON
  * @readOnly
- * @since 0.4.1
- * @component ICE
  * @for Skylink
+ * @since 0.7.0
  */
 Skylink.prototype.CANDIDATE_GENERATION_STATE = {
   NEW: 'new',
@@ -248,90 +59,132 @@ Skylink.prototype.CANDIDATE_GENERATION_STATE = {
 };
 
 /**
- * The current version of the internal <u>Data Transfer (DT)</u> Protocol that Skylink is using.<br>
- * - This is not a feature for developers to use but rather for SDK developers to
- *   see the Protocol version used in this Skylink version.
- * - In some cases, this information may be used for reporting issues with Skylink.
- * - DT_PROTOCOL VERSION: <code>0.1.0</code>.
- * @attribute DT_PROTOCOL_VERSION
- * @type String
- * @readOnly
- * @component DataTransfer
- * @for Skylink
- * @since 0.5.10
- */
-Skylink.prototype.DT_PROTOCOL_VERSION = '0.1.0';
-
-/**
- * These are the types of data transfers that indicates if transfer is an
- *   outgoing <small><em>(uploading)</em></small> or incoming <small><em>(downloding)</em></small> transfers.
- * @attribute DATA_TRANSFER_TYPE
+ * Contains the list of Datachannel connection states.
+ * @attribute DATA_CHANNEL_STATE
+ * @param {String} CONNECTING <small>Value <code>"connecting"</code></small>
+ *   The state when the Datachannel is attempting to open a connection.
+ * @param {String} OPEN <small>Value <code>"open"</code></small>
+ *   The state when the Datachannel connection has opened.
+ * @param {String} CLOSING <small>Value <code>"closing"</code></small>
+ *   The state when the Datachannel connection is closing.<br>
+ *   This happens when a Peer has closed the Datachannel connection explicitly.
+ * @param {String} CLOSED <small>Value <code>"closed"</code></small>
+ *   The state when the Datachannel connection has closed.
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when the Datachannel connection has encountered an error.
  * @type JSON
- * @param {String} UPLOAD <small>Value <code>"upload"</code></small>
- *   This data transfer is an outgoing <em>(uploading)</em> transfer.<br>
- *   Data is sent to the receiving Peer using the associated DataChannel connection.
- * @param {String} DOWNLOAD <small>Value <code>"download"</code></small>
- *   The data transfer is an incoming <em>(downloading)</em> transfer.<br>
- *   Data is received from the sending Peer using the associated DataChannel connection.
  * @readOnly
- * @component DataTransfer
  * @for Skylink
- * @since 0.1.0
+ * @since 0.7.0
  */
-Skylink.prototype.DATA_TRANSFER_TYPE = {
-  UPLOAD: 'upload',
-  DOWNLOAD: 'download'
+Skylink.prototype.DATA_CHANNEL_STATE = {
+  CONNECTING: 'connecting',
+  OPEN: 'open',
+  CLOSING: 'closing',
+  CLOSED: 'closed',
+  ERROR: 'error'
 };
 
 /**
- * These are the list of data transfer states that Skylink would trigger.
- * @attribute DATA_TRANSFER_STATE
- * @type JSON
- * @param {String} UPLOAD_REQUEST <small>Value <code>"request"</code></small>
- *   The state when a data transfer request has been received from Peer.
- * This happens after Peer starts a data transfer using
- *   {{#crossLink "Skylink/sendBlobData:method"}}sendBlobData(){{/crossLink}} or
- *   {{#crossLink "Skylink/sendURLData:method"}}sendURLData(){{/crossLink}}.
- * @param {String} UPLOAD_STARTED <small>Value <code>"uploadStarted"</code></small>
- *   The state when the data transfer will begin and start to upload the first data
- *   packets to receiving Peer.<br>
- * This happens after receiving Peer accepts a data transfer using
- *   {{#crossLink "Skylink/acceptDataTransfer:method"}}acceptDataTransfer(){{/crossLink}}.
- * @param {String} DOWNLOAD_STARTED <small>Value <code>"downloadStarted"</code></small>
- *   The state when the data transfer has begin and associated DataChannel connection is
- *   expected to receive the first data packet from sending Peer.<br>
- * This happens after self accepts a data transfer using
- *   {{#crossLink "Skylink/acceptDataTransfer:method"}}acceptDataTransfer(){{/crossLink}} upon
- *   the triggered state of <code>UPLOAD_REQUEST</code>.
- * @param {String} REJECTED <small>Value <code>"rejected"</code></small>
- *   The state when the data transfer has been rejected by receiving Peer and data transfer is
- *   terminated.<br>
- * This happens after Peer rejects a data transfer using
- *   {{#crossLink "Skylink/acceptDataTransfer:method"}}acceptDataTransfer(){{/crossLink}}.
- * @param {String} UPLOADING <small>Value <code>"uploading"</code></small>
- *   The state when the data transfer is still being transferred to receiving Peer.<br>
- * This happens after state <code>UPLOAD_STARTED</code>.
- * @param {String} DOWNLOADING <small>Value <code>"downloading"</code></small>
- *   The state when the data transfer is still being transferred from sending Peer.<br>
- * This happens after state <code>DOWNLOAD_STARTED</code>.
- * @param {String} UPLOAD_COMPLETED <small>Value <code>"uploadCompleted"</code></small>
- *   The state when the data transfer has been transferred to receiving Peer successfully.<br>
- * This happens after state <code>UPLOADING</code> or <code>UPLOAD_STARTED</code>, depending
- *   on how huge the data being transferred is.
- * @param {String} DOWNLOAD_COMPLETED <small>Value <code>"downloadCompleted"</code></small>
- *   The state when the data transfer has been transferred from sending Peer successfully.<br>
- * This happens after state <code>DOWNLOADING</code> or <code>DOWNLOAD_STARTED</code>, depending
- *   on how huge the data being transferred is.
- * @param {String} CANCEL <small>Value <code>"cancel"</code></small>
- *   The state when the data transfer has been terminated by Peer.<br>
- * This happens after state <code>DOWNLOAD_STARTED</code> or <code>UPLOAD_STARTED</code>.
- * @param {String} ERROR <small>Value <code>"error"</code></small>
- *   The state when the data transfer has occurred an exception.<br>
- * At this stage, the data transfer would usually be terminated and may lead to state <code>CANCEL</code>.
+ * Contains the list of Datachannel types.
+ * @attribute DATA_CHANNEL_TYPE
+ * @param {String} MESSAGING <small><b>DEFAULT</b> | Value <code>"messaging"</code></small>
+ *   <blockquote class="panel-info">If <a href="#method_init"><u><code>init()</code> method</u></a>
+ *     <code>enableDataChannel</code> option is enabled for both Peers, there is
+ *     only one of this Datachannel type that can occur in the connection</blockquote>
+ *   The type where the Datachannel connection is primarily used for sending P2P messages.<br>
+ *   This connection is persistent until the Peer connection of the Datachannel is closed,
+ *     and can be used for data transfers when simultaneous transfers is not supported with
+ *     the connecting Peer connection.
+ * @param {String} DATA <small>Value <code>"data"</code></small>
+ *   The type where the Datachannel connection is only used for data transfers.<br>
+ *   This connection is closed once the data transfer has completed or terminated.
  * @readOnly
- * @component DataTransfer
+ * @type JSON
  * @for Skylink
- * @since 0.4.0
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_CHANNEL_TYPE = {
+  MESSAGING: 'messaging',
+  DATA: 'data'
+};
+
+/**
+ * Contains the list of data transfer data types.
+ * @attribute DATA_TRANSFER_DATA_TYPE
+ * @param {String} BINARY_STRING <small>Value <code>"binaryString"</code></small>
+ *   The data type where binary data packets are converted to string over
+ *   the Datachannel connection for <kbd>Blob</kbd> data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @param {String} BINARY <small>Value <code>"binary"</code></small>
+ *   The option to transfer binary data packets without conversion over
+ *   the Datachannel connection for <kbd>Blob</kbd> data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @param {String} STRING <small>Value <code>"string"</code></small>
+ *   The option to transfer string data over Datachannel connection for <kbd>Data URL</kbd> data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_DATA_TYPE = {
+  BINARY_STRING: 'binaryString',
+  BINARY: 'binary',
+  STRING: 'string'
+};
+
+/**
+ * <blockquote class="panel-warning">
+ *   Note that for the next releases, this constant will be renamed as <code>DATA_TRANSFER_TYPE</code>.
+ * </blockquote>
+ * Contains the list of data transfers transfer types.
+ * @attribute DATA_TRANSFER_SESSION_TYPE
+ * @param {String} BLOB <small>Value <code>"blob"</code></small>
+ *   The type of data transfer where it is transferring a Blob data.
+ *   [Rel: Skylink.method.sendBlobData]
+ * @param {String} DATAURL <small>Value <code>"dataURL"</code></small>
+ *   The type of data transfer where it is transferring a DataURL string.
+ *   [Rel: Skylink.method.sendURLData]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_SESSION_TYPE = {
+  BLOB: 'blob',
+  DATAURL: 'dataURL'
+};
+
+/**
+ * Contains the list of data transfer states.
+ * @attribute DATA_TRANSFER_STATE
+ * @param {String} UPLOAD_REQUEST <small>Value <code>"request"</code></small>
+ *   The state when request to start a downloading data transfer is received.
+ *   [Rel: Skylink.method.acceptDataTransfer]
+ * @param {String} UPLOAD_STARTED <small>Value <code>"uploadStarted"</code></small>
+ *   The state when uploading data transfer has started.
+ * @param {String} DOWNLOAD_STARTED <small>Value <code>"downloadStarted"</code></small>
+ *   The state when downloading data transfer has started.
+ * @param {String} REJECTED <small>Value <code>"rejected"</code></small>
+ *   The state when downloading data transfer request is rejected.
+ * @param {String} UPLOADING <small>Value <code>"uploading"</code></small>
+ *   The state when uploading data transfer is in-progress.
+ * @param {String} DOWNLOADING <small>Value <code>"downloading"</code></small>
+ *   The state when downloading data transfer is in-progress.
+ * @param {String} UPLOAD_COMPLETED <small>Value <code>"uploadCompleted"</code></small>
+ *   The state when uploading data transfer has completed.
+ * @param {String} DOWNLOAD_COMPLETED <small>Value <code>"downloadCompleted"</code></small>
+ *   The state when downloading data transfer has completed.
+ * @param {String} CANCEL <small>Value <code>"cancel"</code></small>
+ *   The state when data transfer has been cancelled and is terminated.
+ *   [Rel: Skylink.method.cancelDataTransfer]
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when data transfer has failed with errors and is terminated.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
  */
 Skylink.prototype.DATA_TRANSFER_STATE = {
   UPLOAD_REQUEST: 'request',
@@ -347,122 +200,488 @@ Skylink.prototype.DATA_TRANSFER_STATE = {
 };
 
 /**
- * These are the list of DataChannel connection states that Skylink would trigger.
- * - Some of the state references the [w3c WebRTC Specification Draft](http://w3c.github.io/webrtc-pc/#idl-def-RTCDataChannelState),
- *   except the <code>ERROR</code> state, which is an addition provided state by Skylink
- *   to inform exception during the DataChannel connection with Peers.
- * @attribute DATA_CHANNEL_STATE
+ * <blockquote class="panel-warning">
+ *   Note that for the next releases, this constant will be renamed as <code>DATA_TRANSFER_DIRECTION</code>
+ *   before removal in the next releases.
+ * </blockquote>
+ * Contains the list of data transfer directions.
+ * @attribute DATA_TRANSFER_TYPE
+ * @param {String} UPLOAD <small>Value <code>"upload"</code></small>
+ *   The type of data transfer direction where it is uploading to Peer.
+ * @param {String} DOWNLOAD <small>Value <code>"download"</code></small>
+ *   The type of data transfer direction where is downloading from Peer.
  * @type JSON
- * @param {String} CONNECTING <small>Value <code>"connecting"</code></small>
- *   The state when DataChannel is attempting to establish a connection.<br>
- *   This is the initial state when a DataChannel connection is created.
- * @param {String} OPEN <small>Value <code>"open"</code></small>
- *   The state when DataChannel connection is established.<br>
- *   This happens usually after <code>CONNECTING</code> state, or not when DataChannel connection
- *   is from initializing Peer (the one who begins the DataChannel connection).
- * @param {String} CLOSING <small>Value <code>"closing"</code></small>
- *   The state when DataChannel connection is closing.<br>
- *   This happens when DataChannel connection is closing and happens after <code>OPEN</code>.
- * @param {String} CLOSED <small>Value <code>"closed"</code></small>
- *   The state when DataChannel connection is closed.<br>
- *   This happens when DataChannel connection has closed and happens after <code>CLOSING</code>
- *   (or sometimes <code>OPEN</code> depending on the browser implementation).
- * @param {String} ERROR <small>Value <code>"error"</code></small>
- *   The state when DataChannel connection have met with an exception.<br>
- *   This may happen during any state not after <code>CLOSED</code>.
  * @readOnly
- * @component DataChannel
+ * @deprecated
  * @for Skylink
- * @since 0.1.0
+ * @since 0.7.0
  */
-Skylink.prototype.DATA_CHANNEL_STATE = {
-  CONNECTING: 'connecting',
-  OPEN: 'open',
-  CLOSING: 'closing',
+Skylink.prototype.DATA_TRANSFER_TYPE = {
+  UPLOAD: 'upload',
+  DOWNLOAD: 'download'
+};
+
+/**
+ * Contains the current DT Protocol version of SkylinkJS.<br>
+ * <blockquote class="sub">Current version: <code>0.1.0</code></blockquote>
+ * @attribute DT_PROTOCOL_VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DT_PROTOCOL_VERSION = '0.1.0';
+
+/**
+ * Contains the list of <a href="#method_getPeers"><u><code>getPeers()</code> method</u></a> retrieval states.
+ * @attribute GET_PEERS_STATE
+ * @type JSON
+ * @param {String} ENQUIRED <small>Value <code>"enquired"</code></small>
+ *   The state when SDK is attempting to retrieve the list of Peers and Rooms.
+ * @param {String} RECEIVED <small>Value <code>"received"</code></small>
+ *   The state when SDK has retrieved the list of Peers and Rooms successfully.
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when SDK has failed retrieving the list of Peers and Rooms.
+ * @link <a href="http://support.temasys.com.sg">What is the Privileged Key feature and how to utilise it</a>
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.GET_PEERS_STATE = {
+  ENQUIRED: 'enquired',
+  RECEIVED: 'received'
+};
+
+/**
+ * Contains the list of connection handshaking states of a Peer connection.
+ * @attribute HANDSHAKE_PROGRESS
+ * @param {String} ENTER <small>Value <code>"enter"</code></small>
+ *   The state when Peer has just entered the Room.<br>
+ *   As a response, <code>WELCOME</code> will be sent to notify of SDK Peer existence.
+ * @param {String} WELCOME <small>Value <code>"welcome"</code></small>
+ *   The state when SDK Peer is notified of Peer that is already in the Room.<br>
+ *   As a response, <code>OFFER</code> will be sent to initiate connection handshaking.
+ * @param {String} OFFER <small>Value <code>"offer"</code></small>
+ *   The state when connection handshaking has been initiated.<br>
+ *   As a response, <code>ANSWER</code> will be sent to complete the connection handshaking.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @param {String} ANSWER <small>Value <code>"answer"</code></small>
+ *   The state when connection handshaking has been completed.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when connection handshaking has encountered an error.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.HANDSHAKE_PROGRESS = {
+  ENTER: 'enter',
+  WELCOME: 'welcome',
+  OFFER: 'offer',
+  ANSWER: 'answer',
+  ERROR: 'error'
+};
+
+/**
+ * Contains the list of ICE connection states of a Peer connection.
+ * @attribute ICE_CONNECTION_STATE
+ * @param {String} STARTING <small>Value <code>"starting"</code></small>
+ *   The state when ICE agent is waiting for remote candidates supplied
+ *   from ICE gathering from Peer.
+ * @param {String} CHECKING <small>Value <code>"checking"</code></small>
+ *   The state when ICE agent has received the remote candidates from Peer
+ *   and is checking for a usable candidate pair to start ICE connection.
+ * @param {String} CONNECTED <small>Value <code>"connected"</code></small>
+ *   The state when ICE agent has found a usable connection but still
+ *   checking if there is a better candidate pair for better ICE connection.<br>
+ *   At this stage, ICE connection is already established and may not necessarily
+ *   go to <code>COMPLETED</code>.
+ * @param {String} COMPLETED <small>Value <code>"completed"</code></small>
+ *   The state when ICE agent has finished checking for the best candidate pairs
+ *   for the best ICE connection.<br>
+ *   At this stage, ICE connection is has been already established.
+ * @param {String} FAILED <small>Value <code>"failed"</code></small>
+ *   The state when ICE agent had failed to find a ICE connection from all candidate pairs.
+ * @param {String} DISCONNECTED <small>Value <code>"disconnected"</code></small>
+ *   The state when ICE agent connection is disconnected abruptly and may happen on
+ *   a flaky network.
+ * @param {String} CLOSED <small>Value <code>"closed"</code></small>
+ *   The state when ICE agent connection is closed and is no longer responding to any STUN requests.
+ * @param {String} TRICKLE_FAILED <small>Value <code>"trickeFailed"</code></small>
+ *   The state when after ICE agent connection state had gone to <code>FAILED</code> and
+ *   <a href="#method_init"><code><u>init()</code> method</u></a> <code>enableIceTrickle</code> option is enabled.
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.ICE_CONNECTION_STATE = {
+  STARTING: 'starting',
+  CHECKING: 'checking',
+  CONNECTED: 'connected',
+  COMPLETED: 'completed',
+  CLOSED: 'closed',
+  FAILED: 'failed',
+  TRICKLE_FAILED: 'trickleFailed',
+  DISCONNECTED: 'disconnected'
+};
+
+/**
+ * Contains the list of <a href="#method_introducePeer"><u><code>introducePeer()</code> method</u></a>
+ *   introduction states.
+ * @attribute INTRODUCE_STATE
+ * @param {String} INTRODUCING <small>Value <code>"introducing"</code></small>
+ *   The state when the SDK is attempting to introduce the Peer (Sender) to Peer (Receiver).
+ * @param {String} INTRODUCED <small>Value <code>"introduced"</code></small>
+ *   The state when the SDK has introduced Peer (Sender) to Peer (Receiver) successfully.
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when the SDK had failed to introduce Peer (Sender) to Peer (Receiver).
+ * @link <a href="http://support.temasys.com.sg">What is the Privileged Key feature and how to utilise it</a>
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.INTRODUCE_STATE = {
+  INTRODUCING: 'introducing',
+  INTRODUCED: 'introduced',
+  ERROR: 'error'
+};
+
+/**
+ * Contains the list of SDK log levels.
+ * @attribute LOG_LEVEL
+ * @param {Number} DEBUG <small>Value <code>4</code></small>
+ *   The option to display additional logs for more code execution debugging state purposes.
+ *   <small>LOG OUTPUTS<br>
+ *   <code>DEBUG</code>, <code>LOG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code></small>
+ * @param {Number} LOG <small>Value <code>3</code> | Level higher than <code>INFO</code></small>
+ *   The option to display additional logs for code execution state purposes.
+ *   <small>LOG OUTPUTS<br>
+ *   <code>LOG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code></small>
+ * @param {Number} INFO <small>Value <code>2</code></small>
+ *   The option to display additional logs that are informative purposes.
+ *   <small>LOG OUTPUTS<br>
+ *   <code>INFO</code>, <code>WARN</code>, <code>ERROR</code></small>
+ * @param {Number} WARN <small>Value <code>1</code></small>
+ *   The option to display additional logs warning the user.
+ *   <small>LOG OUTPUTS<br>
+ *   <code>WARN</code>, <code>ERROR</code></small>
+ * @param {Number} ERROR <small><b>DEFAULT</b> | Value <code>0</code></small>
+ *   The option to display error logs.
+ *   <small>LOG OUTPUTS<br>
+ *   <code>ERROR</code></small>
+ * @param {Number} NO_LOGS <small>Value <code>-1</code></small>
+ *   The option to display no logs.
+ *   <small>LOG OUTPUTS<br>
+ *   <span>NONE</span></small>
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.LOG_LEVEL = {
+  DEBUG: 4,
+  LOG: 3,
+  INFO: 2,
+  WARN: 1,
+  ERROR: 0,
+  NO_LOGS: -1
+};
+
+/**
+ * Contains the list of signaling states of a Peer connection.
+ * @attribute PEER_CONNECTION_STATE
+ * @param {String} STABLE <small>Value <code>"stable"</code></small>
+ *   The state when there is currently no <code>OFFER</code> or <code>ANSWER</code> exchanged.
+ * @param {String} HAVE_LOCAL_OFFER <small>Value <code>"have-local-offer"</code></small>
+ *   The state when there is a local <code>OFFER</code> sent to Peer.<br>
+ *   After receiving remote <code>ANSWER</code>, the state will go to <code>STABLE</code>.
+ * @param {String} HAVE_REMOTE_OFFER <small>Value <code>"have-remote-offer"</code></small>
+ *   The state when there is a remote <code>OFFER</code> received from Peer.<br>
+ *   After sending local <code>ANSWER</code>, the state will go to <code>STABLE</code>.
+ * @param {String} CLOSED <small>Value <code>"closed"</code></small>
+ *   The state when signaling is closed and there is no
+ *   <code>OFFER</code> or <code>ANSWER</code> exchanged anymore.
+ * @param {String} ERROR <small>Value <code>"error"</code></small>
+ *   The state when setting local / remote <code>OFFER</code> or <code>ANSWER</code> fails and
+ *   might cause a failure in establishing Peer connection.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.PEER_CONNECTION_STATE = {
+  STABLE: 'stable',
+  HAVE_LOCAL_OFFER: 'have-local-offer',
+  HAVE_REMOTE_OFFER: 'have-remote-offer',
   CLOSED: 'closed',
   ERROR: 'error'
 };
 
 /**
- * These are the types of DataChannel connection that Skylink provides.
- * - Different channels serves different functionalities.
- * @attribute DATA_CHANNEL_TYPE
+ * Contains the list of <a href="#method_init"><u><code>init()</code> method</u></a>
+ *   SDK initialization ready states.
+ * @attribute READY_STATE_CHANGE
+ * @param {Number} INIT <small>Value <code>0</code></small>
+ *   The state when the SDK is initializing <code>init()</code> configuration settings.
+ * @param {Number} LOADING <small>Value <code>1</code></small>
+ *   The state when the SDK is attempting to start connection session.
+ * @param {Number} COMPLETED <small>Value <code>2</code></small>
+ *   The state when the SDK connection session has been state.
+ * @param {Number} ERROR <small>Value <code>-1</code></small>
+ *   The state when the SDK has failed initializing <code>init()</code> configuration settings
+ *   or failed starting connection session.
+ *   [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR]
  * @type JSON
- * @param {String} MESSAGING <small><b>MAIN connection</b> | Value <code>"messaging"</code></small>
- *   This DataChannel connection is used for P2P messaging only, as used in
- *   {{#crossLink "Skylink/sendP2PMessage:method"}}sendP2PMessage(){{/crossLink}}.<br>
- * Unless if self connects with Peers connecting from the mobile SDK platform applications,
- *   this connection would be used for data transfers as used in
- *   {{#crossLink "Skylink/sendBlobData:method"}}sendBlobData(){{/crossLink}} and
- *   and {{#crossLink "Skylink/sendURLData:method"}}sendURLData(){{/crossLink}}, which allows
- *   only one outgoing and incoming data transfer one at a time (no multi-transfer support).<br>
- *   This connection will always be kept alive until the Peer connection has ended.
- * @param {String} DATA <small>Value <code>"data"</code></small>
- *   This DataChannel connection is used for a data transfer, as used in
- *   {{#crossLink "Skylink/sendBlobData:method"}}sendBlobData(){{/crossLink}}
- *   and {{#crossLink "Skylink/sendURLData:method"}}sendURLData(){{/crossLink}}.<br>
- * If self connects with Peers with DataChannel connections of this type,
- *   it indicates that multi-transfer is supported.<br>
- *   This connection will be closed once the data transfer has completed or terminated.
  * @readOnly
- * @component DataChannel
  * @for Skylink
- * @since 0.6.1
+ * @since 0.7.0
  */
-Skylink.prototype.DATA_CHANNEL_TYPE = {
-  MESSAGING: 'messaging',
-  DATA: 'data'
+Skylink.prototype.READY_STATE_CHANGE = {
+  INIT: 0,
+  LOADING: 1,
+  COMPLETED: 2,
+  ERROR: -1
 };
 
 /**
- * These are the list of available transfer encodings that would be used by Skylink during a data transfer.
- * - The currently supported data type is <code>BINARY_STRING</code>.
- * - Support for data types <code>BLOB</code> and <code>ARRAY_BUFFER</code> is still in implementation.
- * @attribute DATA_TRANSFER_DATA_TYPE
+ * <blockquote class="panel-warning">
+ *   Note that for the next releases, the Keys and Values will change for a more
+ *   descriptive term.
+ * </blockquote>
+ * Contains the list of <a href="#method_init"><u><code>init()</code> method</u></a>
+ *   SDK initialization errors.
+ * @attribute READY_STATE_CHANGE_ERROR
+ * @param {Number} API_INVALID <small>Value <code>4001</code></small>
+ *   The error when provided Application Key is does not exists.
+ *   <small>Resolve this by finding if Application Key exists in your
+ *     <a href="https://developer.temasys.com.sg">Skylink Developer Account</a>.</small>
+ * @param {Number} API_DOMAIN_NOT_MATCH <small>Value <code>4002</code></small>
+ *   The error when accessing backend IP address does not match Application Key configured <var>domain</var>.
+ *   <small>Resolve this by seeking support in
+ *     <a href="http://support.temasys.com.sg">Temasys Support Portal</a>.</small>
+ * @param {Number} API_CORS_DOMAIN_NOT_MATCH <small>Value <code>4003</code></small>
+ *   The error when accessing CORS domain does not match Application Key configured <var>corsurl</var>.
+ *   <small>Resolve this by configuring your Application Key <u>CORS Url</u> correctly in your
+ *     <a href="https://developer.temasys.com.sg">Skylink Developer Account</a>.</small>
+ * @param {Number} API_CREDENTIALS_INVALID <small>Value <code>4004</code></small>
+ *   The error when credentials provided for Application Key is invalid.
+ *   <small>Resolve this by checking if credentials are generated correctly, or <u>Secret</u> used for
+ *      generating credentials is correct. See <a href="#method_init"><u><code>init()</code> method</u></a>
+ *      on how to generate the credentials.</small>
+ * @param {Number} API_CREDENTIALS_NOT_MATCH <small>Value <code>4005</code></small>
+ *   The error when credentials provided for Application Key does not match provided <code>duration</code>
+ *      and <code>startDate</code> in generated credentials.
+ *   <small>Resolve this by checking if credentials are generated correctly.
+ *      See <a href="#method_init"><u><code>init()</code> method</u></a> on how to generate the credentials.</small>
+ * @param {Number} API_INVALID_PARENT_KEY <small>Value <code>4006</code></small>
+ *   The error when provided Application Key has an invalid <var>parent</var> field value.
+ *   <small>Resolve this by providing another Application Key. You may check if it's valid by
+ *     accessing your <a href="https://developer.temasys.com.sg">Skylink Developer Account</a>
+ *     and use any Application Keys from the displayed list of Application Keys.</small>
+ * @param {Number} API_NO_MEETING_RECORD_FOUND <small>Value <code>4010</code></small>
+ *   The error when provided Persistent Room enabled key does not have any meeting records that matches
+ *   the credentials provided in <a href="#method_init"><u><code>init()</code> method</u></a>.
+ *   <small>See <a href="#article">Persistent Rooms and how it works</a>.</small>
+ * @param {Number} NO_SOCKET_IO <small>Value <code>1</code></small>
+ *   The error when there is no <kbd>socket.io-client</kbd> dependency loaded before the SDK.
+ *   <small>Resolve this by loading the dependency based on the correct versions following
+ *     <a href="https://github.com/Temasys/SkylinkJS/releases">SkylinkJS release versions</a>.</small>
+ * @param {Number} NO_XMLHTTPREQUEST_SUPPORT <small>Value <code>2</code></small>
+ *   The error when there is no <kbd>XMLHttpRequest</kbd> API interface supported in the browser.
+ *   <small>Resolve this by switching to one of our
+ *     <a href="https://github.com/Temasys/SkylinkJS#supported-browsers">supported browsers list</a>.</small>
+ * @param {Number} NO_WEBRTC_SUPPORT <small>Value <code>3</code></small>
+ *   The error when there is no <kbd>RTCPeerConnection</kbd> API interface supported in the browser,
+ *   which the <a href="https://plugin.temasys.com.sg">Temasys Plugin</a> does not support and is not
+ *   installed in the browser.
+ *   <small>Resolve this by switching to one of our
+ *     <a href="https://github.com/Temasys/SkylinkJS#supported-browsers">supported browsers list</a>,
+ *     or if browser is Safari or IE in our supported browsers list, prompt users to install the Temasys Plugin.</small>
+ * @param {Number} NO_PATH <small>Value <code>4</code></small>
+ *   The error when invalid <a href="#method_init"><u><code>init()</code> method</u></a> options are provided.
+ *   <small>Resolve this by ensuring correct <code>init()</code> method options are provided.</small>
+ * @param {Number} ADAPTER_NO_LOADED <small>Value <code>7</code></small>
+ *   The error when there is no <kbd>adapterjs</kbd> dependency loaded before the SDK.
+ *   <small>Resolve this by loading the dependency based on the correct versions following
+ *     <a href="https://github.com/Temasys/SkylinkJS/releases">SkylinkJS release versions</a>.</small>
+ * @param {Number} XML_HTTP_REQUEST_ERROR <small>Value <code>-1</code></small>
+ *   The error when there is no response from server when requesting to start connection session.
+ *   <small>Resolve this by diagnosing network connections or refreshing the page. You may
+ *     report this to <a href="http://support.temasys.com.sg">Temasys Support Portal</a>
+ *     if both solutions does not work.</small>
  * @type JSON
- * @param {String} BINARY_STRING <small><b>DEFAULT</b> | Value <code>"binaryString"</code></small>
- *   The option to let Skylink encode data packets using
- *   [binary converted strings](https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs)
- *   when sending the data packets through the DataChannel connection during data transfers.
- * @param {String} ARRAY_BUFFER <small><em>IN IMPLEMENTATION</em> | Value <code>"arrayBuffer"</code></small>
- *   The option to let Skylink encode data packets using
- *   [ArrayBuffers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)
- *   when sending the data packets through the DataChannel connection during data transfers.
- * @param {String} BLOB <small><em>IN IMPLEMENTATION</em> | Value <code>"blob"</code></small>
- *   The option to let Skylink encode data packets using
- *   [Blobs](https://developer.mozilla.org/en/docs/Web/API/Blob)
- *   when sending the data packets through the DataChannel connection during data transfers.
  * @readOnly
- * @component DataProcess
- * @partof DATA TRANSFER FUNCTIONALITY
  * @for Skylink
- * @since 0.1.0
+ * @since 0.7.0
  */
-Skylink.prototype.DATA_TRANSFER_DATA_TYPE = {
-  BINARY_STRING: 'binaryString',
-  ARRAY_BUFFER: 'arrayBuffer',
-  BLOB: 'blob'
+Skylink.prototype.READY_STATE_CHANGE_ERROR = {
+  API_INVALID: 4001,
+  API_DOMAIN_NOT_MATCH: 4002,
+  API_CORS_DOMAIN_NOT_MATCH: 4003,
+  API_CREDENTIALS_INVALID: 4004,
+  API_CREDENTIALS_NOT_MATCH: 4005,
+  API_INVALID_PARENT_KEY: 4006,
+  API_NO_MEETING_RECORD_FOUND: 4010,
+  XML_HTTP_REQUEST_ERROR: -1,
+  NO_SOCKET_IO: 1,
+  NO_XMLHTTPREQUEST_SUPPORT: 2,
+  NO_WEBRTC_SUPPORT: 3,
+  NO_PATH: 4,
+  ADAPTER_NO_LOADED: 7
 };
 
 /**
- * These are the list of platform signaling system actions that Skylink would be given with.
- * - Upon receiving from the signaling, the application has to reflect the
- *   relevant actions given.
- * - You may refer to {{#crossLink "Skylink/SYSTEM_ACTION_REASON:attribute"}}SYSTEM_ACTION_REASON{{/crossLink}}
- *   for the types of system action reasons that would be given.
+ * <div class="panel-warning">
+ *   Note that configurating the regional server is no longer required as the automatic
+ *   selection for the nearest regional server is implemented based on load and latency.
+ *   Hence, this has been deprecated and will be removed in the next releases.
+ * </div>
+ * Contains the list of regional server that the SDK can use to connect to.
+ * @attribute REGIONAL_SERVER
+ * @param {String} APAC1 <small>Value <code>"sg"</code></small>
+ *   The option to connect to the Asia pacific 1 regional server.
+ * @param {String} US1 <small>Value <code>"us2"</code></small>
+ *   The option to connect to the US 1 regional server.
+ * @type JSON
+ * @readOnly
+ * @deprecated
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.REGIONAL_SERVER = {
+  APAC1: 'sg',
+  US1: 'us2'
+};
+
+/**
+ * Contains the list of connecting server Peer types.
+ * @attribute SERVER_PEER_TYPE
+ * @param {String} MCU <small>Value <code>"mcu"</code></small>
+ *   The type that indicates connecting server Peer is <kbd>MCU</kbd>.
+ *   <small>See: <a href="#">What is MCU and how it works</a></small>
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SERVER_PEER_TYPE = {
+  MCU: 'mcu'
+  //SIP: 'sip'
+};
+
+/**
+ * Contains the current SM Protocol version of SkylinkJS.
+ * <blockquote class="sub">Current version: <code>0.1.1</code></blockquote>
+ * @attribute SM_PROTOCOL_VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.1';
+
+/**
+ * Contains the list of Room socket connection error states.
+ * @attribute SOCKET_ERROR
+ * @param {Number} CONNECTION_FAILED <small>Value <code>0</code></small>
+ *   The error state when socket has failed connecting in the first attempt.
+ * @param {String} RECONNECTION_FAILED <small>Value <code>-1</code></small>
+ *   The error state when socket has failed reconnecting.
+ * @param {String} CONNECTION_ABORTED <small>Value <code>-2</code></small>
+ *   The error state when socket has aborted reconnections after
+ *   the first attempt failure in <code>CONNECTION FAILED</code>.
+ * @param {String} RECONNECTION_ABORTED <small>Value <code>-3</code></small>
+ *   The error state when socket has aborted reconnections after
+ *   several attempts failures in <code>RECONNECTION_FAILED</code>.
+ * @param {String} RECONNECTION_ATTEMPT <small>Value <code>-4</code></small>
+ *   The state when socket is attempting to reconnect to establish a succesful connection.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SOCKET_ERROR = {
+  CONNECTION_FAILED: 0,
+  RECONNECTION_FAILED: -1,
+  CONNECTION_ABORTED: -2,
+  RECONNECTION_ABORTED: -3,
+  RECONNECTION_ATTEMPT: -4
+};
+
+/**
+ * <blockquote class="panel-warning">
+ *   Note that for the next releases, the Keys and Values will change for a more
+ *   descriptive term.
+ * </blockquote>
+ * Contains the list of Room socket fallback states for a successful reconnection.
+ * @attribute SOCKET_FALLBACK
+ * @param {String} NON_FALLBACK <small>Value <code>"nonfallback"</code></small>
+ *   The state when socket is attempting to reconnect the first port and transports used that had failed.
+ *   <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>WebSocket</code></blockquote>
+ * @param {String} NON_FALLBACK_SSL <small>Value <code>"nonfallbackSSL"</code></small>
+ *   The state when socket is attempting to reconnect the first port and transports used that had failed.
+ *   <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>WebSocket</code></blockquote>
+ * @param {String} NON_FALLBACK_LONG_POLLING <small>Value <code>"nonLongPollingfallback"</code></small>
+ *   The state when socket is attempting to reconnect the first port and transports used that had failed.
+ *   <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote>
+ * @param {String} NON_FALLBACK_LONG_POLLING_SSL <small>Value <code>"nonLongPollingfallbackSSL"</code></small>
+ *   The state when socket is attempting to reconnect the first port and transports used that had failed.
+ *   <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote>
+ * @param {String} FALLBACK_PORT <small>Value <code>"fallbackPortNonSSL"</code></small>
+ *   The state when socket is attempting to reconnect the next available fallback port.
+ *   <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>WebSocket</code></blockquote>
+ * @param {String} FALLBACK_PORT_SSL <small>Value <code>"fallbackPortSSL"</code></small>
+ *   The state when socket is attempting to reconnect the next available fallback port.
+ *   <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>WebSocket</code></blockquote>
+ * @param {String} LONG_POLLING <small>Value <code>"fallbackLongPollingNonSSL"</code></small>
+ *   The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports
+ *   for a better attempt at reconnectivity after all reconnection attempts with all available ports
+ *   has failed.<br>The socket will start the reconnect attempt with
+ *   next fallback port starting from the first port used.<br>
+ *   This state may occur directly after <code>NON_FALLBACK_LONG_POLLING</code>
+ *   if <kbd>WebSocket</kbd> transports is not supported.
+ *   <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote>
+ * @param {String} LONG_POLLING_SSL <small>Value <code>"fallbackLongPollingSSL"</code></small>
+ *   The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports
+ *   for a better attempt at reconnectivity after all reconnection attempts with all available ports
+ *   has failed.<br>The socket will start the reconnect attempt with
+ *   next fallback port starting from the first port used.<br>
+ *   This state may occur directly after <code>NON_FALLBACK_LONG_POLLING_SSL</code>
+ *   if <kbd>WebSocket</kbd> transports is not supported.
+ *   <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote>
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SOCKET_FALLBACK = {
+  NON_FALLBACK: 'nonfallback',
+  NON_FALLBACK_SSL: 'nonfallbackSSL',
+  NON_FALLBACK_LONG_POLLING: 'nonLongPollingfallback',
+  NON_FALLBACK_LONG_POLLING_SSL: 'nonLongPollingfallbackSSL',
+  FALLBACK_PORT: 'fallbackPortNonSSL',
+  FALLBACK_SSL_PORT: 'fallbackPortSSL',
+  LONG_POLLING: 'fallbackLongPollingNonSSL',
+  LONG_POLLING_SSL: 'fallbackLongPollingSSL'
+};
+
+/**
+ * Contains the list of SDK connection session actions.
  * @attribute SYSTEM_ACTION
- * @type JSON
  * @param {String} WARNING <small>Value <code>"warning"</code></small>
- *   This action serves a warning to self. Usually if
- *   warning is not heeded, it may result in an <code>REJECT</code> action.
+ *   The action when SDK is warned that connection session may result in <code>REJECT</code> soon later.
+ *   [Rel: Skylink.attr.SYSTEM_ACTION_REASON]
  * @param {String} REJECT <small>Value <code>"reject"</code></small>
- *   This action means that self has been kicked out
- *   of the current signaling room connection, and subsequent Peer connections
- *   would be disconnected.
+ *   The action when SDK connection session has been rejected.
+ *   [Rel: Skylink.attr.SYSTEM_ACTION_REASON]
+ * @type JSON
  * @readOnly
- * @component Room
  * @for Skylink
- * @since 0.5.1
+ * @since 0.7.0
  */
 Skylink.prototype.SYSTEM_ACTION = {
   WARNING: 'warning',
@@ -470,40 +689,35 @@ Skylink.prototype.SYSTEM_ACTION = {
 };
 
 /**
- * These are the list of Skylink platform signaling codes as the reason
- *   for the system action given by the platform signaling that Skylink would receive.
- * - You may refer to {{#crossLink "Skylink/SYSTEM_ACTION:attribute"}}SYSTEM_ACTION{{/crossLink}}
- *   for the types of system actions that would be given.
- * - Reason codes like <code>FAST_MESSAGE</code>, <code>ROOM_FULL</code>, <code>VERIFICATION</code> and
- *   <code>OVER_SEAT_LIMIT</code> has been removed as they are no longer supported.
+ * Contains the list of SDK connection session actions reasons.
  * @attribute SYSTEM_ACTION_REASON
+ * @param {String} ROOM_LOCKED <small>Value <code>"locked"</code></small>
+ *   The action reason when Room is locked and SDK Peer is unable to join the Room.
+ * <blockquote class="sub">Action associated: <code>REJECT</code></blockquote>
+ * @param {String} DUPLICATED_LOGIN <small>Value <code>"duplicatedLogin"</code></small>
+ *   The action reason when Room connection has a duplicated connection session credentials.
+ *   <small>Resolve this by enquiring help from
+ *     <a href="http://support.temasys.com.sg">Temasys Support Portal</a> if this occurs.</small>
+ * <blockquote class="sub">Action associated: <code>REJECT</code></blockquote>
+ * @param {String} SERVER_ERROR <small>Value <code>"serverError"</code></small>
+ *   The action reason when Room connection encountered an error.
+ *   <small>Resolve this by enquiring help from
+ *     <a href="http://support.temasys.com.sg">Temasys Support Portal</a> if this occurs.</small>
+ * <blockquote class="sub">Action associated: <code>REJECT</code></blockquote>
+ * @param {String} EXPIRED <small>Value <code>"expired"</code></small>
+ *   The action reason when Persistent Room connection session has expired.
+ *   <small>See <a href="#article">Persistent Rooms and how it works</a>.</small>
+ * <blockquote class="sub">Action associated: <code>REJECT</code></blockquote>
+ * @param {String} ROOM_CLOSING <small>Value <code>"toclose"</code></small>
+ *   The action reason when Room connection session is going to end soon.
+ * <blockquote class="sub">Action associated: <code>WARNING</code></blockquote>
+ * @param {String} ROOM_CLOSED <small>Value <code>"roomclose"</code></small>
+ *   The action reason when Room connection session has ended.
+ * <blockquote class="sub">action associated: <code>REJECT</code></blockquote>
  * @type JSON
- * @param {String} ROOM_LOCKED <small>Value <code>"locked"</code> | Action ties with <code>REJECT</code></small>
- *   The reason code when room is locked and self is rejected from joining the room.
- * @param {String} DUPLICATED_LOGIN <small>Value <code>"duplicatedLogin"</code> | Action ties with <code>REJECT</code></small>
- *   The reason code when the credentials given is already in use, which the platform signaling
- *   throws an exception for this error.<br>
- * This rarely occurs as Skylink handles this issue, and it's recommended to report this issue if this occurs.
- * @param {String} SERVER_ERROR <small>Value <code>"serverError"</code> | Action ties with <code>REJECT</code></small>
- *   The reason code when the connection with the platform signaling has an exception with self.<br>
- * This rarely (and should not) occur and it's recommended to  report this issue if this occurs.
- * @param {String} EXPIRED <small>Value <code>"expired"</code> | Action ties with <code>REJECT</code></small>
- *   The reason code when the persistent room meeting has expired so self is unable to join the room as
- *   the end time of the meeting has ended.<br>
- * Depending on other meeting timings available for this room, the persistent room will appear expired.<br>
- * This relates to the persistent room feature configured in the Application Key.
- * @param {String} ROOM_CLOSED <small>Value <code>"roomclose"</code> | Action ties with <code>REJECT</code></small>
- *   The reason code when the persistent room meeting has ended and has been rendered expired so self is rejected
- *   from the room as the meeting is over.<br>
- * This relates to the persistent room feature configured in the Application Key.
- * @param {String} ROOM_CLOSING <small>Value <code>"toclose"</code> | Action ties with <code>WARNING</code></small>
- *   The reason code when the persistent room meeting is going to end soon, so this warning is given to inform
- *   users before self is rejected from the room.<br>
- * This relates to the persistent room feature configured in the Application Key.
  * @readOnly
- * @component Room
  * @for Skylink
- * @since 0.5.2
+ * @since 0.7.0
  */
 Skylink.prototype.SYSTEM_ACTION_REASON = {
   //FAST_MESSAGE: 'fastmsg',
@@ -518,489 +732,200 @@ Skylink.prototype.SYSTEM_ACTION_REASON = {
 };
 
 /**
- * These are the logging levels that Skylink provides.
- * - This manipulates the debugging messages sent to <code>console</code> object.
- * - Refer to [Javascript Web Console](https://developer.mozilla.org/en/docs/Web/API/console).
- * @attribute LOG_LEVEL
+ * <div class="panel-warning">
+ *   Note that configuring these options might not necessarily result in the desired type (TCP/UDP) of connection
+ *   as it is depends on how the browser connects the connection.
+ * </div>
+ * Contains the list of available TURN transports configuration options to pass when constructing a connection object.
+ * @attribute TURN_TRANSPORT
  * @type JSON
- * @param {Number} DEBUG <small>Value <code>4</code> | Level higher than <code>LOG</code></small>
- *   Displays debugging logs from <code>LOG</code> level onwards with <code>DEBUG</code> logs.
- * @param {Number} LOG <small>Value <code>3</code> | Level higher than <code>INFO</code></small>
- *   Displays debugging logs from <code>INFO</code> level onwards with <code>LOG</code> logs.
- * @param {Number} INFO <small>Value <code>2</code> | Level higher than <code>WARN</code></small>
- *   Displays debugging logs from <code>WARN</code> level onwards with <code>INFO</code> logs.
- * @param {Number} WARN <small>Value <code>1</code> | Level higher than <code>ERROR</code></small>
- *   Displays debugging logs of <code>ERROR</code> level with <code>WARN</code> logs.
- * @param {Number} ERROR <small><b>DEFAULT</b> | Value <code>0</code> | Lowest level</small>
- *   Displays only <code>ERROR</code> logs.
+ * @param {String} TCP <small>Value <code>"tcp"</code></small>
+ *   The option to connect with setting only TCP transports.
+ *   <small>EXAMPLE TURN URLS OUTPUT<br>
+ *   <code>turn:turnurl:123?transport=tcp</code><br>
+ *   <code>turn:turnurl?transport=tcp</code><br>
+ *   <code>turn:turnurl:1234?transport=tcp</code></small>
+ * @param {String} UDP <small>Value <code>"udp"</code></small>
+ *   The option to connect with setting only UDP transports.
+ *   <small>EXAMPLE TURN URLS OUTPUT<br>
+ *   <code>turn:turnurl:123?transport=udp</code><br>
+ *   <code>turn:turnurl?transport=udp</code><br>
+ *   <code>turn:turnurl:1234?transport=udp</code></small>
+ * @param {String} ANY <small><b>DEFAULT</b> | Value <code>"any"</code></small>
+ *   The option to connect with any transports that is configured by the Skylink Platform.
+ *   <small>EXAMPLE TURN URLS OUTPUT<br>
+ *   <code>turn:turnurl:123?transport=tcp</code><br>
+ *   <code>turn:turnurl?transport=udp</code><br>
+ *   <code>turn:turnurl:1234</code><br>
+ *   <code>turn:turnurl</code></small>
+ * @param {String} NONE <small>Value <code>"none"</code></small>
+ *   The option to connect without setting any transports.
+ *   <small>EXAMPLE TURN URLS OUTPUT<br>
+ *   <code>turn:turnurl:123</code><br>
+ *   <code>turn:turnurl</code><br>
+ *   <code>turn:turnurl:1234</code></small>
+ * @param {String} ALL <small>Value <code>"all"</code></small>
+ *   The option to connect with setting both TCP and UDP transports.
+ *   <small>EXAMPLE TURN URLS OUTPUT<br>
+ *   <code>turn:turnurl:123?transport=tcp</code><br>
+ *   <code>turn:turnurl:123?transport=udp</code><br>
+ *   <code>turn:turnurl?transport=tcp</code><br>
+ *   <code>turn:turnurl?transport=udp</code><br>
+ *   <code>turn:turnurl:1234?transport=tcp</code><br>
+ *   <code>turn:turnurl:1234?transport=udp</code></small>
  * @readOnly
- * @component Log
  * @for Skylink
- * @since 0.5.4
+ * @since 0.7.0
  */
-Skylink.prototype.LOG_LEVEL = {
-  DEBUG: 4,
-  LOG: 3,
-  INFO: 2,
-  WARN: 1,
-  ERROR: 0
+Skylink.prototype.TURN_TRANSPORT = {
+  UDP: 'udp',
+  TCP: 'tcp',
+  ANY: 'any',
+  NONE: 'none',
+  ALL: 'all'
 };
 
 /**
- * These are the list of socket connection error states that Skylink would trigger.
- * - These error states references the [socket.io-client events](http://socket.io/docs/client-api/).
- * @attribute SOCKET_ERROR
- * @type JSON
- * @param {Number} CONNECTION_FAILED <small>Value <code>0</code></small>
- *   The error state when Skylink have failed to establish a socket connection with
- *   platform signaling in the first attempt.
- * @param {String} RECONNECTION_FAILED <small>Value <code>-1</code></small>
- *   The error state when Skylink have failed to
- *   reestablish a socket connection with platform signaling after the first attempt
- *   <code>CONNECTION_FAILED</code>.
- * @param {String} CONNECTION_ABORTED <small>Value <code>-2</code></small>
- *   The error state when attempt to reestablish socket connection
- *   with platform signaling has been aborted after the failed first attempt
- *   <code>CONNECTION_FAILED</code>.
- * @param {String} RECONNECTION_ABORTED <small>Value <code>-3</code></small>
- *   The error state when attempt to reestablish socket connection
- *   with platform signaling has been aborted after several failed reattempts
- *   <code>RECONNECTION_FAILED</code>.
- * @param {String} RECONNECTION_ATTEMPT <small>Value <code>-4</code></small>
- *   The error state when Skylink is attempting to reestablish
- *   a socket connection with platform signaling after a failed attempt
- *   <code>CONNECTION_FAILED</code> or <code>RECONNECTION_FAILED</code>.
- * @readOnly
- * @component Socket
- * @for Skylink
- * @since 0.5.6
- */
-Skylink.prototype.SOCKET_ERROR = {
-  CONNECTION_FAILED: 0,
-  RECONNECTION_FAILED: -1,
-  CONNECTION_ABORTED: -2,
-  RECONNECTION_ABORTED: -3,
-  RECONNECTION_ATTEMPT: -4
-};
-
-/**
- * These are the list of fallback attempt types that Skylink would attempt with.
- * @attribute SOCKET_FALLBACK
- * @type JSON
- * @param {String} NON_FALLBACK <small>Value <code>"nonfallback"</code> | Protocol <code>"http:"</code>,
- * <code>"https:"</code> | Transports <code>"WebSocket"</code>, <code>"Polling"</code></small>
- *   The current socket connection attempt
- *   is using the first selected socket connection port for
- *   the current selected transport <code>"Polling"</code> or <code>"WebSocket"</code>.
- * @param {String} FALLBACK_PORT <small>Value <code>"fallbackPortNonSSL"</code> | Protocol <code>"http:"</code>
- *  | Transports <code>"WebSocket"</code></small>
- *   The current socket connection reattempt
- *   is using the next selected socket connection port for
- *   <code>HTTP</code> protocol connection with the current selected transport
- *   <code>"Polling"</code> or <code>"WebSocket"</code>.
- * @param {String} FALLBACK_PORT_SSL <small>Value <code>"fallbackPortSSL"</code> | Protocol <code>"https:"</code>
- *  | Transports <code>"WebSocket"</code></small>
- *   The current socket connection reattempt
- *   is using the next selected socket connection port for
- *   <code>HTTPS</code> protocol connection with the current selected transport
- *   <code>"Polling"</code> or <code>"WebSocket"</code>.
- * @param {String} LONG_POLLING <small>Value <code>"fallbackLongPollingNonSSL"</code> | Protocol <code>"http:"</code>
- *  | Transports <code>"Polling"</code></small>
- *   The current socket connection reattempt
- *   is using the next selected socket connection port for
- *   <code>HTTP</code> protocol connection with <code>"Polling"</code> after
- *   many attempts of <code>"WebSocket"</code> has failed.
- *   This occurs only for socket connection that is originally using
- *   <code>"WebSocket"</code> transports.
- * @param {String} LONG_POLLING_SSL <small>Value <code>"fallbackLongPollingSSL"</code> | Protocol <code>"https:"</code>
- *  | Transports <code>"Polling"</code></small>
- *   The current socket connection reattempt
- *   is using the next selected socket connection port for
- *   <code>HTTPS</code> protocol connection with <code>"Polling"</code> after
- *   many attempts of <code>"WebSocket"</code> has failed.
- *   This occurs only for socket connection that is originally using
- *   <code>"WebSocket"</code> transports.
- * @readOnly
- * @component Socket
- * @for Skylink
- * @since 0.5.6
- */
-Skylink.prototype.SOCKET_FALLBACK = {
-  NON_FALLBACK: 'nonfallback',
-  FALLBACK_PORT: 'fallbackPortNonSSL',
-  FALLBACK_SSL_PORT: 'fallbackPortSSL',
-  LONG_POLLING: 'fallbackLongPollingNonSSL',
-  LONG_POLLING_SSL: 'fallbackLongPollingSSL'
-};
-
-/**
- * These are the list of Peer connection handshake states that Skylink would trigger.
- * - Do not be confused with {{#crossLink "Skylink/PEER_CONNECTION_STATE:attr"}}PEER_CONNECTION_STATE{{/crossLink}}.
- *   This is the Peer recognition connection that is established with the platform signaling protocol, and not
- *   the Peer connection signaling state itself.
- * - In this case, this happens before the {{#crossLink "Skylink/PEER_CONNECTION_STATE:attr"}}PEER_CONNECTION_STATE
- *   handshaking states. {{/crossLink}} The <code>OFFER</code> and <code>ANSWER</code> relates to the
- *   {{#crossLink "Skylink/PEER_CONNECTION_STATE:attr"}}PEER_CONNECTION_STATE states{{/crossLink}}.
- * - For example as explanation how these state works below, let's make self as the offerer and
- *   the connecting Peer as the answerer.
- * @attribute HANDSHAKE_PROGRESS
- * @type JSON
- * @param {String} ENTER <small>Value <code>"enter"</code></small>
- *   The state when Peer have received <code>ENTER</code> from self,
- *   and Peer connection with self is initialised with self.<br>
- * This state will occur for both self and Peer as <code>ENTER</code>
- *   message is sent to ping for Peers in the room.<br>
- * At this state, Peer would sent <code>WELCOME</code> to the peer to
- *   start the session description connection handshake.<br>
- * <table class="table table-condensed">
- *   <thead><tr><th class="col-md-1"></th><th class="col-md-5">Self</th><th>Peer</th></thead>
- *   <tbody>
- *     <tr><td class="col-md-1">1.</td>
- *       <td class="col-md-5">Sends <code>ENTER</code></td><td>Sends <code>ENTER</code></td></tr>
- *     <tr><td class="col-md-1">2.</td>
- *       <td class="col-md-5">-</td><td>Receives self <code>ENTER</code></td></tr>
- *     <tr><td class="col-md-1">3.</td>
- *       <td class="col-md-5">-</td><td>Sends self <code>WELCOME</code></td></tr>
- *   </tbody>
- * </table>
- * @param {String} WELCOME <small>Value <code>"welcome"</code></small>
- *   The state when self have received <code>WELCOME</code> from Peer,
- *   and Peer connection is initialised with Peer.<br>
- * At this state, self would start the session description connection handshake and
- *   send the local <code>OFFER</code> session description to Peer.
- * <table class="table table-condensed">
- *   <thead><tr><th class="col-md-1"></th><th class="col-md-5">Self</th><th>Peer</th></thead>
- *   <tbody>
- *     <tr><td class="col-md-1">4.</td>
- *       <td class="col-md-5">Receives <code>WELCOME</code></td><td>-</td></tr>
- *     <tr><td class="col-md-1">5.</td>
- *       <td class="col-md-5">Generates <code>OFFER</code></td><td>-</td></tr>
- *     <tr><td class="col-md-1">6.</td>
- *       <td class="col-md-5">Sets local <code>OFFER</code><sup>REF</sup></td><td>-</td></tr>
- *     <tr><td class="col-md-1">7.</td>
- *       <td class="col-md-5">Sends <code>OFFER</code></td><td>-</td></tr>
- *   </tbody>
- * </table>
- * <sup>REF</sup>: The will cause {{#crossLink "Skylink/PEER_CONNECTION_STATE:attr"}}PEER_CONNECTION_STATE{{/crossLink}}
- *   state go to <code>HAVE_LOCAL_OFFER</code>.
- * @param {String} OFFER <small>Value <code>"offer"</code></small>
- *   The state when Peer received <code>OFFER</code> from self.
- * At this state, Peer would set the remote <code>OFFER</code> session description and
- *   start to send local <code>ANSWER</code> session description to self.<br>
- * <table class="table table-condensed">
- *   <thead><tr><th class="col-md-1"></th><th class="col-md-5">Self</th><th>Peer</th></thead>
- *   <tbody>
- *     <tr><td class="col-md-1">8.</td>
- *        <td class="col-md-5">-</td><td>Receives <code>OFFER</code></td></tr>
- *     <tr><td class="col-md-1">9.</td>
- *        <td class="col-md-5">-</td><td>Sets remote <code>OFFER</code><sup>REF</sup></td></tr>
- *     <tr><td class="col-md-1">10.</td>
- *        <td class="col-md-5">-</td><td>Generates <code>ANSWER</code></td></tr>
- *     <tr><td class="col-md-1">11.</td>
- *        <td class="col-md-5">-</td><td>Sets local <code>ANSWER</code></td></tr>
- *     <tr><td class="col-md-1">12.</td>
- *        <td class="col-md-5">-</td><td>Sends <code>ANSWER</code></td></tr>
- *   </tbody>
- * </table>
- * <sup>REF</sup>: The will cause {{#crossLink "Skylink/PEER_CONNECTION_STATE:attr"}}PEER_CONNECTION_STATE{{/crossLink}}
- *   state go to <code>HAVE_REMOTE_OFFER</code>.
- * @param {String} ANSWER <small>Value <code>"answer"</code></small>
- *   The state when self received <code>ANSWER</code> from Peer.<br>
- * At this state, self would set the remote <code>ANSWER</code> session description and
- *   the connection handshaking progress has been completed.<br>
- * <table class="table table-condensed">
- *   <thead><tr><th class="col-md-1"></th><th class="col-md-5">Self</th><th>Peer</th></thead>
- *   <tbody>
- *     <tr><td class="col-md-1">13.</td>
- *        <td class="col-md-5">Receives <code>ANSWER</code></td><td>-</td></tr>
- *     <tr><td class="col-md-1">14.</td>
- *        <td class="col-md-5">Sets remote <code>ANSWER</code></td><td>-</td></tr>
- *   </tbody>
- * </table>
- * @param {String} ERROR <small>Value <code>"error"</code></small>
- *   The state when connection handshake has occurred and exception,
- *   in this which the connection handshake could have been aborted abruptly
- *   and no Peer connection is established.
- * @readOnly
- * @component Peer
- * @for Skylink
- * @since 0.1.0
- */
-Skylink.prototype.HANDSHAKE_PROGRESS = {
-  ENTER: 'enter',
-  WELCOME: 'welcome',
-  OFFER: 'offer',
-  ANSWER: 'answer',
-  ERROR: 'error'
-};
-
-/**
- * The current version of the internal <u>Signaling Message (SM)</u> Protocol that Skylink is using.<br>
- * - This is not a feature for developers to use but rather for SDK developers to
- *   see the Protocol version used in this Skylink version.
- * - In some cases, this information may be used for reporting issues with Skylink.
- * - SM_PROTOCOL VERSION: <code>0.1.</code>.
- * @attribute SM_PROTOCOL_VERSION
+ * Contains the current SDK version of SkylinkJS.
+ *   <blockquote class="sub">Current version: <code>(See documentation version)</code></blockquote>
+ * @attribute VERSION
  * @type String
- * @required
- * @component Socket
+ * @readOnly
  * @for Skylink
- * @since 0.6.0
+ * @since 0.7.0
  */
-Skylink.prototype.SM_PROTOCOL_VERSION = '0.1.1';
+Skylink.prototype.VERSION = '@@version';
 
 
 /**
- * These are the list of available video codecs settings that Skylink would use
- *   when streaming video stream with Peers.
- * - The video codec would be used if the self and Peer's browser supports the selected codec.
- * - This would default to the browser selected codec. In most cases, option <code>VP8</code> is
- *   used by default.
+ * <div class="panel-warning">
+ *   Note that configuring these options might not necessarily result in the video codec connection
+ *   as it is depends on the browser supports.
+ * </div>
+ * Contains the list of video codec configuration options to use during connection with video streams.
  * @attribute VIDEO_CODEC
  * @param {String} AUTO <small><b>DEFAULT</b> | Value <code>"auto"</code></small>
- *   The option to let Skylink use any video codec selected by the browser generated session description.
+ *   The option to use the browser selected video codec.
  * @param {String} VP8 <small>Value <code>"VP8"</code></small>
- *   The option to let Skylink use the [VP8](https://en.wikipedia.org/wiki/VP8) codec.<br>
- *   This is the common and mandantory video codec used by most browsers.
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/VP8">VP8</a> video codec.<br>
+ *   This is the commonly supported video codec in most browsers.
+ * @param {String} VP9 <small>Value <code>"VP9"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/VP9">VP9</a> video codec.
  * @param {String} H264 <small>Value <code>"H264"</code></small>
- *   The option to let Skylink use the [H264](https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC) codec.<br>
- *   This only works if the browser supports the H264 video codec.
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC">H264</a> video codec.
+ * @param {String} H264UC <small>Value <code>"H264UC"</code></small>
+ *   The option to configure to use <a href="https://en.wikipedia.org/wiki/Scalable_Video_Coding">H264 SVC</a> video codec.
  * @type JSON
  * @readOnly
- * @component Stream
  * @for Skylink
- * @since 0.5.10
+ * @since 0.7.0
  */
 Skylink.prototype.VIDEO_CODEC = {
   AUTO: 'auto',
   VP8: 'VP8',
-  H264: 'H264'
+  VP9: 'VP9',
+  H264: 'H264',
+  H264UC: 'H264UC'
 };
 
 /**
- * These are the list of available audio codecs settings that Skylink would use
- *   when streaming audio stream with Peers.
- * - The audio codec would be used if the self and Peer's browser supports the selected codec.
- * - This would default to the browser selected codec. In most cases, option <code>OPUS</code> is
- *   used by default.
- * @attribute AUDIO_CODEC
- * @param {String} AUTO <small><b>DEFAULT</b> | Value <code>"auto"</code></small>
- *   The option to let Skylink use any audio codec selected by the browser generated session description.
- * @param {String} OPUS <small>Value <code>"opus"</code></small>
- *   The option to let Skylink use the [OPUS](https://en.wikipedia.org/wiki/Opus_(audio_format)) codec.<br>
- *   This is the common and mandantory audio codec used.
- * @param {String} ISAC <small>Value <code>"ISAC"</code></small>
- *   The option to let Skylink use the [iSAC](https://en.wikipedia.org/wiki/Internet_Speech_Audio_Codec).<br>
- *   This only works if the browser supports the iSAC video codec.
- * @type JSON
- * @readOnly
- * @component Stream
- * @for Skylink
- * @since 0.5.10
- */
-Skylink.prototype.AUDIO_CODEC = {
-  AUTO: 'auto',
-  ISAC: 'ISAC',
-  OPUS: 'opus'
-};
-
-/**
- * These are the list of suggested video resolutions that Skylink should configure
- *   when retrieving self user media video stream.
- * - Setting the resolution may not force set the resolution provided as it
- *   depends on the how the browser handles the resolution.
- * - It's recommended to use video resolution option to maximum <code>FHD</code>, as the other
- *   resolution options may be unrealistic and create performance issues. However, we provide them
- *   to allow developers to test with the browser capability, but do use it at your own risk.
- * - The higher the resolution, the more CPU usage might be used, hence it's recommended to
- *   use the default option <code>VGA</code>.
- * - This follows the
- *   [Wikipedia Graphics display resolution page](https://en.wikipedia.org/wiki/Graphics_display_resolution#Video_Graphics_Array)
- * @param {JSON} QQVGA <small>Value <code>{ width: 160, height: 120 }</code> | Aspect Ratio <code>4:3</code></small>
- *   The option to use QQVGA resolution.
- * @param {JSON} HQVGA <small>Value <code>{ width: 240, height: 160 }</code> | Aspect Ratio <code>3:2</code></small>
+ * <div class="panel-warning">
+ *   Note that configuring these options might not necessarily result in the desired resolution as it
+ *   depends on how the browser renders the video stream resolution.
+ * </div>
+ * Contains the list of video resolution default presets.
+ * @param {JSON} QQVGA <small>Value <code>{ width: 160, height: 120 }</code></small>
+ *   The option to use QQVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>4:3</code></blockquote>
+ * @param {JSON} HQVGA <small>Value <code>{ width: 240, height: 160 }</code></small>
  *   The option to use HQVGA resolution.
- * @param {JSON} QVGA <small>Value <code>{ width: 320, height: 240 }</code> | Aspect Ratio <code>4:3</code></small>
- *   The option to use QVGA resolution.
- * @param {JSON} WQVGA <small>Value <code>{ width: 384, height: 240 }</code> | Aspect Ratio <code>16:10</code></small>
- *   The option to use WQVGA resolution.
- * @param {JSON} HVGA <small>Value <code>{ width: 480, height: 320 }</code> | Aspect Ratio <code>3:2</code></small>
- *   The option to use HVGA resolution.
- * @param {JSON} VGA <small><b>DEFAULT</b> | Value <code>{ width: 640, height: 480 }</code> | Aspect Ratio <code>4:3</code></small>
- *   The option to use VGA resolution.
- * @param {JSON} WVGA <small>Value <code>{ width: 768, height: 480 }</code> | Aspect Ratio <code>16:10</code></small>
- *   The option to use WVGA resolution.
- * @param {JSON} FWVGA <small>Value <code>{ width: 854, height: 480 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use FWVGA resolution.
- * @param {JSON} SVGA <small>Value <code>{ width: 800, height: 600 }</code> | Aspect Ratio <code>4:3</code></small>
- *   The option to use SVGA resolution.
- * @param {JSON} DVGA <small>Value <code>{ width: 960, height: 640 }</code> | Aspect Ratio <code>3:2</code></small>
- *   The option to use DVGA resolution.
- * @param {JSON} WSVGA <small>Value <code>{ width: 1024, height: 576 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use WSVGA resolution.
- * @param {JSON} HD <small>Value <code>{ width: 1280, height: 720 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use HD resolution.
- * @param {JSON} HDPLUS <small>Value <code>{ width: 1600, height: 900 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use HDPLUS resolution.
- * @param {JSON} FHD <small>Value <code>{ width: 1920, height: 1080 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use FHD resolution.
- * @param {JSON} QHD <small>Value <code>{ width: 2560, height: 1440 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use QHD resolution.
- * @param {JSON} WQXGAPLUS <small>Value <code>{ width: 3200, height: 1800 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use WQXGAPLUS resolution.
- * @param {JSON} UHD <small>Value <code>{ width: 3840, height: 2160 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use UHD resolution.
- * @param {JSON} UHDPLUS <small>Value <code>{ width: 5120, height: 2880 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use UHDPLUS resolution.
- * @param {JSON} FUHD <small>Value <code>{ width: 7680, height: 4320 }</code> | Aspect Ratio <code>16:9</code></small>
- *   The option to use FUHD resolution.
- * @param {JSON} QUHD <small>Value <code>{ width: 15360, height: 8640 }</code> | Aspect Ratio <code>16:9</code></small>
+ *   <blockquote class="sub">Aspect Ratio <code>3:2</code></blockquote>
+ * @param {JSON} QVGA <small>Value <code>{ width: 320, height: 240 }</code></small>
+ *   The option to use QVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>4:3</code></blockquote>
+ * @param {JSON} WQVGA <small>Value <code>{ width: 384, height: 240 }</code></small>
+ *   The option to use WQVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:10</code></blockquote>
+ * @param {JSON} HVGA <small>Value <code>{ width: 480, height: 320 }</code></small>
+ *   The option to use HVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>3:2</code></blockquote>
+ * @param {JSON} VGA <small><b>DEFAULT</b> | Value <code>{ width: 640, height: 480 }</code></small>
+ *   The option to use VGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>4:3</code></blockquote>
+ * @param {JSON} WVGA <small>Value <code>{ width: 768, height: 480 }</code></small>
+ *   The option to use WVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:10</code></blockquote>
+ * @param {JSON} FWVGA <small>Value <code>{ width: 854, height: 480 }</code></small>
+ *   The option to use FWVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} SVGA <small>Value <code>{ width: 800, height: 600 }</code></small>
+ *   The option to use SVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>4:3</code></blockquote>
+ * @param {JSON} DVGA <small>Value <code>{ width: 960, height: 640 }</code></small>
+ *   The option to use DVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>3:2</code></blockquote>
+ * @param {JSON} WSVGA <small>Value <code>{ width: 1024, height: 576 }</code></small>
+ *   The option to use WSVGA video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} HD <small>Value <code>{ width: 1280, height: 720 }</code></small>
+ *   The option to use HD video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} HDPLUS <small>Value <code>{ width: 1600, height: 900 }</code></small>
+ *   The option to use HDPLUS video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} FHD <small>Value <code>{ width: 1920, height: 1080 }</code></small>
+ *   The option to use FHD video resolution.
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} QHD <small>Value <code>{ width: 2560, height: 1440 }</code></small>
+ *   The option to use QHD video resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} WQXGAPLUS <small>Value <code>{ width: 3200, height: 1800 }</code></small>
+ *   The option to use WQXGAPLUS video resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} UHD <small>Value <code>{ width: 3840, height: 2160 }</code></small>
+ *   The option to use UHD video resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} UHDPLUS <small>Value <code>{ width: 5120, height: 2880 }</code></small>
+ *   The option to use UHDPLUS video resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} FUHD <small>Value <code>{ width: 7680, height: 4320 }</code></small>
+ *   The option to use FUHD video resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
+ * @param {JSON} QUHD <small>Value <code>{ width: 15360, height: 8640 }</code></small>
  *   The option to use QUHD resolution.
+ *   <small>Note that this resolution may not be supported and may be unrealistic.</small>
+ *   <blockquote class="sub">Aspect Ratio <code>16:9</code></blockquote>
  * @attribute VIDEO_RESOLUTION
  * @type JSON
  * @readOnly
- * @component Stream
  * @for Skylink
- * @since 0.5.6
+ * @since 0.7.0
  */
 Skylink.prototype.VIDEO_RESOLUTION = {
-  QQVGA: { width: 160, height: 120, aspectRatio: '4:3' },
-  HQVGA: { width: 240, height: 160, aspectRatio: '3:2' },
-  QVGA: { width: 320, height: 240, aspectRatio: '4:3' },
-  WQVGA: { width: 384, height: 240, aspectRatio: '16:10' },
-  HVGA: { width: 480, height: 320, aspectRatio: '3:2' },
-  VGA: { width: 640, height: 480, aspectRatio: '4:3' },
-  WVGA: { width: 768, height: 480, aspectRatio: '16:10' },
-  FWVGA: { width: 854, height: 480, aspectRatio: '16:9' },
-  SVGA: { width: 800, height: 600, aspectRatio: '4:3' },
-  DVGA: { width: 960, height: 640, aspectRatio: '3:2' },
-  WSVGA: { width: 1024, height: 576, aspectRatio: '16:9' },
-  HD: { width: 1280, height: 720, aspectRatio: '16:9' },
-  HDPLUS: { width: 1600, height: 900, aspectRatio: '16:9' },
-  FHD: { width: 1920, height: 1080, aspectRatio: '16:9' },
-  QHD: { width: 2560, height: 1440, aspectRatio: '16:9' },
-  WQXGAPLUS: { width: 3200, height: 1800, aspectRatio: '16:9' },
-  UHD: { width: 3840, height: 2160, aspectRatio: '16:9' },
-  UHDPLUS: { width: 5120, height: 2880, aspectRatio: '16:9' },
-  FUHD: { width: 7680, height: 4320, aspectRatio: '16:9' },
-  QUHD: { width: 15360, height: 8640, aspectRatio: '16:9' }
+  QQVGA: { width: 160, height: 120 /*, aspectRatio: '4:3'*/ },
+  HQVGA: { width: 240, height: 160 /*, aspectRatio: '3:2'*/ },
+  QVGA: { width: 320, height: 240 /*, aspectRatio: '4:3'*/ },
+  WQVGA: { width: 384, height: 240 /*, aspectRatio: '16:10'*/ },
+  HVGA: { width: 480, height: 320 /*, aspectRatio: '3:2'*/ },
+  VGA: { width: 640, height: 480 /*, aspectRatio: '4:3'*/ },
+  WVGA: { width: 768, height: 480 /*, aspectRatio: '16:10'*/ },
+  FWVGA: { width: 854, height: 480 /*, aspectRatio: '16:9'*/ },
+  SVGA: { width: 800, height: 600 /*, aspectRatio: '4:3'*/ },
+  DVGA: { width: 960, height: 640 /*, aspectRatio: '3:2'*/ },
+  WSVGA: { width: 1024, height: 576 /*, aspectRatio: '16:9'*/ },
+  HD: { width: 1280, height: 720 /*, aspectRatio: '16:9'*/ },
+  HDPLUS: { width: 1600, height: 900 /*, aspectRatio: '16:9'*/ },
+  FHD: { width: 1920, height: 1080 /*, aspectRatio: '16:9'*/ },
+  QHD: { width: 2560, height: 1440 /*, aspectRatio: '16:9'*/ },
+  WQXGAPLUS: { width: 3200, height: 1800 /*, aspectRatio: '16:9'*/ },
+  UHD: { width: 3840, height: 2160 /*, aspectRatio: '16:9'*/ },
+  UHDPLUS: { width: 5120, height: 2880 /*, aspectRatio: '16:9'*/ },
+  FUHD: { width: 7680, height: 4320 /*, aspectRatio: '16:9'*/ },
+  QUHD: { width: 15360, height: 8640 /*, aspectRatio: '16:9'*/ }
 };
 
-/**
- * These are the list of room initialization ready states that Skylink would trigger.
- * - The states indicates if the required connection information has been retrieved successfully from
- *   the platform server to start a connection.
- * - These states are triggered when {{#crossLink "Skylink/init:method"}}init(){{/crossLink}} or
- *   {{#crossLink "Skylink/joinRoom:attr"}}joinRoom(){{/crossLink}} is invoked.
- * @attribute READY_STATE_CHANGE
- * @type JSON
- * @param {Number} INIT <small>Value <code>0</code></small>
- *   The state when Skylink is at the initial state before retrieval.<br>
- * If all dependencies has been loaded, this would proceed to <code>LOADING</code> state.
- * @param {Number} LOADING <small>Value <code>1</code></small>
- *   The state when Skylink starts retrieving the connection information from the platform server.<br>
- * This state occurs after <code>INIT</code> state and if retrieval is successful, this would
- *   proceed to <code>COMPLETED</code> state.
- * @param {Number} COMPLETED <small>Value <code>2</code></small>
- *   The state when the connection information has been retrieved successfully.<br>
- * This state occurs after <code>LOADING</code>, and if it's
- *   {{#crossLink "Skylink/joinRoom:attr"}}joinRoom(){{/crossLink}} that is invoked, room connection
- *   would commerce.
- * @param {Number} ERROR <small>Value <code>-1</code></small>
- *   The state when an exception occured while retrieving the connection information.<br>
- * This state might be triggered when dependencies failed to load or HTTP retrieval fails.<br>
- * Reference {{#crossLink "Skylink/READY_STATE_CHANGE_ERROR:attr"}}READY_STATE_CHANGE_ERROR{{/crossLink}}
- *   to see the list of errors that might have triggered the <code>ERROR</code> state.
- * @readOnly
- * @component Room
- * @for Skylink
- * @since 0.1.0
- */
-Skylink.prototype.READY_STATE_CHANGE = {
-  INIT: 0,
-  LOADING: 1,
-  COMPLETED: 2,
-  ERROR: -1
-};
-
-/**
- * These are the list of room initialization ready state errors that Skylink has.
- * - Ready state errors like <code>ROOM_LOCKED</code>, <code>API_NOT_ENOUGH_CREDIT</code>,
- *   <code>API_NOT_ENOUGH_PREPAID_CREDIT</code>, <code>API_FAILED_FINDING_PREPAID_CREDIT</code> and
- *   <code>SCRIPT_ERROR</code> has been removed as they are no longer supported.
- * @attribute READY_STATE_CHANGE_ERROR
- * @type JSON
- * @param {Number} API_INVALID <small>Value <code>4001</code></small>
- *   The error when provided Application Key does not exists <em>(invalid)</em>.<br>
- * For this error, it's recommended that you check if the Application Key exists in your account
- *   in the developer console.
- * @param {Number} API_DOMAIN_NOT_MATCH <small>Value <code>4002</code></small>
- *   The error when application accessing from backend IP address is not valid for provided Application Key.<br>
- * This rarely (and should not) occur and it's recommended to report this issue if this occurs.
- * @param {Number} API_CORS_DOMAIN_NOT_MATCH <small>Value <code>4003</code></small>
- *   The error when application accessing from the CORS domain is not valid for provided Application Key.<br>
- * For this error, it's recommended that you check the CORS configuration for the provided Application Key
- *   in the developer console.
- * @param {Number} API_CREDENTIALS_INVALID <small>Value <code>4004</code></small>
- *   The error when credentials provided is not valid for provided Application Key.<br>
- * For this error, it's recommended to check the <code>credentials</code> provided in
- *   {{#crossLink "Skylink/init:method"}}init() configuration{{/crossLink}}.
- * @param {Number} API_CREDENTIALS_NOT_MATCH <small>Value <code>4005</code></small>
- *   The error when credentials does not match as expected generated credentials for provided Application Key.<br>
- * For this error, it's recommended to check the <code>credentials</code> provided in
- *   {{#crossLink "Skylink/init:method"}}init() configuration{{/crossLink}}.
- * @param {Number} API_INVALID_PARENT_KEY <small>Value <code>4006</code></small>
- *   The error when provided alias Application Key has an error because parent Application Key does not exists.<br>
- * For this error, it's recommended to provide another alias Application Key.
- * @param {Number} API_NO_MEETING_RECORD_FOUND <small>Value <code>4010</code></small>
- *   The error when there is no meeting currently that is open or available to join
- *   for self at the current time in the selected room.<br>
- * For this error, it's recommended to retrieve the list of meetings and check if it exists using
- *   the [Meeting Resource REST API](https://temasys.atlassian.net/wiki/display/TPD/SkylinkAPI+-+Meeting+%28Persistent+Room%29+Resources).
- * @param {Number} NO_SOCKET_IO <small>Value <code>1</code></small>
- *   The error when socket.io dependency is not loaded.<br>
- * For this error, it's recommended to load the
- *   [correct socket.io-client dependency](http://socket.io/download/) from the CDN.
- * @param {Number} NO_XMLHTTPREQUEST_SUPPORT <small>Value <code>2</code></small>
- *   The error when XMLHttpRequest is not supported in current browser.<br>
- * For this error, it's recommended to ask user to switch to another browser that supports <code>XMLHttpRequest</code>.
- * @param {Number} NO_WEBRTC_SUPPORT <small>Value <code>3</code></small>
- *   The error when WebRTC is not supported in current browser.<br>
- * For this error, it's recommended to ask user to switch to another browser that supports WebRTC.
- * @param {Number} NO_PATH <small>Value <code>4</code></small>
- *   The error when constructed path is invalid.<br>
- * This rarely (and should not) occur and it's recommended to report this issue if this occurs.
- * @param {Number} INVALID_XMLHTTPREQUEST_STATUS <small>Value <code>5</code></small>
- *   The error when XMLHttpRequest does not return a HTTP status code of <code>200</code> but a HTTP failure.<br>
- * This rarely (and should not) occur and it's recommended to report this issue if this occurs.
- * @param {Number} ADAPTER_NO_LOADED <small>Value <code>7</code></small>
- *   The error when AdapterJS dependency is not loaded.<br>
- * For this error, it's recommended to load the
- *   [correct AdapterJS dependency](https://github.com/Temasys/AdapterJS/releases) from the CDN.
- * @param {Number} XML_HTTP_REQUEST_ERROR <small>Value <code>-1</code></small>
- *   The error when XMLHttpRequest failure on the network level when attempting to
- *   connect to the platform server to retrieve selected room connection information.<br>
- * This might happen when connection timeouts. If this is a persistent issue, it's recommended to report this issue.
- * @readOnly
- * @component Room
- * @for Skylink
- * @since 0.4.0
- */
-Skylink.prototype.READY_STATE_CHANGE_ERROR = {
-  API_INVALID: 4001,
-  API_DOMAIN_NOT_MATCH: 4002,
-  API_CORS_DOMAIN_NOT_MATCH: 4003,
-  API_CREDENTIALS_INVALID: 4004,
-  API_CREDENTIALS_NOT_MATCH: 4005,
-  API_INVALID_PARENT_KEY: 4006,
-  API_NO_MEETING_RECORD_FOUND: 4010,
-  //ROOM_LOCKED: 5001,
-  XML_HTTP_REQUEST_ERROR: -1,
-  NO_SOCKET_IO: 1,
-  NO_XMLHTTPREQUEST_SUPPORT: 2,
-  NO_WEBRTC_SUPPORT: 3,
-  NO_PATH: 4,
-  //INVALID_XMLHTTPREQUEST_STATUS: 5,
-  //SCRIPT_ERROR: 6,
-  ADAPTER_NO_LOADED: 7
-};

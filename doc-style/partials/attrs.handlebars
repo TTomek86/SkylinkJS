@@ -5,16 +5,8 @@
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
-      {{#if deprecated}}
-        <span class="label label-warning" title="This property is deprecated. Might be removed in future releases.">deprecated</span>
-      {{/if}}
-
       {{#if multiple}}
         <span class="label label-warning" title="This argument may occur one or more times.">multiple</span>
-      {{/if}}
-
-      {{#if required}}
-        <span class="label label-warning" title="This attribute is required for communication.">required</span>
       {{/if}}
 
       {{#if unsupported}}
@@ -23,10 +15,6 @@
 
       {{#if access}}
         <span class="label label-default" title="This attribute is {{access}}.">{{access}}</span>
-      {{/if}}
-
-      {{#if optional}}
-        <span class="label label-default" title="This attribute is optional and not required for communication.">optional</span>
       {{/if}}
 
       {{#if final}}
@@ -55,6 +43,18 @@
 
       {{#if global}}
         <span class="label label-info label-global" title="This attribute is placed in the global class namespace.">global</span>
+      {{/if}}
+
+      {{#if required}}
+        <span class="label label-warning" title="This attribute is required for communication.">required</span>
+      {{/if}}
+
+      {{#if optional}}
+        <span class="label label-default" title="This attribute is optional and not required for communication.">optional</span>
+      {{/if}}
+
+      {{#if deprecated}}
+        <span class="label label-warning" title="This property is deprecated. Might be removed in future releases.">deprecated</span>
       {{/if}}
     </div>
 

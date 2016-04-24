@@ -46,8 +46,8 @@ $(document).ready(function () {
     // parse [Rel: XXXX]
     if (elementHTML.indexOf('[Rel:') > -1) {
       var regexOutput = '<small><i class="fa fa-book"></i>&nbsp;&nbsp;' +
-        'See also: <a href="#attr_$1">$1</a> for more information.</small>';
-      elementHTML = elementHTML.replace(/\[Rel:\ Skylink\.([^.\]]+)([^\]]+|)\]/i, regexOutput);
+        'See also: <a href="#$1_$3">$3</a> for more information.</small>';
+      elementHTML = elementHTML.replace(/\[Rel:\ Skylink\.([^.\]]+)([^\]]+|)\.([^.\]]+)([^\]]+|)\]/i, regexOutput);
     }
     // set the updated content
     $(element).html(elementHTML);

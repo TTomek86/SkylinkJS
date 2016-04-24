@@ -1,8 +1,19 @@
 body {
   font-family: 'Source Sans Pro', sans-serif, helvetica;
 }
-pre, code {
+pre, code, var {
   font-family: 'Source Code Pro', consolas, helvetica, sans-serif;
+}
+kbd {
+  background: #aaa;
+  font-size: 11px;
+  border-radius: 2px;
+}
+var {
+  font-style: normal;
+  color: #6C0000;
+  font-size: 12px;
+  font-weight: 600;
 }
 /* Bootstrap override */
 h1, h2, h3 {
@@ -44,6 +55,8 @@ h3 code {
 .navbar-brand img {
   width: 90px;
   margin-top: -5px;
+  display: inline-block;
+  vertical-align: middle;
 }
 .jumbotron {
   margin-top: 30px;
@@ -239,13 +252,32 @@ h3 code {
   color: #888;
   display: block;
 }
+.param .param-description small span {
+  color: #b8b8b8;
+}
 .param .param-description small.default {
   border-left: solid 2px #ccc;
   padding-left: 15px;
+  color: #888;
 }
 .param .param-description small.default span {
   margin-right: 8px;
   font-weight: 600;
+}
+.param .param-description small var {
+  font-size: 10px;
+  font-style: normal;
+}
+.param .param-description code small {
+  display: inline-block;
+  vertical-align: middle;
+}
+.param .param-description a code small b {
+  font-weight: 600;
+  color: #767676;
+}
+.param .param-description a:hover code small {
+  text-decoration: underline;
 }
 .returns-description span,
 .returns-description p {
@@ -359,12 +391,60 @@ blockquote small:before,
 blockquote small:after {
   content: ""!important;
 }
+
+blockquote.sub {
+  margin: 5px 0;
+  color: #888;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-left: solid 1px #ccc!important;
+  padding: 2px 7px!important;
+  background: #fafafa;
+  display: inline-block;
+  vertical-align: top;
+  clear: both;
+}
+blockquote.sub code {
+  text-transform: none;
+}
+#hd {
+  z-index: 9999;
+}
+/* Used for description */
+.panel-warning {
+  background: #eee;
+  padding: 5px 12px!important;
+  border-left: solid 4px #ccc!important;
+  margin: 15px 0;
+  color: #888;
+}
+/* Used for param description */
+.panel-info {
+  color: #337ab7;
+  background: #dfecf6;
+  padding: 4px 9px!important;
+  border-left: solid 3px #8bb8df!important;
+  margin: 7px 0!important;
+  font-size: 12px;
+}
+
+.panel-info code {
+  color: #888;
+  background: #eee;
+}
+
 @media (max-width: 991px) {
   .section-doc-group .col-md-3 {
     display: none;
   }
   .section-doc-group .col-md-9 {
     padding-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .btn-navbar {
+    margin-right: 15px;
   }
 }
 
