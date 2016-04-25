@@ -399,7 +399,6 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
   pc.setAnswer = '';
   pc.hasStream = false;
   pc.hasScreen = !!isScreenSharing;
-  pc.hasMainChannel = false;
   pc.firefoxStreamId = '';
   pc.processingLocalSDP = false;
   pc.processingRemoteSDP = false;
@@ -407,6 +406,8 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
 
   // datachannels
   self._dataChannels[targetMid] = {};
+  self._transfers[targetMid] = {};
+
   // candidates
   self._addedCandidates[targetMid] = {
     relay: [],
@@ -423,9 +424,16 @@ Skylink.prototype._createPeerConnection = function(targetMid, isScreenSharing) {
 
       var channelType = self.DATA_CHANNEL_TYPE.DATA;
       var channelKey = dc.label;
+      var agentName = '',
+          peerInfo = self.getPeerInfo(targetMid);
+
+      if (peerInfo && peerInfo.agent && peerInfo.agent.name) {
+        agentName = peerInfo.agent.name;
+      }
+
 
       // if peer does not have main channel, the first item is main
-      if (!pc.hasMainChannel) {
+      if (self._INTEROP_MULTI_TRANSFERS.indexOf(agentName) > -1) {
         channelType = self.DATA_CHANNEL_TYPE.MESSAGING;
         channelKey = 'main';
         pc.hasMainChannel = true;

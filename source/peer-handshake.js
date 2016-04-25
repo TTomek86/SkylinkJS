@@ -237,7 +237,7 @@ Skylink.prototype._doOffer = function(targetMid, peerBrowser) {
     }
 
     self._dataChannels[targetMid].main =
-      self._createDataChannel(targetMid, self.DATA_CHANNEL_TYPE.MESSAGING, null, targetMid);
+      self._createDataChannel(targetMid, self.DATA_CHANNEL_TYPE.MESSAGING, null, 'main');
     self._peerConnections[targetMid].hasMainChannel = true;
   }
 

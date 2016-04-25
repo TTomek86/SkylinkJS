@@ -248,6 +248,18 @@ Skylink.prototype._createDataChannel = function(peerId, channelType, dc, customC
       var checkIfChannelClosedDuringConn = !!pc ? !pc.dataChannelClosed : false;
 
       if (checkIfChannelClosedDuringConn && dc.dcType === self.DATA_CHANNEL_TYPE.MESSAGING) {
+        var agentName = '',
+            peerInfo = self.getPeerInfo(peerId);
+
+        if (peerInfo && peerInfo.agent && peerInfo.agent.name) {
+          agentName = peerInfo.agent.name;
+        }
+
+        if (self._INTEROP_MULTI_TRANSFERS.indexOf(agentName) > -1) {
+          log.debug([peerId, 'RTCDataChannel', channelName, 'Not re-opening closed datachannel to prevent crashes for other SDKs']);
+          return;
+        }
+
         log.debug([peerId, 'RTCDataChannel', channelName, 'Re-opening closed datachannel in ' +
           'on-going connection'], {
             channelType: channelType,
@@ -256,7 +268,7 @@ Skylink.prototype._createDataChannel = function(peerId, channelType, dc, customC
         });
 
         self._dataChannels[peerId].main =
-          self._createDataChannel(peerId, self.DATA_CHANNEL_TYPE.MESSAGING, null, peerId);
+          self._createDataChannel(peerId, self.DATA_CHANNEL_TYPE.MESSAGING, null, 'main');
 
         log.debug([peerId, 'RTCDataChannel', channelName, 'Re-opened closed datachannel'], {
           channelType: channelType,
