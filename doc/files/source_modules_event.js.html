@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/modules/event.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Module that allows &lt;kbd&gt;Objects&lt;/kbd&gt; to mixin functions for event subscriptions and dispatching.
+ * @class SkylinkEvent
+ * @private
+ * @for Skylink
+ * @since 0.7.0
+ */
+var SkylinkEvent = {
+
+  /**
+   * Method that subscribes a &lt;code&gt;listener&lt;/code&gt; function to an &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; which would be triggered
+   *   every time when the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; is dispatched.
+   * @method on
+   * @param {String} eventName The parameter name of the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; to subscribe to.
+   * @param {Function} listenerFn The parameter &lt;code&gt;listener&lt;/code&gt; function to bind to the subscription.
+   * @example
+   *   // Parameters: on(eventName, listenerFn)
+   *   SkylinkDemo.on(&quot;peerJoined&quot;, function (peerId) {
+   *     console.log(peerID + &quot; has joined the Room&quot;);
+   *     ///-[Handle UI view when Peer has joined the Room]
+   *   });
+   * @linksTo #events|See the list of available Events to subscribe to
+   * @for Skylink
+   * @since 0.7.0
+   */
+  on: function(event, callback) {
+    // Prevent subscription if invalid Event name is provided
+    if (!Array.isArray(this._listeners.on[event])) {
+      throw new Error(&#x27;Failed on subscription as invalid Event name is provided.&#x27;);
+    }
+
+    this._listeners.on[event].push(callback);
+
+    // Prevent chaining for now
+    //return this;
+  },
+
+  /**
+   * Method that unsubscribes &lt;code&gt;listener&lt;/code&gt; functions from &lt;a href=&quot;#events&quot;&gt;Events&lt;/a&gt;.
+   * @method off
+   * @param {String} [eventName] &lt;blockquote class=&quot;panel-info&quot;&gt;
+   *     Not providing this parameter value removes all &lt;code&gt;listener&lt;/code&gt; functions from
+   *     all &lt;a href=&quot;#events&quot;&gt;Events&lt;/a&gt;.
+   *   &lt;/blockquote&gt;
+   *   The parameter name of the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; to unsubscribe &lt;code&gt;listener&lt;/code&gt; functions.&lt;br&gt;
+   * @param {Function} [listenerFn] &lt;blockquote class=&quot;panel-info&quot;&gt;
+   *     Not providing this parameter value removes all &lt;code&gt;listener&lt;/code&gt; functions from
+   *     the provided &lt;code&gt;eventName&lt;/code&gt; parameter &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt;.
+   *   &lt;/blockquote&gt;
+   *   The parameter of a particular &lt;code&gt;listener&lt;/code&gt; function to unsubscribe from the
+   *   provided &lt;code&gt;eventName&lt;/code&gt; parameter &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt;.
+   * @example
+   *   // Parameters: off(eventName, listenerFn)
+   *   //! Unsubscribes this specific listener function from &quot;iceConnectionState&quot; Event
+   *   var listenerFn = function (state, peerId) {
+   *     console.log(peerId + &quot; connection state: &quot; + state);
+   *   };
+   *
+   *   SkylinkDemo.off(&quot;iceConnectionState&quot;, listenerFn);
+   *
+   *   // Parameters: off(eventName)
+   *   //! Unsubscribes all listener functions from &quot;peerJoined&quot; Event
+   *   SkylinkDemo.off(&quot;peerJoined&quot;);
+   *
+   *   // Parameters: off()
+   *   //! Unsubscribes all listener functions from all Events
+   *
+   *   SkylinkDemo.off();
+   * @linksTo #events|See the list of available Events to subscribe to
+   * @for Skylink
+   * @since 0.7.0
+   */
+  off: function(event, callback) {
+    // Prevent unsubscription if invalid Event name is provided
+    if (!(Array.isArray(this._listeners.once[event]) || Array.isArray(this._listeners.on[event]))) {
+      throw new Error(&#x27;Failed unsubscription as invalid Event name is provided.&#x27;);
+    }
+
+    //Remove all listeners if event is not provided
+    if (typeof event === &#x27;undefined&#x27;) {
+      this._listeners.on = {};
+      this._listeners.once = {};
+    }
+
+    //Remove all callbacks of the specified events if callback is not provided
+    if (typeof callback === &#x27;undefined&#x27;) {
+      this._listeners.on[event] = [];
+      this._listeners.once[event] = [];
+    } else {
+
+      //Remove single on callback
+      if (this._listeners.on[event]) {
+        this._removeListener(this._listeners.on[event], callback);
+      }
+
+      //Remove single once callback
+      if (this._listeners.once[event]) {
+        this._removeListener(this._listeners.once[event], callback);
+      }
+    }
+
+    // Prevent chaining for now
+    //return this;
+  },
+
+  /**
+   * Method that subscribes a &lt;code&gt;listener&lt;/code&gt; function to an &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; which would be triggered
+   *   only once when the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; is dispatched.
+   * @method once
+   * @param {String} eventName The parameter name of the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; to subscribe to.
+   * @param {Function} listenerFn The parameter listener function to bind to the subscription.
+   * @param {Function} [conditionalFn] &lt;blockquote class=&quot;panel-info&quot;&gt;
+   *     This function will trigger every time the &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; is dispatched.
+   *     Return &lt;code&gt;true&lt;/code&gt; in this function to complete the &lt;code&gt;conditional&lt;/code&gt; function.
+   *   &lt;/blockquote&gt; The parameter &lt;code&gt;conditional&lt;/code&gt; function
+   *   that halts the triggering of the &lt;code&gt;listener&lt;/code&gt; function until the
+   *   &lt;code&gt;conditional&lt;/code&gt; function returns &lt;code&gt;true&lt;/code&gt;.
+   * @example
+   *   // Parameters: once(eventName, listenerFn)
+   *   SkylinkDemo.on(&quot;mediaAccessSuccess&quot;, function (stream) {
+   *     console.log(&quot;Received local stream&quot;, stream);
+   *     ///-[Handle UI view when user has given access to local Stream]
+   *   });
+   *
+   *   // Parameters: once(eventName, listenerFn, conditionalFn)
+   *   SkylinkDemo.on(&quot;dataChannelState&quot;, function (state, peerId) {
+   *     console.info(&quot;P2P messaging are now available with &quot; + peerId);
+   *     ///-[Handle UI view when P2P messaging is available]
+   *   }, function (state, peerId, error, channelName, channelType) {
+   *     //! Condition to ensure that Datachannel is opened and is for messaiging Datachannel
+   *     return state === SkylinkDemo.DATA_CHANNEL_STATE.OPEN &amp;&amp;
+   *       channelType === SkylinkDemo.DATA_CHANNEL_TYPE.MESSAGING;
+   *   });
+   * @linksTo #events|See the list of available Events to subscribe to
+   * @for Skylink
+   * @since 0.7.0
+   */
+  once: function(event, callback, condition) {
+    // Prevent subscription if invalid Event name is provided
+    if (!Array.isArray(this._listeners.once[event])) {
+      throw new Error(&#x27;Failed once subscription as invalid Event name is provided.&#x27;);
+    }
+
+    if (typeof condition !== &#x27;function&#x27;) {
+      condition = function() {
+        return true;
+      };
+    }
+    this._listeners.once[event].push([callback, condition]);
+
+    // Prevent chaining for now
+    //return this;
+  },
+
+  /**
+   * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+   *   Parameters after the &lt;code&gt;eventName&lt;/code&gt; parameter value is
+   *   considered the Event parameters payload.
+   * &lt;/blockquote&gt;
+   * Function that dispatches &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; to all listeners.
+   * @method _trigger
+   * @param {String} eventName The Event name.
+   * @private
+   * @for SkylinkEvent
+   * @since 0.7.0
+   */
+  _trigger: function(event) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    if (this._listeners.on[event]) {
+      for (var i = 0; i &lt; this._listeners.on[event].length; i++) {
+        this._listeners.on[event][i].apply(this, args);
+      }
+    }
+
+    if (this._listeners.once[event]) {
+      for (var j = 0; j &lt; this._listeners.once[event].length; j++) {
+        if (this._listeners.once[event][j][1].apply(this, args)) {
+          this._listeners.once[event][j][0].apply(this, args);
+          this._listeners.once[event].splice(j, 1);
+          j--;
+        }
+      }
+    }
+
+    // Prevent chaining for now
+    //return this;
+  },
+
+  /**
+   * Function that removes a specific listener function from
+   *   a specific &lt;a href=&quot;#events&quot;&gt;Event&lt;/a&gt; from a list of listeners.
+   * @method _removeListener
+   * @param {Array} listeners The array of listeners.
+   * @param {Function} listener The specific listener to remove from the
+   *   array of listeners.
+   * @private
+   * @for SkylinkEvent
+   * @since 0.7.0
+   */
+  _removeListener: function(listeners, listener) {
+    for (var i = 0; i &lt; listeners.length; i++) {
+      var listenerIndex = listeners[i];
+      // Use the callback not the once condition
+      if (Array.isArray(listenerIndex)) {
+        listenerIndex = listeners[i][0];
+      }
+      if (listenerIndex === listener) {
+        listeners.splice(i, 1);
+        return;
+      }
+    }
+  },
+
+  /**
+   * Function that allows mixin of all &lt;kbd&gt;SkylinkEvent&lt;/kbd&gt; functions
+   *   to the &lt;kbd&gt;Object&lt;/kbd&gt;.
+   * @method _mixin
+   * @param {Object} object The &lt;kbd&gt;Object&lt;/kbd&gt; to mixin functions for event subscriptions and dispatching.
+   * @private
+   * @for SkylinkEvent
+   * @since 0.7.0
+   */
+  _mixin: function(object, eventList) {
+    var methods = [&#x27;on&#x27;, &#x27;off&#x27;, &#x27;once&#x27;, &#x27;_trigger&#x27;, &#x27;_removeListener&#x27;];
+    for (var i = 0; i &lt; methods.length; i++) {
+      if (SkylinkEvent.hasOwnProperty(methods[i])) {
+        if (typeof object === &#x27;function&#x27;) {
+          object.prototype[methods[i]] = SkylinkEvent[methods[i]];
+        } else {
+          object[methods[i]] = SkylinkEvent[methods[i]];
+        }
+      }
+    }
+
+    /**
+     * Stores all the &lt;a href=&quot;#events&quot;&gt;Events&lt;/a&gt; listeners.
+     * @attribute _listeners
+     * @param {JSON} on Stores the list of &lt;code&gt;on()&lt;/code&gt; listener functions.
+     * @param {JSON} once Stores the list of &lt;code&gt;once()&lt;/code&gt; listener functions.
+     * @type JSON
+     * @private
+     * @for Skylink
+     * @since 0.7.0
+     */
+    object._listeners = {
+      on: SkylinkUtils.objectCloneFn(eventList),
+      once: SkylinkUtils.objectCloneFn(eventList)
+    };
+
+    // Prevent chaining for now
+    //return object;
+  }
+};
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

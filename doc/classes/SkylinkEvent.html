@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <div class="page container" style="margin-top: 30px;">
+  <section id="infodocs">
+    <p><p>Module that allows <kbd>Objects</kbd> to mixin functions for event subscriptions and dispatching.</p>
+</p>
+    <hr>
+  </section>
+  <section id="classdocs">
+    <ul class="nav nav-tabs" role="tablist">
+      <li  role="presentation" class="doc-selected active"><a href="#constructor">Setting up SkylinkJS</a></li>
+      
+        <li role="presentation" class="doc-selected"><a href="#methods">Methods</a></li>
+      
+      
+      
+      
+    </ul>
+    <div class="scroll-data"></div>
+  </section>
+</div>
+<br><br>
+<div class="page container">
+  <div id="index" class="api-class-tabpanel index">
+    <ul id="doc-type-select" class="nav nav-pills" role="tablist">
+      <li role="presentation" class="doc-type-select-public active">
+        <a>Developer <span class="doc-private-label">methods</span></a>
+      </li>
+      <li role="presentation" class="doc-type-select-private">
+        <a>Internal <span class="doc-private-label">methods</span></a>
+      </li>
+    </ul>
+    <div class="section-doc-group">
+      <h2 id="current-doc-selected-title"></h2>
+      <div class="col-md-3">
+        <div></div>
+        <div class="list-group-o-wrapper">
+          <span class="title"></span>
+          <div class="list-group-wrapper">
+            <div class="list-group ">
+              <a href="#method_SkylinkEvent" class="list-group-item code-menu-item constructor-item">
+                &nbsp;&nbsp;Skylink ()
+              </a>
+              
+                
+                  <a href="#method__mixin" class="list-group-item code-menu-item  private-method-item ">
+                    &nbsp;&nbsp;_mixin
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#method__removeListener" class="list-group-item code-menu-item  private-method-item ">
+                    &nbsp;&nbsp;_removeListener
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#method__trigger" class="list-group-item code-menu-item  private-method-item ">
+                    &nbsp;&nbsp;_trigger
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+              
+              
+              
+              
+            </div>
+          </div>
+          <div class="scroll-top">
+            <i class="fa fa-arrow-circle-o-up"></i>&nbsp;&nbsp;Scroll to top
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9 doc-content">
+        
+        
+          <section id="methods">
+            
+              <div id="method__mixin" class="code-item method item private-method-item ">
+  <h3 class="code-item-name"><code>_mixin</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>object</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+        <span class="label label-default" title="This method is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p>Function that allows mixin of all <kbd>SkylinkEvent</kbd> functions
+  to the <kbd>Object</kbd>.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">object</code>
+            <span class="type"><b>{</b>Object<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The <kbd>Object</kbd> to mixin functions for event subscriptions and dispatching.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+              <div id="method__removeListener" class="code-item method item private-method-item ">
+  <h3 class="code-item-name"><code>_removeListener</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>listeners</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code>listener</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+        <span class="label label-default" title="This method is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p>Function that removes a specific listener function from
+  a specific <a href="#events">Event</a> from a list of listeners.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">listeners</code>
+            <span class="type"><b>{</b>Array<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The array of listeners.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">listener</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The specific listener to remove from the
+  array of listeners.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+              <div id="method__trigger" class="code-item method item private-method-item ">
+  <h3 class="code-item-name"><code>_trigger</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>eventName</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+        <span class="label label-default" title="This method is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p><blockquote class="panel-warning">
+  Parameters after the <code>eventName</code> parameter value is
+  considered the Event parameters payload.
+</blockquote>
+Function that dispatches <a href="#events">Event</a> to all listeners.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">eventName</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The Event name.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+          </section>
+        
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+
+
+
+
+
+
+
+
+
+-->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

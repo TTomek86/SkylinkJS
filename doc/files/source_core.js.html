@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/core.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * &lt;h2&gt;Before using Skylink&lt;/h2&gt;
+ * Please invoke {{#crossLink &quot;Skylink/init:method&quot;}}init(){{/crossLink}} method
+ * first to initialise the Application Key before using any functionalities in Skylink.
+ *
+ * If you do not have an Application Key, you may register for a Skylink platform developer account
+ *   [to create one](http://developer.temasys.com.sg/register).
+ *
+ * To get started you may [visit the getting started page](https://temasys.github.io/how-to/2014/08/08/
+ * Getting_started_with_WebRTC_and_SkylinkJS/), or alternatively fork a ready made demo application
+ * that uses Skylink Web SDK at [getaroom.io](http://getaroom.io/).
+ *
+ * For tips on using skylink and troubleshooting you can visit
+ *   [our support portal](http://support.temasys.com.sg/support/solutions/folders/5000267498).
+ * @class Skylink
+ * @constructor
+ * @example
+ *   // Here&#x27;s a simple example on how you can start using Skylink
+ *   var SkylinkDemo = new Skylink();
+ *
+ *   // Subscribe all events first before init()
+ *   SkylinkDemo.on(&quot;incomingStream&quot;, function (peerId, stream, peerInfo, isSelf) {
+ *     if (isSelf) {
+ *       attachMediaStream(document.getElementById(&quot;selfVideo&quot;), stream);
+ *     } else {
+ *       var peerVideo = document.createElement(&quot;video&quot;);
+ *       peerVideo.id = peerId;
+ *       peerVideo.autoplay = &quot;autoplay&quot;;
+ *       document.getElementById(&quot;peersVideo&quot;).appendChild(peerVideo);
+ *       attachMediaStream(peerVideo, stream);
+ *     }
+ *   });
+ *
+ *   SkylinkDemo.on(&quot;peerLeft&quot;, function (peerId, peerInfo, isSelf) {
+ *     if (!isSelf) {
+ *       var peerVideo = document.getElementById(peerId);
+ *       // do a check if peerVideo exists first
+ *       if (peerVideo) {
+ *         document.getElementById(&quot;peersVideo&quot;).removeChild(peerVideo);
+ *       } else {
+ *         console.error(&quot;Peer video for &quot; + peerId + &quot; is not found.&quot;);
+ *       }
+ *     }
+ *   });
+ *
+ *  // never call joinRoom in readyStateChange event subscription.
+ *  // call joinRoom after init() callback if you want to joinRoom instantly.
+ *  SkylinkDemo.on(&quot;readyStateChange&quot;, function (state, room) {
+ *    console.log(&quot;Room (&quot; + room + &quot;) state: &quot;, room);
+ *  })
+ *
+ *  // always remember to call init()
+ *  SkylinkDemo.init(&quot;YOUR_APP_KEY_HERE&quot;, function (error, success) {
+ *    // do a check for error or success
+ *    if (error) {
+ *      console.error(&quot;Init failed: &quot;, error);
+ *    } else {
+ *      SkylinkDemo.joinRoom(&quot;my_room&quot;, {
+ *        userData: &quot;My Username&quot;,
+ *        audio: true,
+ *        video: true
+ *      });
+ *    }
+ *  });
+ * @for Skylink
+ * @since 0.7.0
+ */
+function Skylink () {
+
+  SkylinkEvent._mixin(this, SkylinkEventList);
+
+  /**
+   * Stores the global configuration made in &lt;code&gt;init()&lt;/code&gt;.&lt;br&gt;
+   * @attribute _globals
+   * @type JSON
+   * @param {JSON} current The current &lt;code&gt;init()&lt;/code&gt; configuration.
+   *   &lt;small&gt;Parameter fields follows &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;options&lt;/code&gt; parameter.&lt;/small&gt;
+   * @param {JSON} defaults The default &lt;code&gt;init()&lt;/code&gt; configuration.
+   *   &lt;small&gt;Parameter fields follows &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;options&lt;/code&gt; parameter.&lt;/small&gt;
+   * @private
+   * @for Skylink
+   * @since 0.7.0
+   */
+  this._globals = {
+    current: {},
+    defaults: {
+      appKey: null,
+      defaultRoom: null,
+      selectedRoom: null,
+      roomServer: &#x27;//api.temasys.com.sg&#x27;,
+      region: null,
+      enableIceTrickle: true,
+      enableDataChannel: true,
+      enableTURNServer: true,
+      enableSTUNServer: true,
+      forceTURN: false,
+      usePublicSTUN: true,
+      TURNServerTransport: this.TURN_TRANSPORT.ANY,
+      credentials: null,
+      audioFallback: false,
+      forceSSL: false,
+      audioCodec: this.AUDIO_CODEC.AUTO,
+      videoCodec: this.VIDEO_CODEC.AUTO,
+      socketTimeout: 20000,
+      forceTURNSSL: false
+    }
+  };
+
+  /**
+   * Stores the current connection session information.
+   * @attribute _session
+   * @type JSON
+   * @private
+   * @for Skylink
+   * @since 0.7.0
+   */
+  this._session = {
+    state: 0,
+    url: null,
+    data: null
+  };
+}
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

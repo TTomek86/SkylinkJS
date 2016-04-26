@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/constants/core.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * &lt;div class=&quot;panel-warning&quot;&gt;
+ *   Note that configuring these options might not necessarily result in the audio codec connection
+ *   as it is depends on the browser supports.
+ * &lt;/div&gt;
+ * Contains the list of audio codec configuration options to use during connection with audio streams.
+ * @attribute AUDIO_CODEC
+ * @param {String} AUTO &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;&quot;auto&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to use the browser selected audio codec.
+ * @param {String} OPUS &lt;small&gt;Value &lt;code&gt;&quot;opus&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/Opus_(audio_format)&quot;&gt;opus&lt;/a&gt; audio codec.&lt;br&gt;
+ *   This is the commonly supported audio codec.
+ * @param {String} ISAC &lt;small&gt;Value &lt;code&gt;&quot;ISAC&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/Internet_Speech_Audio_Codec&quot;&gt;iSAC&lt;/a&gt; audio codec.
+ * @param {String} SILK &lt;small&gt;Value &lt;code&gt;&quot;SILK&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/SILK&quot;&gt;SILK&lt;/a&gt; audio codec.
+ * @param {String} ILBC &lt;small&gt;Value &lt;code&gt;&quot;iLBC&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/Internet_Low_Bitrate_Codec&quot;&gt;iLBC&lt;/a&gt; audio codec.
+ * @param {String} G722 &lt;small&gt;Value &lt;code&gt;&quot;G722&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/G.722&quot;&gt;G722&lt;/a&gt; audio codec.&lt;br&gt;
+ *   &lt;small&gt;This is experimental, so try this at your own risk.&lt;/small&gt;
+ * @param {String} G711 &lt;small&gt;Value &lt;code&gt;&quot;G711&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/G.711&quot;&gt;G711&lt;/a&gt; audio codec.&lt;br&gt;
+ *   &lt;small&gt;This is experimental, so try this at your own risk.&lt;/small&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.AUDIO_CODEC = {
+  AUTO: &#x27;auto&#x27;,
+  ISAC: &#x27;ISAC&#x27;,
+  OPUS: &#x27;opus&#x27;,
+  SILK: &#x27;SILK&#x27;,
+  ILBC: &#x27;iLBC&#x27;,
+  G722: &#x27;G722&#x27;,
+  G711: &#x27;G711&#x27;
+};
+
+/**
+ * Contains the list of ICE gathering states of a Peer connection.
+ * @attribute CANDIDATE_GENERATION_STATE
+ * @param {String} NEW &lt;small&gt;Value &lt;code&gt;&quot;new&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state at the beginning before any ICE gathering.
+ * @param {String} GATHERING &lt;small&gt;Value &lt;code&gt;&quot;gathering&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE gathering has started.
+ * @param {String} COMPLETED &lt;small&gt;Value &lt;code&gt;&quot;completed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE gathering has completed.
+ * @link &lt;a href=&quot;#x&quot;&gt;What is ICE and how it works&lt;/a&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.CANDIDATE_GENERATION_STATE = {
+  NEW: &#x27;new&#x27;,
+  GATHERING: &#x27;gathering&#x27;,
+  COMPLETED: &#x27;completed&#x27;
+};
+
+/**
+ * Contains the list of Datachannel connection states.
+ * @attribute DATA_CHANNEL_STATE
+ * @param {String} CONNECTING &lt;small&gt;Value &lt;code&gt;&quot;connecting&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the Datachannel is attempting to open a connection.
+ * @param {String} OPEN &lt;small&gt;Value &lt;code&gt;&quot;open&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the Datachannel connection has opened.
+ * @param {String} CLOSING &lt;small&gt;Value &lt;code&gt;&quot;closing&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the Datachannel connection is closing.&lt;br&gt;
+ *   This happens when a Peer has closed the Datachannel connection explicitly.
+ * @param {String} CLOSED &lt;small&gt;Value &lt;code&gt;&quot;closed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the Datachannel connection has closed.
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the Datachannel connection has encountered an error.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_CHANNEL_STATE = {
+  CONNECTING: &#x27;connecting&#x27;,
+  OPEN: &#x27;open&#x27;,
+  CLOSING: &#x27;closing&#x27;,
+  CLOSED: &#x27;closed&#x27;,
+  ERROR: &#x27;error&#x27;
+};
+
+/**
+ * Contains the list of Datachannel types.
+ * @attribute DATA_CHANNEL_TYPE
+ * @param {String} MESSAGING &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;&quot;messaging&quot;&lt;/code&gt;&lt;/small&gt;
+ *   &lt;blockquote class=&quot;panel-info&quot;&gt;If &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *     &lt;code&gt;enableDataChannel&lt;/code&gt; option is enabled for both Peers, there is
+ *     only one of this Datachannel type that can occur in the connection&lt;/blockquote&gt;
+ *   The type where the Datachannel connection is primarily used for sending P2P messages.&lt;br&gt;
+ *   This connection is persistent until the Peer connection of the Datachannel is closed,
+ *     and can be used for data transfers when simultaneous transfers is not supported with
+ *     the connecting Peer connection.
+ * @param {String} DATA &lt;small&gt;Value &lt;code&gt;&quot;data&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type where the Datachannel connection is only used for data transfers.&lt;br&gt;
+ *   This connection is closed once the data transfer has completed or terminated.
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_CHANNEL_TYPE = {
+  MESSAGING: &#x27;messaging&#x27;,
+  DATA: &#x27;data&#x27;
+};
+
+/**
+ * Contains the list of data transfer data types.
+ * @attribute DATA_TRANSFER_DATA_TYPE
+ * @param {String} BINARY_STRING &lt;small&gt;Value &lt;code&gt;&quot;binaryString&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The data type where binary data packets are converted to string over
+ *   the Datachannel connection for &lt;kbd&gt;Blob&lt;/kbd&gt; data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @param {String} BINARY &lt;small&gt;Value &lt;code&gt;&quot;binary&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to transfer binary data packets without conversion over
+ *   the Datachannel connection for &lt;kbd&gt;Blob&lt;/kbd&gt; data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @param {String} STRING &lt;small&gt;Value &lt;code&gt;&quot;string&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to transfer string data over Datachannel connection for &lt;kbd&gt;Data URL&lt;/kbd&gt; data transfers.
+ *   [Rel: Skylink.attr.DATA_TRANSFER_SESSION_TYPE]
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_DATA_TYPE = {
+  BINARY_STRING: &#x27;binaryString&#x27;,
+  BINARY: &#x27;binary&#x27;,
+  STRING: &#x27;string&#x27;
+};
+
+/**
+ * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+ *   Note that for the next releases, this constant will be renamed as &lt;code&gt;DATA_TRANSFER_TYPE&lt;/code&gt;.
+ * &lt;/blockquote&gt;
+ * Contains the list of data transfers transfer types.
+ * @attribute DATA_TRANSFER_SESSION_TYPE
+ * @param {String} BLOB &lt;small&gt;Value &lt;code&gt;&quot;blob&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type of data transfer where it is transferring a Blob data.
+ *   [Rel: Skylink.method.sendBlobData]
+ * @param {String} DATAURL &lt;small&gt;Value &lt;code&gt;&quot;dataURL&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type of data transfer where it is transferring a DataURL string.
+ *   [Rel: Skylink.method.sendURLData]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_SESSION_TYPE = {
+  BLOB: &#x27;blob&#x27;,
+  DATAURL: &#x27;dataURL&#x27;
+};
+
+/**
+ * Contains the list of data transfer states.
+ * @attribute DATA_TRANSFER_STATE
+ * @param {String} UPLOAD_REQUEST &lt;small&gt;Value &lt;code&gt;&quot;request&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when request to start a downloading data transfer is received.
+ *   [Rel: Skylink.method.acceptDataTransfer]
+ * @param {String} UPLOAD_STARTED &lt;small&gt;Value &lt;code&gt;&quot;uploadStarted&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when uploading data transfer has started.
+ * @param {String} DOWNLOAD_STARTED &lt;small&gt;Value &lt;code&gt;&quot;downloadStarted&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when downloading data transfer has started.
+ * @param {String} REJECTED &lt;small&gt;Value &lt;code&gt;&quot;rejected&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when downloading data transfer request is rejected.
+ * @param {String} UPLOADING &lt;small&gt;Value &lt;code&gt;&quot;uploading&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when uploading data transfer is in-progress.
+ * @param {String} DOWNLOADING &lt;small&gt;Value &lt;code&gt;&quot;downloading&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when downloading data transfer is in-progress.
+ * @param {String} UPLOAD_COMPLETED &lt;small&gt;Value &lt;code&gt;&quot;uploadCompleted&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when uploading data transfer has completed.
+ * @param {String} DOWNLOAD_COMPLETED &lt;small&gt;Value &lt;code&gt;&quot;downloadCompleted&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when downloading data transfer has completed.
+ * @param {String} CANCEL &lt;small&gt;Value &lt;code&gt;&quot;cancel&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when data transfer has been cancelled and is terminated.
+ *   [Rel: Skylink.method.cancelDataTransfer]
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when data transfer has failed with errors and is terminated.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_STATE = {
+  UPLOAD_REQUEST: &#x27;request&#x27;,
+  UPLOAD_STARTED: &#x27;uploadStarted&#x27;,
+  DOWNLOAD_STARTED: &#x27;downloadStarted&#x27;,
+  REJECTED: &#x27;rejected&#x27;,
+  CANCEL: &#x27;cancel&#x27;,
+  ERROR: &#x27;error&#x27;,
+  UPLOADING: &#x27;uploading&#x27;,
+  DOWNLOADING: &#x27;downloading&#x27;,
+  UPLOAD_COMPLETED: &#x27;uploadCompleted&#x27;,
+  DOWNLOAD_COMPLETED: &#x27;downloadCompleted&#x27;
+};
+
+/**
+ * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+ *   Note that for the next releases, this constant will be renamed as &lt;code&gt;DATA_TRANSFER_DIRECTION&lt;/code&gt;
+ *   before removal in the next releases.
+ * &lt;/blockquote&gt;
+ * Contains the list of data transfer directions.
+ * @attribute DATA_TRANSFER_TYPE
+ * @param {String} UPLOAD &lt;small&gt;Value &lt;code&gt;&quot;upload&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type of data transfer direction where it is uploading to Peer.
+ * @param {String} DOWNLOAD &lt;small&gt;Value &lt;code&gt;&quot;download&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type of data transfer direction where is downloading from Peer.
+ * @type JSON
+ * @readOnly
+ * @deprecated
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DATA_TRANSFER_TYPE = {
+  UPLOAD: &#x27;upload&#x27;,
+  DOWNLOAD: &#x27;download&#x27;
+};
+
+/**
+ * Contains the current DT Protocol version of SkylinkJS.&lt;br&gt;
+ * &lt;blockquote class=&quot;sub&quot;&gt;Current version: &lt;code&gt;0.1.0&lt;/code&gt;&lt;/blockquote&gt;
+ * @attribute DT_PROTOCOL_VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.DT_PROTOCOL_VERSION = &#x27;0.1.0&#x27;;
+
+/**
+ * Contains the list of &lt;a href=&quot;#method_getPeers&quot;&gt;&lt;u&gt;&lt;code&gt;getPeers()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; retrieval states.
+ * @attribute GET_PEERS_STATE
+ * @type JSON
+ * @param {String} ENQUIRED &lt;small&gt;Value &lt;code&gt;&quot;enquired&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when SDK is attempting to retrieve the list of Peers and Rooms.
+ * @param {String} RECEIVED &lt;small&gt;Value &lt;code&gt;&quot;received&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when SDK has retrieved the list of Peers and Rooms successfully.
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when SDK has failed retrieving the list of Peers and Rooms.
+ * @link &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;What is the Privileged Key feature and how to utilise it&lt;/a&gt;
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.GET_PEERS_STATE = {
+  ENQUIRED: &#x27;enquired&#x27;,
+  RECEIVED: &#x27;received&#x27;
+};
+
+/**
+ * Contains the list of connection handshaking states of a Peer connection.
+ * @attribute HANDSHAKE_PROGRESS
+ * @param {String} ENTER &lt;small&gt;Value &lt;code&gt;&quot;enter&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when Peer has just entered the Room.&lt;br&gt;
+ *   As a response, &lt;code&gt;WELCOME&lt;/code&gt; will be sent to notify of user existence.
+ * @param {String} WELCOME &lt;small&gt;Value &lt;code&gt;&quot;welcome&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when user is notified of Peer that is already in the Room.&lt;br&gt;
+ *   As a response, &lt;code&gt;OFFER&lt;/code&gt; will be sent to initiate connection handshaking.
+ * @param {String} OFFER &lt;small&gt;Value &lt;code&gt;&quot;offer&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when connection handshaking has been initiated.&lt;br&gt;
+ *   As a response, &lt;code&gt;ANSWER&lt;/code&gt; will be sent to complete the connection handshaking.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @param {String} ANSWER &lt;small&gt;Value &lt;code&gt;&quot;answer&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when connection handshaking has been completed.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when connection handshaking has encountered an error.
+ *   [Rel: Skylink.attr.PEER_CONNECTION_STATE]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.HANDSHAKE_PROGRESS = {
+  ENTER: &#x27;enter&#x27;,
+  WELCOME: &#x27;welcome&#x27;,
+  OFFER: &#x27;offer&#x27;,
+  ANSWER: &#x27;answer&#x27;,
+  ERROR: &#x27;error&#x27;
+};
+
+/**
+ * Contains the list of ICE connection states of a Peer connection.
+ * @attribute ICE_CONNECTION_STATE
+ * @param {String} STARTING &lt;small&gt;Value &lt;code&gt;&quot;starting&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent is waiting for remote candidates supplied
+ *   from ICE gathering from Peer.
+ * @param {String} CHECKING &lt;small&gt;Value &lt;code&gt;&quot;checking&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent has received the remote candidates from Peer
+ *   and is checking for a usable candidate pair to start ICE connection.
+ * @param {String} CONNECTED &lt;small&gt;Value &lt;code&gt;&quot;connected&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent has found a usable connection but still
+ *   checking if there is a better candidate pair for better ICE connection.&lt;br&gt;
+ *   At this stage, ICE connection is already established and may not necessarily
+ *   go to &lt;code&gt;COMPLETED&lt;/code&gt;.
+ * @param {String} COMPLETED &lt;small&gt;Value &lt;code&gt;&quot;completed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent has finished checking for the best candidate pairs
+ *   for the best ICE connection.&lt;br&gt;
+ *   At this stage, ICE connection is has been already established.
+ * @param {String} FAILED &lt;small&gt;Value &lt;code&gt;&quot;failed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent had failed to find a ICE connection from all candidate pairs.
+ * @param {String} DISCONNECTED &lt;small&gt;Value &lt;code&gt;&quot;disconnected&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent connection is disconnected abruptly and may happen on
+ *   a flaky network.
+ * @param {String} CLOSED &lt;small&gt;Value &lt;code&gt;&quot;closed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when ICE agent connection is closed and is no longer responding to any STUN requests.
+ * @param {String} TRICKLE_FAILED &lt;small&gt;Value &lt;code&gt;&quot;trickeFailed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when after ICE agent connection state had gone to &lt;code&gt;FAILED&lt;/code&gt; and
+ *   &lt;a href=&quot;#method_init&quot;&gt;&lt;code&gt;&lt;u&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; &lt;code&gt;enableIceTrickle&lt;/code&gt; option is enabled.
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.ICE_CONNECTION_STATE = {
+  STARTING: &#x27;starting&#x27;,
+  CHECKING: &#x27;checking&#x27;,
+  CONNECTED: &#x27;connected&#x27;,
+  COMPLETED: &#x27;completed&#x27;,
+  CLOSED: &#x27;closed&#x27;,
+  FAILED: &#x27;failed&#x27;,
+  TRICKLE_FAILED: &#x27;trickleFailed&#x27;,
+  DISCONNECTED: &#x27;disconnected&#x27;
+};
+
+/**
+ * Contains the list of &lt;a href=&quot;#method_introducePeer&quot;&gt;&lt;u&gt;&lt;code&gt;introducePeer()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *   introduction states.
+ * @attribute INTRODUCE_STATE
+ * @param {String} INTRODUCING &lt;small&gt;Value &lt;code&gt;&quot;introducing&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK is attempting to introduce the Peer (Sender) to Peer (Receiver).
+ * @param {String} INTRODUCED &lt;small&gt;Value &lt;code&gt;&quot;introduced&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK has introduced Peer (Sender) to Peer (Receiver) successfully.
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK had failed to introduce Peer (Sender) to Peer (Receiver).
+ * @link &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;What is the Privileged Key feature and how to utilise it&lt;/a&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.INTRODUCE_STATE = {
+  INTRODUCING: &#x27;introducing&#x27;,
+  INTRODUCED: &#x27;introduced&#x27;,
+  ERROR: &#x27;error&#x27;
+};
+
+/**
+ * Contains the list of SDK log levels.
+ * @attribute LOG_LEVEL
+ * @param {Number} DEBUG &lt;small&gt;Value &lt;code&gt;4&lt;/code&gt;&lt;/small&gt;
+ *   The option to display additional logs for more code execution debugging state purposes.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;code&gt;DEBUG&lt;/code&gt;, &lt;code&gt;LOG&lt;/code&gt;, &lt;code&gt;INFO&lt;/code&gt;, &lt;code&gt;WARN&lt;/code&gt;, &lt;code&gt;ERROR&lt;/code&gt;&lt;/small&gt;
+ * @param {Number} LOG &lt;small&gt;Value &lt;code&gt;3&lt;/code&gt; | Level higher than &lt;code&gt;INFO&lt;/code&gt;&lt;/small&gt;
+ *   The option to display additional logs for code execution state purposes.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;code&gt;LOG&lt;/code&gt;, &lt;code&gt;INFO&lt;/code&gt;, &lt;code&gt;WARN&lt;/code&gt;, &lt;code&gt;ERROR&lt;/code&gt;&lt;/small&gt;
+ * @param {Number} INFO &lt;small&gt;Value &lt;code&gt;2&lt;/code&gt;&lt;/small&gt;
+ *   The option to display additional logs that are informative purposes.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;code&gt;INFO&lt;/code&gt;, &lt;code&gt;WARN&lt;/code&gt;, &lt;code&gt;ERROR&lt;/code&gt;&lt;/small&gt;
+ * @param {Number} WARN &lt;small&gt;Value &lt;code&gt;1&lt;/code&gt;&lt;/small&gt;
+ *   The option to display additional logs warning the user.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;code&gt;WARN&lt;/code&gt;, &lt;code&gt;ERROR&lt;/code&gt;&lt;/small&gt;
+ * @param {Number} ERROR &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;0&lt;/code&gt;&lt;/small&gt;
+ *   The option to display error logs.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;code&gt;ERROR&lt;/code&gt;&lt;/small&gt;
+ * @param {Number} NO_LOGS &lt;small&gt;Value &lt;code&gt;-1&lt;/code&gt;&lt;/small&gt;
+ *   The option to display no logs.
+ *   &lt;small&gt;LOG OUTPUTS&lt;br&gt;
+ *   &lt;span&gt;NONE&lt;/span&gt;&lt;/small&gt;
+ * @readOnly
+ * @type JSON
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.LOG_LEVEL = {
+  DEBUG: 4,
+  LOG: 3,
+  INFO: 2,
+  WARN: 1,
+  ERROR: 0,
+  NO_LOGS: -1
+};
+
+/**
+ * Contains the list of signaling states of a Peer connection.
+ * @attribute PEER_CONNECTION_STATE
+ * @param {String} STABLE &lt;small&gt;Value &lt;code&gt;&quot;stable&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when there is currently no &lt;code&gt;OFFER&lt;/code&gt; or &lt;code&gt;ANSWER&lt;/code&gt; exchanged.
+ * @param {String} HAVE_LOCAL_OFFER &lt;small&gt;Value &lt;code&gt;&quot;have-local-offer&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when there is a local &lt;code&gt;OFFER&lt;/code&gt; sent to Peer.&lt;br&gt;
+ *   After receiving remote &lt;code&gt;ANSWER&lt;/code&gt;, the state will go to &lt;code&gt;STABLE&lt;/code&gt;.
+ * @param {String} HAVE_REMOTE_OFFER &lt;small&gt;Value &lt;code&gt;&quot;have-remote-offer&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when there is a remote &lt;code&gt;OFFER&lt;/code&gt; received from Peer.&lt;br&gt;
+ *   After sending local &lt;code&gt;ANSWER&lt;/code&gt;, the state will go to &lt;code&gt;STABLE&lt;/code&gt;.
+ * @param {String} CLOSED &lt;small&gt;Value &lt;code&gt;&quot;closed&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when signaling is closed and there is no
+ *   &lt;code&gt;OFFER&lt;/code&gt; or &lt;code&gt;ANSWER&lt;/code&gt; exchanged anymore.
+ * @param {String} ERROR &lt;small&gt;Value &lt;code&gt;&quot;error&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when setting local / remote &lt;code&gt;OFFER&lt;/code&gt; or &lt;code&gt;ANSWER&lt;/code&gt; fails and
+ *   might cause a failure in establishing Peer connection.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.PEER_CONNECTION_STATE = {
+  STABLE: &#x27;stable&#x27;,
+  HAVE_LOCAL_OFFER: &#x27;have-local-offer&#x27;,
+  HAVE_REMOTE_OFFER: &#x27;have-remote-offer&#x27;,
+  CLOSED: &#x27;closed&#x27;,
+  ERROR: &#x27;error&#x27;
+};
+
+/**
+ * Contains the list of &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *   SDK initialization ready states.
+ * @attribute READY_STATE_CHANGE
+ * @param {Number} INIT &lt;small&gt;Value &lt;code&gt;0&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK is initializing &lt;code&gt;init()&lt;/code&gt; configuration settings.
+ * @param {Number} LOADING &lt;small&gt;Value &lt;code&gt;1&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK is attempting to start connection session.
+ * @param {Number} COMPLETED &lt;small&gt;Value &lt;code&gt;2&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK connection session has been state.
+ * @param {Number} ERROR &lt;small&gt;Value &lt;code&gt;-1&lt;/code&gt;&lt;/small&gt;
+ *   The state when the SDK has failed initializing &lt;code&gt;init()&lt;/code&gt; configuration settings
+ *   or failed starting connection session.
+ *   [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.READY_STATE_CHANGE = {
+  INIT: 0,
+  LOADING: 1,
+  COMPLETED: 2,
+  ERROR: -1
+};
+
+/**
+ * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+ *   Note that for the next releases, the Keys and Values will change for a more
+ *   descriptive term.
+ * &lt;/blockquote&gt;
+ * Contains the list of &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *   SDK initialization errors.
+ * @attribute READY_STATE_CHANGE_ERROR
+ * @param {Number} API_INVALID &lt;small&gt;Value &lt;code&gt;4001&lt;/code&gt;&lt;/small&gt;
+ *   The error when provided Application Key is does not exists.
+ *   &lt;small&gt;Resolve this by finding if Application Key exists in your
+ *     &lt;a href=&quot;https://developer.temasys.com.sg&quot;&gt;Skylink Developer Account&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} API_DOMAIN_NOT_MATCH &lt;small&gt;Value &lt;code&gt;4002&lt;/code&gt;&lt;/small&gt;
+ *   The error when accessing backend IP address does not match Application Key configured &lt;var&gt;domain&lt;/var&gt;.
+ *   &lt;small&gt;Resolve this by seeking support in
+ *     &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;Temasys Support Portal&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} API_CORS_DOMAIN_NOT_MATCH &lt;small&gt;Value &lt;code&gt;4003&lt;/code&gt;&lt;/small&gt;
+ *   The error when accessing CORS domain does not match Application Key configured &lt;var&gt;corsurl&lt;/var&gt;.
+ *   &lt;small&gt;Resolve this by configuring your Application Key &lt;u&gt;CORS Url&lt;/u&gt; correctly in your
+ *     &lt;a href=&quot;https://developer.temasys.com.sg&quot;&gt;Skylink Developer Account&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} API_CREDENTIALS_INVALID &lt;small&gt;Value &lt;code&gt;4004&lt;/code&gt;&lt;/small&gt;
+ *   The error when credentials provided for Application Key is invalid.
+ *   &lt;small&gt;Resolve this by checking if credentials are generated correctly, or &lt;u&gt;Secret&lt;/u&gt; used for
+ *      generating credentials is correct. See &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *      on how to generate the credentials.&lt;/small&gt;
+ * @param {Number} API_CREDENTIALS_NOT_MATCH &lt;small&gt;Value &lt;code&gt;4005&lt;/code&gt;&lt;/small&gt;
+ *   The error when credentials provided for Application Key does not match provided &lt;code&gt;duration&lt;/code&gt;
+ *      and &lt;code&gt;startDate&lt;/code&gt; in generated credentials.
+ *   &lt;small&gt;Resolve this by checking if credentials are generated correctly.
+ *      See &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; on how to generate the credentials.&lt;/small&gt;
+ * @param {Number} API_INVALID_PARENT_KEY &lt;small&gt;Value &lt;code&gt;4006&lt;/code&gt;&lt;/small&gt;
+ *   The error when provided Application Key has an invalid &lt;var&gt;parent&lt;/var&gt; field value.
+ *   &lt;small&gt;Resolve this by providing another Application Key. You may check if it&#x27;s valid by
+ *     accessing your &lt;a href=&quot;https://developer.temasys.com.sg&quot;&gt;Skylink Developer Account&lt;/a&gt;
+ *     and use any Application Keys from the displayed list of Application Keys.&lt;/small&gt;
+ * @param {Number} API_NO_MEETING_RECORD_FOUND &lt;small&gt;Value &lt;code&gt;4010&lt;/code&gt;&lt;/small&gt;
+ *   The error when provided Persistent Room enabled key does not have any meeting records that matches
+ *   the credentials provided in &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;.
+ *   &lt;small&gt;See &lt;a href=&quot;#article&quot;&gt;Persistent Rooms and how it works&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} NO_SOCKET_IO &lt;small&gt;Value &lt;code&gt;1&lt;/code&gt;&lt;/small&gt;
+ *   The error when there is no &lt;kbd&gt;socket.io-client&lt;/kbd&gt; dependency loaded before the SDK.
+ *   &lt;small&gt;Resolve this by loading the dependency based on the correct versions following
+ *     &lt;a href=&quot;https://github.com/Temasys/SkylinkJS/releases&quot;&gt;SkylinkJS release versions&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} NO_XMLHTTPREQUEST_SUPPORT &lt;small&gt;Value &lt;code&gt;2&lt;/code&gt;&lt;/small&gt;
+ *   The error when there is no &lt;kbd&gt;XMLHttpRequest&lt;/kbd&gt; API interface supported in the browser.
+ *   &lt;small&gt;Resolve this by switching to one of our
+ *     &lt;a href=&quot;https://github.com/Temasys/SkylinkJS#supported-browsers&quot;&gt;supported browsers list&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} NO_WEBRTC_SUPPORT &lt;small&gt;Value &lt;code&gt;3&lt;/code&gt;&lt;/small&gt;
+ *   The error when there is no &lt;kbd&gt;RTCPeerConnection&lt;/kbd&gt; API interface supported in the browser,
+ *   which the &lt;a href=&quot;https://plugin.temasys.com.sg&quot;&gt;Temasys Plugin&lt;/a&gt; does not support and is not
+ *   installed in the browser.
+ *   &lt;small&gt;Resolve this by switching to one of our
+ *     &lt;a href=&quot;https://github.com/Temasys/SkylinkJS#supported-browsers&quot;&gt;supported browsers list&lt;/a&gt;,
+ *     or if browser is Safari or IE in our supported browsers list, prompt users to install the Temasys Plugin.&lt;/small&gt;
+ * @param {Number} NO_PATH &lt;small&gt;Value &lt;code&gt;4&lt;/code&gt;&lt;/small&gt;
+ *   The error when invalid &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; options are provided.
+ *   &lt;small&gt;Resolve this by ensuring correct &lt;code&gt;init()&lt;/code&gt; method options are provided.&lt;/small&gt;
+ * @param {Number} ADAPTER_NO_LOADED &lt;small&gt;Value &lt;code&gt;7&lt;/code&gt;&lt;/small&gt;
+ *   The error when there is no &lt;kbd&gt;adapterjs&lt;/kbd&gt; dependency loaded before the SDK.
+ *   &lt;small&gt;Resolve this by loading the dependency based on the correct versions following
+ *     &lt;a href=&quot;https://github.com/Temasys/SkylinkJS/releases&quot;&gt;SkylinkJS release versions&lt;/a&gt;.&lt;/small&gt;
+ * @param {Number} XML_HTTP_REQUEST_ERROR &lt;small&gt;Value &lt;code&gt;-1&lt;/code&gt;&lt;/small&gt;
+ *   The error when there is no response from server when requesting to start connection session.
+ *   &lt;small&gt;Resolve this by diagnosing network connections or refreshing the page. You may
+ *     report this to &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;Temasys Support Portal&lt;/a&gt;
+ *     if both solutions does not work.&lt;/small&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.READY_STATE_CHANGE_ERROR = {
+  API_INVALID: 4001,
+  API_DOMAIN_NOT_MATCH: 4002,
+  API_CORS_DOMAIN_NOT_MATCH: 4003,
+  API_CREDENTIALS_INVALID: 4004,
+  API_CREDENTIALS_NOT_MATCH: 4005,
+  API_INVALID_PARENT_KEY: 4006,
+  API_NO_MEETING_RECORD_FOUND: 4010,
+  XML_HTTP_REQUEST_ERROR: -1,
+  NO_SOCKET_IO: 1,
+  NO_XMLHTTPREQUEST_SUPPORT: 2,
+  NO_WEBRTC_SUPPORT: 3,
+  NO_PATH: 4,
+  ADAPTER_NO_LOADED: 7
+};
+
+/**
+ * Contains the list of &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *   SDK initialization errors current HTTP request status.
+ * @attribute READY_STATE_CHANGE_ERROR_STATUS
+ * @param {Number} NO_REQUEST_MADE &lt;small&gt;Value &lt;code&gt;-2&lt;/code&gt;&lt;/small&gt;
+ *   The status error when no HTTP request has been made due to invalid configuration passed in
+ *   &lt;a href=&quot;#method_init&quot;&gt;&lt;u&gt;&lt;code&gt;init()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;.
+ * @param {Number} REQUEST_ERROR &lt;small&gt;Value &lt;code&gt;-1&lt;/code&gt;&lt;/small&gt;
+ *   The status error when HTTP request had failed due to request errors.
+ * @param {Number} REQUEST_EMPTY_RESULT &lt;small&gt;Value &lt;code&gt;0&lt;/code&gt;&lt;/small&gt;
+ *   The status error when HTTP request returns an empty response.
+ * @param {Number} REQUEST_FAILED &lt;small&gt;Value &lt;code&gt;200&lt;/code&gt;&lt;/small&gt;
+ *   The status error when HTTP request returns a response but authentication to start
+ *     connection session fails.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.READY_STATE_CHANGE_ERROR_STATUS = {
+  NO_REQUEST_MADE: -2,
+  REQUEST_ERROR: -1,
+  REQUEST_EMPTY_RESULT: 0,
+  REQUEST_FAILED: 200
+};
+
+/**
+ * &lt;div class=&quot;panel-warning&quot;&gt;
+ *   Note that configurating the regional server is no longer required as the automatic
+ *   selection for the nearest regional server is implemented based on load and latency.
+ *   Hence, this has been deprecated and will be removed in the next releases.
+ * &lt;/div&gt;
+ * Contains the list of regional server that the SDK can use to connect to.
+ * @attribute REGIONAL_SERVER
+ * @param {String} APAC1 &lt;small&gt;Value &lt;code&gt;&quot;sg&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect to the Asia pacific 1 regional server.
+ * @param {String} US1 &lt;small&gt;Value &lt;code&gt;&quot;us2&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect to the US 1 regional server.
+ * @type JSON
+ * @readOnly
+ * @deprecated
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.REGIONAL_SERVER = {
+  APAC1: &#x27;sg&#x27;,
+  US1: &#x27;us2&#x27;
+};
+
+/**
+ * Contains the list of connecting server Peer types.
+ * @attribute SERVER_PEER_TYPE
+ * @param {String} MCU &lt;small&gt;Value &lt;code&gt;&quot;mcu&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The type that indicates connecting server Peer is &lt;kbd&gt;MCU&lt;/kbd&gt;.
+ *   &lt;small&gt;See: &lt;a href=&quot;#&quot;&gt;What is MCU and how it works&lt;/a&gt;&lt;/small&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SERVER_PEER_TYPE = {
+  MCU: &#x27;mcu&#x27;
+  //SIP: &#x27;sip&#x27;
+};
+
+/**
+ * Contains the current SM Protocol version of SkylinkJS.
+ * &lt;blockquote class=&quot;sub&quot;&gt;Current version: &lt;code&gt;0.1.1&lt;/code&gt;&lt;/blockquote&gt;
+ * @attribute SM_PROTOCOL_VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SM_PROTOCOL_VERSION = &#x27;0.1.1&#x27;;
+
+/**
+ * Contains the list of Room socket connection error states.
+ * @attribute SOCKET_ERROR
+ * @param {Number} CONNECTION_FAILED &lt;small&gt;Value &lt;code&gt;0&lt;/code&gt;&lt;/small&gt;
+ *   The error state when socket has failed connecting in the first attempt.
+ * @param {String} RECONNECTION_FAILED &lt;small&gt;Value &lt;code&gt;-1&lt;/code&gt;&lt;/small&gt;
+ *   The error state when socket has failed reconnecting.
+ * @param {String} CONNECTION_ABORTED &lt;small&gt;Value &lt;code&gt;-2&lt;/code&gt;&lt;/small&gt;
+ *   The error state when socket has aborted reconnections after
+ *   the first attempt failure in &lt;code&gt;CONNECTION FAILED&lt;/code&gt;.
+ * @param {String} RECONNECTION_ABORTED &lt;small&gt;Value &lt;code&gt;-3&lt;/code&gt;&lt;/small&gt;
+ *   The error state when socket has aborted reconnections after
+ *   several attempts failures in &lt;code&gt;RECONNECTION_FAILED&lt;/code&gt;.
+ * @param {String} RECONNECTION_ATTEMPT &lt;small&gt;Value &lt;code&gt;-4&lt;/code&gt;&lt;/small&gt;
+ *   The state when socket is attempting to reconnect to establish a succesful connection.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SOCKET_ERROR = {
+  CONNECTION_FAILED: 0,
+  RECONNECTION_FAILED: -1,
+  CONNECTION_ABORTED: -2,
+  RECONNECTION_ABORTED: -3,
+  RECONNECTION_ATTEMPT: -4
+};
+
+/**
+ * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+ *   Note that for the next releases, the Keys and Values will change for a more
+ *   descriptive term.
+ * &lt;/blockquote&gt;
+ * Contains the list of Room socket fallback states for a successful reconnection.
+ * @attribute SOCKET_FALLBACK
+ * @param {String} NON_FALLBACK &lt;small&gt;Value &lt;code&gt;&quot;nonfallback&quot;&lt;/code&gt;&lt;/small&gt;
+ *   &lt;blockquote class=&quot;panel-info&quot;&gt;This has been deprecated and will be eventually be removed
+ *      or changed into other seperate states in next releases.&lt;/blockquote&gt;
+ *   The state when socket is attempting to reconnect the first port and transports used that had failed.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Protocol: &lt;code&gt;http:&lt;/code&gt;, &lt;code&gt;https:&lt;/code&gt;&lt;br&gt;
+ *      Transports: &lt;code&gt;WebSocket&lt;/code&gt;, &lt;code&gt;Polling&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} FALLBACK_PORT &lt;small&gt;Value &lt;code&gt;&quot;fallbackPortNonSSL&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when socket is attempting to reconnect the next available fallback port.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Protocol: &lt;code&gt;http:&lt;/code&gt;&lt;br&gt;Transports: &lt;code&gt;WebSocket&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} FALLBACK_PORT_SSL &lt;small&gt;Value &lt;code&gt;&quot;fallbackPortSSL&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when socket is attempting to reconnect the next available fallback port.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Protocol: &lt;code&gt;https:&lt;/code&gt;&lt;br&gt;Transports: &lt;code&gt;WebSocket&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} LONG_POLLING &lt;small&gt;Value &lt;code&gt;&quot;fallbackLongPollingNonSSL&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when socket switches to &lt;kbd&gt;Polling&lt;/kbd&gt; transports from &lt;kbd&gt;WebSocket&lt;/kbd&gt; transports
+ *   for a better attempt at reconnectivity after all reconnection attempts with all available ports
+ *   has failed.&lt;br&gt;The socket will start the reconnect attempt with
+ *   next fallback port starting from the first port used.&lt;br&gt;
+ *   This state may occur directly after &lt;code&gt;NON_FALLBACK&lt;/code&gt;
+ *   if &lt;kbd&gt;WebSocket&lt;/kbd&gt; transports is not supported.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Protocol: &lt;code&gt;http:&lt;/code&gt;&lt;br&gt;Transports: &lt;code&gt;Polling&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} LONG_POLLING_SSL &lt;small&gt;Value &lt;code&gt;&quot;fallbackLongPollingSSL&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The state when socket switches to &lt;kbd&gt;Polling&lt;/kbd&gt; transports from &lt;kbd&gt;WebSocket&lt;/kbd&gt; transports
+ *   for a better attempt at reconnectivity after all reconnection attempts with all available ports
+ *   has failed.&lt;br&gt;The socket will start the reconnect attempt with
+ *   next fallback port starting from the first port used.&lt;br&gt;
+ *   This state may occur directly after &lt;code&gt;NON_FALLBACK&lt;/code&gt;
+ *   if &lt;kbd&gt;WebSocket&lt;/kbd&gt; transports is not supported.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Protocol: &lt;code&gt;https:&lt;/code&gt;&lt;br&gt;Transports: &lt;code&gt;Polling&lt;/code&gt;&lt;/blockquote&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SOCKET_FALLBACK = {
+  NON_FALLBACK: &#x27;nonfallback&#x27;,
+  FALLBACK_PORT: &#x27;fallbackPortNonSSL&#x27;,
+  FALLBACK_SSL_PORT: &#x27;fallbackPortSSL&#x27;,
+  LONG_POLLING: &#x27;fallbackLongPollingNonSSL&#x27;,
+  LONG_POLLING_SSL: &#x27;fallbackLongPollingSSL&#x27;
+};
+
+/**
+ * Contains the list of SDK connection session actions.
+ * @attribute SYSTEM_ACTION
+ * @param {String} WARNING &lt;small&gt;Value &lt;code&gt;&quot;warning&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action when SDK is warned that connection session may result in &lt;code&gt;REJECT&lt;/code&gt; soon later.
+ *   [Rel: Skylink.attr.SYSTEM_ACTION_REASON]
+ * @param {String} REJECT &lt;small&gt;Value &lt;code&gt;&quot;reject&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action when SDK connection session has been rejected.
+ *   [Rel: Skylink.attr.SYSTEM_ACTION_REASON]
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SYSTEM_ACTION = {
+  WARNING: &#x27;warning&#x27;,
+  REJECT: &#x27;reject&#x27;
+};
+
+/**
+ * Contains the list of SDK connection session actions reasons.
+ * @attribute SYSTEM_ACTION_REASON
+ * @param {String} ROOM_LOCKED &lt;small&gt;Value &lt;code&gt;&quot;locked&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Room is locked and user is unable to join the Room.
+ * &lt;blockquote class=&quot;sub&quot;&gt;Action associated: &lt;code&gt;REJECT&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} DUPLICATED_LOGIN &lt;small&gt;Value &lt;code&gt;&quot;duplicatedLogin&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Room connection has a duplicated connection session credentials.
+ *   &lt;small&gt;Resolve this by enquiring help from
+ *     &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;Temasys Support Portal&lt;/a&gt; if this occurs.&lt;/small&gt;
+ * &lt;blockquote class=&quot;sub&quot;&gt;Action associated: &lt;code&gt;REJECT&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} SERVER_ERROR &lt;small&gt;Value &lt;code&gt;&quot;serverError&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Room connection encountered an error.
+ *   &lt;small&gt;Resolve this by enquiring help from
+ *     &lt;a href=&quot;http://support.temasys.com.sg&quot;&gt;Temasys Support Portal&lt;/a&gt; if this occurs.&lt;/small&gt;
+ * &lt;blockquote class=&quot;sub&quot;&gt;Action associated: &lt;code&gt;REJECT&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} EXPIRED &lt;small&gt;Value &lt;code&gt;&quot;expired&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Persistent Room connection session has expired.
+ *   &lt;small&gt;See &lt;a href=&quot;#article&quot;&gt;Persistent Rooms and how it works&lt;/a&gt;.&lt;/small&gt;
+ * &lt;blockquote class=&quot;sub&quot;&gt;Action associated: &lt;code&gt;REJECT&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} ROOM_CLOSING &lt;small&gt;Value &lt;code&gt;&quot;toclose&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Room connection session is going to end soon.
+ * &lt;blockquote class=&quot;sub&quot;&gt;Action associated: &lt;code&gt;WARNING&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {String} ROOM_CLOSED &lt;small&gt;Value &lt;code&gt;&quot;roomclose&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The action reason when Room connection session has ended.
+ * &lt;blockquote class=&quot;sub&quot;&gt;action associated: &lt;code&gt;REJECT&lt;/code&gt;&lt;/blockquote&gt;
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.SYSTEM_ACTION_REASON = {
+  //FAST_MESSAGE: &#x27;fastmsg&#x27;,
+  ROOM_LOCKED: &#x27;locked&#x27;,
+  //ROOM_FULL: &#x27;roomfull&#x27;,
+  DUPLICATED_LOGIN: &#x27;duplicatedLogin&#x27;,
+  SERVER_ERROR: &#x27;serverError&#x27;,
+  //VERIFICATION: &#x27;verification&#x27;,
+  EXPIRED: &#x27;expired&#x27;,
+  ROOM_CLOSED: &#x27;roomclose&#x27;,
+  ROOM_CLOSING: &#x27;toclose&#x27;
+};
+
+/**
+ * &lt;div class=&quot;panel-warning&quot;&gt;
+ *   Note that configuring these options might not necessarily result in the desired type (TCP/UDP) of connection
+ *   as it is depends on how the browser connects the connection.
+ * &lt;/div&gt;
+ * Contains the list of available TURN transports configuration options to pass when constructing a connection object.
+ * @attribute TURN_TRANSPORT
+ * @type JSON
+ * @param {String} TCP &lt;small&gt;Value &lt;code&gt;&quot;tcp&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect with setting only TCP transports.
+ *   &lt;small&gt;EXAMPLE TURN URLS OUTPUT&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234?transport=tcp&lt;/code&gt;&lt;/small&gt;
+ * @param {String} UDP &lt;small&gt;Value &lt;code&gt;&quot;udp&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect with setting only UDP transports.
+ *   &lt;small&gt;EXAMPLE TURN URLS OUTPUT&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123?transport=udp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl?transport=udp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234?transport=udp&lt;/code&gt;&lt;/small&gt;
+ * @param {String} ANY &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;&quot;any&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect with any transports that is configured by the Skylink Platform.
+ *   &lt;small&gt;EXAMPLE TURN URLS OUTPUT&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl?transport=udp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl&lt;/code&gt;&lt;/small&gt;
+ * @param {String} NONE &lt;small&gt;Value &lt;code&gt;&quot;none&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect without setting any transports.
+ *   &lt;small&gt;EXAMPLE TURN URLS OUTPUT&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234&lt;/code&gt;&lt;/small&gt;
+ * @param {String} ALL &lt;small&gt;Value &lt;code&gt;&quot;all&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to connect with setting both TCP and UDP transports.
+ *   &lt;small&gt;EXAMPLE TURN URLS OUTPUT&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:123?transport=udp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl?transport=udp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234?transport=tcp&lt;/code&gt;&lt;br&gt;
+ *   &lt;code&gt;turn:turnurl:1234?transport=udp&lt;/code&gt;&lt;/small&gt;
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.TURN_TRANSPORT = {
+  UDP: &#x27;udp&#x27;,
+  TCP: &#x27;tcp&#x27;,
+  ANY: &#x27;any&#x27;,
+  NONE: &#x27;none&#x27;,
+  ALL: &#x27;all&#x27;
+};
+
+/**
+ * Contains the current SDK version of SkylinkJS.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Current version: &lt;code&gt;(See documentation version)&lt;/code&gt;&lt;/blockquote&gt;
+ * @attribute VERSION
+ * @type String
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.VERSION = &#x27;@@version&#x27;;
+
+
+/**
+ * &lt;div class=&quot;panel-warning&quot;&gt;
+ *   Note that configuring these options might not necessarily result in the video codec connection
+ *   as it is depends on the browser supports.
+ * &lt;/div&gt;
+ * Contains the list of video codec configuration options to use during connection with video streams.
+ * @attribute VIDEO_CODEC
+ * @param {String} AUTO &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;&quot;auto&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to use the browser selected video codec.
+ * @param {String} VP8 &lt;small&gt;Value &lt;code&gt;&quot;VP8&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/VP8&quot;&gt;VP8&lt;/a&gt; video codec.&lt;br&gt;
+ *   This is the commonly supported video codec in most browsers.
+ * @param {String} VP9 &lt;small&gt;Value &lt;code&gt;&quot;VP9&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/VP9&quot;&gt;VP9&lt;/a&gt; video codec.
+ * @param {String} H264 &lt;small&gt;Value &lt;code&gt;&quot;H264&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC&quot;&gt;H264&lt;/a&gt; video codec.
+ * @param {String} H264UC &lt;small&gt;Value &lt;code&gt;&quot;H264UC&quot;&lt;/code&gt;&lt;/small&gt;
+ *   The option to configure to use &lt;a href=&quot;https://en.wikipedia.org/wiki/Scalable_Video_Coding&quot;&gt;H264 SVC&lt;/a&gt; video codec.
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.VIDEO_CODEC = {
+  AUTO: &#x27;auto&#x27;,
+  VP8: &#x27;VP8&#x27;,
+  VP9: &#x27;VP9&#x27;,
+  H264: &#x27;H264&#x27;,
+  H264UC: &#x27;H264UC&#x27;
+};
+
+/**
+ * &lt;div class=&quot;panel-warning&quot;&gt;
+ *   Note that configuring these options might not necessarily result in the desired resolution as it
+ *   depends on how the browser renders the video stream resolution.
+ * &lt;/div&gt;
+ * Contains the list of video resolution default presets.
+ * @param {JSON} QQVGA &lt;small&gt;Value &lt;code&gt;{ width: 160, height: 120 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use QQVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;4:3&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} HQVGA &lt;small&gt;Value &lt;code&gt;{ width: 240, height: 160 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use HQVGA resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;3:2&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} QVGA &lt;small&gt;Value &lt;code&gt;{ width: 320, height: 240 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use QVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;4:3&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} WQVGA &lt;small&gt;Value &lt;code&gt;{ width: 384, height: 240 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use WQVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:10&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} HVGA &lt;small&gt;Value &lt;code&gt;{ width: 480, height: 320 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use HVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;3:2&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} VGA &lt;small&gt;&lt;b&gt;DEFAULT&lt;/b&gt; | Value &lt;code&gt;{ width: 640, height: 480 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use VGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;4:3&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} WVGA &lt;small&gt;Value &lt;code&gt;{ width: 768, height: 480 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use WVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:10&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} FWVGA &lt;small&gt;Value &lt;code&gt;{ width: 854, height: 480 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use FWVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} SVGA &lt;small&gt;Value &lt;code&gt;{ width: 800, height: 600 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use SVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;4:3&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} DVGA &lt;small&gt;Value &lt;code&gt;{ width: 960, height: 640 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use DVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;3:2&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} WSVGA &lt;small&gt;Value &lt;code&gt;{ width: 1024, height: 576 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use WSVGA video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} HD &lt;small&gt;Value &lt;code&gt;{ width: 1280, height: 720 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use HD video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} HDPLUS &lt;small&gt;Value &lt;code&gt;{ width: 1600, height: 900 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use HDPLUS video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} FHD &lt;small&gt;Value &lt;code&gt;{ width: 1920, height: 1080 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use FHD video resolution.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} QHD &lt;small&gt;Value &lt;code&gt;{ width: 2560, height: 1440 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use QHD video resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} WQXGAPLUS &lt;small&gt;Value &lt;code&gt;{ width: 3200, height: 1800 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use WQXGAPLUS video resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} UHD &lt;small&gt;Value &lt;code&gt;{ width: 3840, height: 2160 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use UHD video resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} UHDPLUS &lt;small&gt;Value &lt;code&gt;{ width: 5120, height: 2880 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use UHDPLUS video resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} FUHD &lt;small&gt;Value &lt;code&gt;{ width: 7680, height: 4320 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use FUHD video resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @param {JSON} QUHD &lt;small&gt;Value &lt;code&gt;{ width: 15360, height: 8640 }&lt;/code&gt;&lt;/small&gt;
+ *   The option to use QUHD resolution.
+ *   &lt;small&gt;Note that this resolution may not be supported and may be unrealistic.&lt;/small&gt;
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Aspect Ratio &lt;code&gt;16:9&lt;/code&gt;&lt;/blockquote&gt;
+ * @attribute VIDEO_RESOLUTION
+ * @type JSON
+ * @readOnly
+ * @for Skylink
+ * @since 0.7.0
+ */
+Skylink.prototype.VIDEO_RESOLUTION = {
+  QQVGA: { width: 160, height: 120 /*, aspectRatio: &#x27;4:3&#x27;*/ },
+  HQVGA: { width: 240, height: 160 /*, aspectRatio: &#x27;3:2&#x27;*/ },
+  QVGA: { width: 320, height: 240 /*, aspectRatio: &#x27;4:3&#x27;*/ },
+  WQVGA: { width: 384, height: 240 /*, aspectRatio: &#x27;16:10&#x27;*/ },
+  HVGA: { width: 480, height: 320 /*, aspectRatio: &#x27;3:2&#x27;*/ },
+  VGA: { width: 640, height: 480 /*, aspectRatio: &#x27;4:3&#x27;*/ },
+  WVGA: { width: 768, height: 480 /*, aspectRatio: &#x27;16:10&#x27;*/ },
+  FWVGA: { width: 854, height: 480 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  SVGA: { width: 800, height: 600 /*, aspectRatio: &#x27;4:3&#x27;*/ },
+  DVGA: { width: 960, height: 640 /*, aspectRatio: &#x27;3:2&#x27;*/ },
+  WSVGA: { width: 1024, height: 576 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  HD: { width: 1280, height: 720 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  HDPLUS: { width: 1600, height: 900 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  FHD: { width: 1920, height: 1080 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  QHD: { width: 2560, height: 1440 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  WQXGAPLUS: { width: 3200, height: 1800 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  UHD: { width: 3840, height: 2160 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  UHDPLUS: { width: 5120, height: 2880 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  FUHD: { width: 7680, height: 4320 /*, aspectRatio: &#x27;16:9&#x27;*/ },
+  QUHD: { width: 15360, height: 8640 /*, aspectRatio: &#x27;16:9&#x27;*/ }
+};
+
+
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

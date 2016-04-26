@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/modules/utils.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Module that handles utilities functions.
+ * @class SkylinkUtils
+ * @private
+ * @for Skylink
+ * @since 0.7.0
+ */
+var SkylinkUtils = {
+
+  /**
+   * Function that clones &lt;kbd&gt;Object&lt;/kbd&gt; keys and values.
+   * @method objectCloneFn
+   * @param {Object} obj The &lt;kbd&gt;Object&lt;/kbd&gt; to clone.
+   * @return {Object} The cloned &lt;kbd&gt;Object&lt;/kbd&gt;.
+   * @private
+   * @for SkylinkUtils
+   * @since 0.7.0
+   */
+  objectCloneFn: function (obj) {
+    if (obj === null || typeof obj !== &#x27;object&#x27;) {
+      return obj;
+    }
+
+    var copy = obj.constructor();
+    for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) {
+        copy[attr] = obj[attr];
+      }
+    }
+    return copy;
+  },
+
+  /**
+   * Function that loops for &lt;kbd&gt;Object&lt;/kbd&gt; keys and values.
+   * @method objectLoopFn
+   * @param {Array|String|JSON} obj The &lt;kbd&gt;Object&lt;/kbd&gt; to loop.
+   * @param {Function} fn The function callback triggered for each loop.&lt;br&gt;
+   *   Return &lt;code&gt;true&lt;/code&gt; in function callback to break looping execution.
+   * @private
+   * @for SkylinkUtils
+   * @since 0.7.0
+   */
+  objectLoopFn: function (obj, fn) {
+    // Loops for Arrays and Strings
+    if (Array.isArray(obj)) {
+      var arrayCI = 0,
+          arrayLen = obj.length;
+
+      while (arrayLen &gt; arrayCI) {
+        if (fn(obj[arrayCI], arrayCI)) {
+          break;
+        }
+
+        arrayCI++;
+      }
+
+    // Loops for Object keys and values
+    } else if (typeof obj === &#x27;object&#x27;) {
+      var keys = Object.keys(obj),
+          objCI = 0,
+          objLen = keys.length;
+
+      while (objLen &gt; objCI) {
+        if (fn(obj[keys[objCI]], keys[objCI])) {
+          break;
+        }
+
+        objCI++;
+      }
+    }
+  },
+
+  /**
+   * Function that checks if &lt;kbd&gt;Object&lt;/kbd&gt; contains the value provided.
+   * @method objectContainsFn
+   * @param {Array|String|JSON} obj The &lt;kbd&gt;Object&lt;/kbd&gt; to check.
+   * @param {Any} value The value to check if it exists in &lt;kbd&gt;Object&lt;/kbd&gt;.
+   * @return {Boolean} The flag that indicates if value exists in &lt;kbd&gt;Object&lt;/kbd&gt;.
+   * @private
+   * @for SkylinkUtils
+   * @since 0.7.0
+   */
+  objectContainsFn: function (obj, value) {
+    var exists = false;
+
+    this.objectLoopFn(obj, function (currentValue) {
+      if (currentValue === value) {
+        exists = true;
+        return true;
+      }
+    });
+
+    return exists;
+  }
+};
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

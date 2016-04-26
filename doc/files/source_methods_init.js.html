@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/methods/init.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/* jshint ignore:start */
+/**
+ * &lt;blockquote class=&quot;panel-warning&quot;&gt;
+ *   Note that this method is required to call before using any other functionalities
+ *   except Event methods like &lt;a href=&quot;#method_on&quot;&gt;&lt;u&gt;&lt;code&gt;on()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;,
+ *   &lt;a href=&quot;#method_off&quot;&gt;&lt;u&gt;&lt;code&gt;off()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;
+ *   or &lt;a href=&quot;#method_once&quot;&gt;&lt;u&gt;&lt;code&gt;once()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;. By default,
+ *   the SDK uses CORS authentication. To use credentials based authentication, configure the
+ *   &lt;code&gt;credentials&lt;/code&gt; parameter.
+ * &lt;/blockquote&gt;
+ * Method that initializes the Skylink object to start connection session.
+ * @method init
+ * @param {String|JSON} options The parameter for configuration settings.&lt;br&gt;
+ *   Providing this value as a &lt;kbd&gt;&quot;String&quot;&lt;/kbd&gt; reads as &lt;code&gt;appKey&lt;/code&gt;.
+ * @param {String} options.appKey The parameter to configure the Application Key.
+ * @param {String} [options.defaultRoom=&amp;options.appKey] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     This fallbacks to the value of Application Key configured if not provided.
+ *   &lt;/blockquote&gt;
+ *   The parameter to configure the default Room name that the SDK
+ *   uses when no &lt;code&gt;room&lt;/code&gt; parameter is
+ *   provided in &lt;a href=&quot;#method_joinRoom&quot;&gt;&lt;u&gt;&lt;code&gt;joinRoom()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;.
+ * @param {String} [options.roomServer] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     This is for SDK debugging purposes and it is &lt;u&gt;NOT RECOMMENDED&lt;/u&gt; to modify the value.
+ *     To use this, have to provide the Protocol Relative URL value (&lt;code&gt;&quot;//&quot;&lt;/code&gt;) before the domain name.
+ *     Ensure that no (&lt;code&gt;&quot;/&quot;&lt;/code&gt;) value is provided at the end of the value.
+ *   &lt;/blockquote&gt;
+ *   The parameter to configure the API server to start connection session.
+ * @param {String} [options.region] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     This has been deprecated and it is not recommended to configure this value anymore.
+ *   &lt;/blockquote&gt;
+ *   The parameter to configure the nearest regional server for the SDK to connect to.
+ *   [Rel: Skylink.attr.REGIONAL_SERVER]
+ * @param {Boolean} [options.enableIceTrickle=true] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     Note that setting this to &lt;code&gt;false&lt;/code&gt; may result in a slower connection.
+ *   &lt;/blockquote&gt;
+ *   The parameter to enable trickle ICE connections for faster connectivity.
+ *   &lt;small&gt;See: &lt;a href=&quot;#x&quot;&gt;What is ICE and how it works&lt;/a&gt;&lt;/small&gt;
+ * @param {Boolean} [options.enableDataChannel=true] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     Note that setting this to &lt;code&gt;false&lt;/code&gt; will disable
+ *     &lt;a href=&quot;#method_sendBlobData&quot;&gt;&lt;u&gt;&lt;code&gt;sendBlobData()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;,
+ *     &lt;a href=&quot;#method_sendURLData&quot;&gt;&lt;u&gt;&lt;code&gt;sendURLData()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; and
+ *     &lt;a href=&quot;#method_sendBlobData&quot;&gt;&lt;u&gt;&lt;code&gt;sendP2PMessage()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt; functionalities.
+ *     You will not be able to receive any P2P messages as well.
+ *     Additionally, even with this enabled,
+ *     if there is a connecting Peer that does not have &lt;code&gt;enableDataChannel&lt;/code&gt;
+ *     enabled, the following above functionalities will not work with that particular Peer connection.
+ *   &lt;/blockquote&gt;
+ *   The parameter to enable Datachannel connections.
+ * @param {Boolean} [options.enableTURNServer=true] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     Note that this only filters the ICE servers when starting Peer connection. To enforce
+ *     TURN connections, configure &lt;code&gt;forceTURN&lt;/code&gt; parameter instead.
+ *   &lt;/blockquote&gt;
+ *   The parameter to enable using TURN ICE servers when starting a Peer connection.&lt;br&gt;
+ *   Disabling this will filter out all TURN ICE servers passed in Peer connections.
+ * @param {Boolean} [options.enableSTUNServer=true] The parameter to
+ *   enable using STUN ICE servers when starting a Peer connection.&lt;br&gt;
+ *   Disabling this will filter out all STUN ICE servers passed in Peer connections.
+ * @param {Boolean} [options.forceTURN=false] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *     Note that if TURN is not enabled for the Application Key configured, Peer connections will not be
+ *     able to connect.
+ *   &lt;/blockquote&gt;
+ *   The parameter to enforce TURN ICE connections.&lt;br&gt;
+ *   Enabling this will filter out all STUN ICE servers as well.
+ * @param {Boolean} [options.usePublicSTUN=true] The parameter to
+ *   enable using publicly available STUN ICE servers when starting a Peer connection.&lt;br&gt;
+ *   Disabling this will filter out all publicly available STUN ICE servers.
+ * @param {Boolean} [options.TURNServerTransport=#&lt;Skylink.TURN_TRANSPORT.ANY&gt;] The parameter to
+ *   configure the TURN ICE servers transports.
+ *   [Rel: Skylink.attr.TURN_TRANSPORT]
+ * @param {JSON} [options.credentials] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   Note that you require the configure the correct &lt;code&gt;startDateTime&lt;/code&gt; and
+ *   &lt;code&gt;duration&lt;/code&gt; used when generating the &lt;code&gt;credentials&lt;/code&gt; to configure the SDK
+ *   to use credentials based authentication, By default, when credentials is not provided,
+ *   the SDK will use CORS based authentication. Additionally, take note that
+ *   using credentials based authentication does not allow you to join the Room
+ *   based on the &lt;code&gt;room&lt;/code&gt; paramter provided in
+ *   &lt;a href=&quot;#method_joinRoom&quot;&gt;&lt;u&gt;&lt;code&gt;joinRoom()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;.&lt;/blockquote&gt;
+ *   The parameter to use credentials based authentication to start connection session.
+ *   &lt;small&gt;See:&lt;a href=&quot;http://support.temasys.com.sg/support/solutions/articles/12000002712-authenticating-your-application-key-to-start-a-connection&quot;&gt;
+ *     Authenticating SDK connection sessions&lt;/a&gt;.&lt;/small&gt;
+ * @param {String} options.credentials.startDateTime The parameter to configure the
+ *   &lt;code&gt;credentials&lt;/code&gt; starting DateTime. This value has to be set in
+ *   (&lt;a href=&quot;https://en.wikipedia.org/wiki/ISO_8601&quot;&gt;ISO 8601 format&lt;/a&gt;), which can be retrieved from
+ *   the &lt;kbd&gt;Date&lt;/kbd&gt; object &lt;code&gt;Date.getISOString()&lt;/code&gt; method.
+ * @param {Number} options.credentials.duration The parameter to configure the
+ *   &lt;code&gt;credentials&lt;/code&gt; connection session duration in Hours.
+ *   &lt;small&gt;EXAMPLES:&lt;br&gt;
+ *   30 mins: &lt;code&gt;0.5&lt;/code&gt;&lt;br&gt;
+ *   1 hour, 24mins: &lt;code&gt;1.4&lt;/code&gt;&lt;br&gt;
+ *   2 hours, 30mins: &lt;code&gt;2.5&lt;/code&gt;&lt;/small&gt;
+ * @param {String} options.credentials.credentials The parameter to configure the
+ *   &lt;code&gt;credentials&lt;/code&gt; connection session authentication string.&lt;br&gt;
+ *   This requires you to generate with your configured Application Key &lt;u&gt;Secret&lt;/u&gt;,
+ *   provided &lt;code&gt;credentials&lt;/code&gt; - &lt;code&gt;startDateTime&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt; and
+ *   &lt;code&gt;defaultRoom&lt;/code&gt; values.
+ *   &lt;small class=&quot;tip-box&quot;&gt;
+ *   &lt;b&gt;INSTRUCTIONS ON GENERATING CREDENTIALS STRING:&lt;/b&gt;
+ *   &lt;ol&gt;
+ *   &lt;li&gt;Concatenate the &lt;code&gt;defaultRoom&lt;/code&gt;, &lt;code&gt;credentials&lt;/code&gt; - &lt;code&gt;duration&lt;/code&gt; and &lt;code&gt;startDateTime&lt;/code&gt;.
+ *      &lt;var&gt;var &lt;code&gt;concatStr&lt;/code&gt; = &lt;code&gt;defaultRoom&lt;/code&gt; + &quot;_&quot; + &lt;code&gt;duration&lt;/code&gt; + &quot;_&quot; + &lt;code&gt;startDateTimeStamp&lt;/code&gt;;&lt;/var&gt;&lt;/li&gt;
+ *   &lt;li&gt;Hash the &lt;code&gt;concatStr&lt;/code&gt; value with the Application Key &lt;u&gt;Secret&lt;/u&gt; using SHA-1
+ *      In this example, we use the &lt;a href=&quot;https://code.google.com/p/crypto-js/#HMAC&quot;&gt;&lt;u&gt;&lt;code&gt;CryptoJS.HmacSHA1&lt;/code&gt; function&lt;/u&gt;&lt;/a&gt; .
+ *      &lt;var&gt;var &lt;code&gt;hash&lt;/code&gt; = CryptoJS.HmacSHA1(&lt;code&gt;concatStr&lt;/code&gt;, &lt;code&gt;secret&lt;/code&gt;);&lt;/var&gt;&lt;/li&gt;
+ *   &lt;li&gt;Convert the hash to a Base64 encoded string.
+ *      In this example, we use the &lt;a href=&quot;https://code.google.com/p/crypto-js/#The_Cipher_Output&quot;&quot;&gt;&lt;u&gt;&lt;code&gt;CryptoJS.enc.Base64&lt;/code&gt; function&lt;/u&gt;&lt;/a&gt;.
+ *      &lt;var&gt;var &lt;code&gt;base64String&lt;/code&gt; = &lt;code&gt;hash&lt;/code&gt;.toString(CryptoJS.enc.Base64);&lt;/var&gt;&lt;/li&gt;
+ *   &lt;li&gt;Encode the Base64 encoded string to a URI component using UTF-8 encoding with
+ *      &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent&quot;&gt;&lt;u&gt;&lt;code&gt;encodeURIComponent()&lt;/code&gt; function&lt;/u&gt;&lt;/a&gt;.
+ *      &lt;var&gt;var &lt;code&gt;credentialsStr&lt;/code&gt; = encodeURIComponent(&lt;code&gt;base64String&lt;/code&gt;);&lt;/var&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/small&gt;
+ * @param {Boolean} [options.audioFallback=false] The parameter to configure to retrieve audio only
+ *   as a fallback when retrieving audio and video fails in
+ *   &lt;a href=&quot;#method_getUserMedia&quot;&gt;&lt;u&gt;&lt;code&gt;getUserMedia()&lt;/code&gt; method&lt;/u&gt;&lt;/a&gt;.
+ * @param {Boolean} [options.forceSSL=false] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   By default, if user is accessing the SDK from &lt;code&gt;https:&lt;/code&gt; protocol, SSL connections are already enabled.&lt;/blockquote&gt;
+ *   The parameter to enforce SSL connections when starting connection session and Room socket connection.
+ * @param {String} [options.audioCodec=#&lt;Skylink.AUDIO_CODEC.AUTO&gt;] The parameter to configure
+ *   the audio codec for audio streams.
+ *   [Rel: Skylink.attr.AUDIO_CODEC]
+ * @param {String} [options.videoCodec=#&lt;Skylink.VIDEO_CODEC.AUTO&gt;] The parameter to configure
+ *   the audio codec for video streams.
+ *   [Rel: Skylink.attr.VIDEO_CODEC]
+ * @param {Number} [options.socketTimeout=20000] The parameter to configure the timeout to wait when there is no
+ *   connection response before triggering as &lt;code&gt;CONNECTION_FAILED&lt;/code&gt; or &lt;code&gt;RECONNECTION_FAILED&lt;/code&gt;.
+ *   [Rel: Skylink.attr.SOCKET_ERROR]
+ * @param {Boolean} [options.forceTURNSSL=false] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   By default, if user is accessing the SDK from &lt;code&gt;https:&lt;/code&gt; protocol, TURN SSL connections are already enabled&lt;/code&gt;.
+ *   Note that if the browser does not support the &lt;code&gt;turns:&lt;/code&gt; protocol, SSL ports will be used instead.&lt;/blockquote&gt;
+ *   The parameter to enforce SSL connections for TURN ICE server connections.
+ * @param {Function} [callbackFn] The parameter &lt;code&gt;callback&lt;/code&gt; function that would be triggered when
+ *   after &lt;code&gt;init()&lt;/code&gt; method process has completed.
+ *   &lt;blockquote class=&quot;sub&quot;&gt;Method parameter payload signature: &lt;var&gt;function(&lt;code&gt;error&lt;/code&gt;, &lt;code&gt;success&lt;/code&gt;)&lt;/var&gt;&lt;/blockquote&gt;
+ * @param {JSON} callbackFn.error The &lt;code&gt;callback&lt;/code&gt; function parameter payload that is defined when
+ *   &lt;code&gt;init()&lt;/code&gt; method process encountered an error.
+ * @param {Number} callbackFn.error.errorCode The error code.
+ *   [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR]
+ * @param {Error} callbackFn.error.error The error object.
+ * @param {Number} callbackFn.error.status The HTTP status received when encountering the error.&lt;br&gt;
+ *   [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR_STATUS]
+ * @param {JSON} callbackFn.success The &lt;code&gt;callback&lt;/code&gt; function parameter payload that is defined when
+ *   &lt;code&gt;init()&lt;/code&gt; method process has completed without errors.
+ * @param {String} callbackFn.success.serverUrl &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   This has been deprecated and will be removed in the next releases.
+ * &lt;/blockquote&gt; The API HTTP request URL.
+ * @param {String} callbackFn.success.readyState &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   This has been deprecated and will be removed in the next releases.
+ * &lt;/blockquote&gt; The current connection session ready state.
+ * @param {String} callbackFn.success.appKey The configured parameter &lt;code&gt;appKey&lt;/code&gt; value.
+ * @param {String} callbackFn.success.defaultRoom The configured parameter &lt;code&gt;defaultRoom&lt;/code&gt; value.
+ * @param {String} callbackFn.success.selectedRoom &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   This has been deprecated in the callback and will be removed in the next releases.
+ * &lt;/blockquote&gt; The current selected Room name.
+ * @param {String} callbackFn.success.roomServer The configured parameter &lt;code&gt;roomServer&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.enableIceTrickle The configured parameter &lt;code&gt;enableIceTrickle&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.enableDataChannel The configured parameter &lt;code&gt;enableDataChannel&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.enableTURNServer The configured parameter &lt;code&gt;enableTURNServer&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.enableSTUNServer The configured parameter &lt;code&gt;enableSTUNServer&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.TURNTransport &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   This will be renamed as &lt;code&gt;TURNServerTransport&lt;/code&gt; in the next releases.
+ * &lt;/blockquote&gt; The configured parameter &lt;code&gt;TURNServerTransport&lt;/code&gt; value.
+ * @param {String} [callbackFn.success.serverRegion] &lt;blockquote class=&quot;panel-info&quot;&gt;
+ *   This will be renamed as &lt;code&gt;region&lt;/code&gt; in the next releases before removal of &lt;code&gt;region&lt;/code&gt; parameter.
+ * &lt;/blockquote&gt; The configured parameter &lt;code&gt;region&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.audioFallback The configured parameter &lt;code&gt;audioFallback&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.forceSSL The configured parameter &lt;code&gt;forceSSL&lt;/code&gt; value.
+ * @param {String} callbackFn.success.audioCodec The configured parameter &lt;code&gt;audioCodec&lt;/code&gt; value.
+ * @param {String} callbackFn.success.videoCodec The configured parameter &lt;code&gt;videoCodec&lt;/code&gt; value.
+ * @param {Number} callbackFn.success.socketTimeout The configured parameter &lt;code&gt;socketTimeout&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.forceTURNSSL The configured parameter &lt;code&gt;forceTURNSSL&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.forceTURN The configured parameter &lt;code&gt;forceTURN&lt;/code&gt; value.
+ * @param {Boolean} callbackFn.success.usePublicSTUN The configured parameter &lt;code&gt;usePublicTURN&lt;/code&gt; value.
+ * @example
+ *   // Parameters: Skylink.init(appKey);
+ *   SkylinkDemo.init(&quot;&lt;% Your Application Key value here %&gt;&quot;);
+ *
+ *
+ *   // Parameters: Skylink.init(options);
+ *   SkylinkDemo.init({
+ *     appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+ *     audioFallback: true,
+ *     defaultRoom: &quot;&lt;% Your default Room name value here %&gt;&quot;,
+ *     forceSSL: true,
+ *     forceTURNSSL: true
+ *   });
+ *
+ *
+ *   // Parameters: Skylink.init(options); - using credentials based authentication
+ *   // ----------------------------------------------------------------------------------
+ *   //  NOTE: It is not recommended to generate credentials on client side but server
+ *   //        side for security. This is for illustration purposes.
+ *   // ----------------------------------------------------------------------------------
+ *   function generateCreds (room, duration, startDateTime) {
+ *     var concatStr = room + &quot;\_&quot; + duration + &quot;\_&quot; + startDateTime;
+ *     //! Do not EXPOSE to any users
+ *     var hash = CryptoJS.HmacSHA1(concatStr, &quot;&lt;% Your Application Key secret value here %&gt;&quot;);
+ *     var base64String = hash.toString(CryptoJS.enc.Base64);
+ *     return encodeURIComponent(base64String);
+ *   }
+ *
+ *   //! This is the Room name that will only be joined for the connection session
+ *   var room  = &quot;&lt;% Your Room name value here %&gt;&quot;, //
+ *       credentials  = {
+ *        //! Set as 2 Hours.
+ *         duration: 2,
+ *         //! Currently is configure for Now. Can be configured with any starting date if preferred.
+ *         startDateTime: (new Date()).toISOString(),
+ *         credentials: null
+ *       };
+ *
+ *   credentials.credentials = generateCreds(room, credentials.duration, credentials.startDateTime);
+ *
+ *   SkylinkDemo.init({
+ *     appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+ *     defaultRoom: room,
+ *     credentials: credentials
+ *   });
+ *
+ *
+ *   // Parameters: Skylink.init(options, callback);
+ *   SkylinkDemo.init({
+ *     appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+ *     audioFallback: true,
+ *     defaultRoom: &quot;&lt;% Your default Room name value here %&gt;&quot;,
+ *     forceSSL: true,
+ *     forceTURNSSL: true
+ *   }, function(error, success){
+ *     if (error) {
+ *       ///-[Error: See &amp;callbackFn error parameter payload.]
+ *     } else{
+ *       ///-[Success: See &amp;callbackFn success parameter payload.]
+ *     }
+ *   });
+ * @required
+ * @for Skylink
+ * @since 0.7.0
+ */
+/* jshint ignore:end */
+Skylink.prototype.init = function (options, callback) {
+  var self = this;
+
+  self._globals.current = SkylinkUtils.objectCloneFn(self._globals.defaults);
+
+  /**
+   * Function that sets the init() ready state
+   */
+  var processSetStateFn = function (state, error) {
+    log.debug([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Ready state -&gt;&#x27;], state);
+
+    self._session.state = state;
+
+    self._trigger(&#x27;readyStateChange&#x27;, state, error, self._globals.current.selectedRoom);
+
+    if ([self.READY_STATE_CHANGE.ERROR, self.READY_STATE_CHANGE.COMPLETED].indexOf(state) &gt; -1) {
+      processSetStateFn(error);
+    }
+  };
+
+  /**
+   * Function that handles the result of init() process
+   */
+  var processResultFn = function (error) {
+    var responseFn = typeof callback === &#x27;function&#x27; ? callback : function () {};
+
+    if (error) {
+      log.error([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Process failed with error -&gt;&#x27;], error);
+
+      responseFn({
+        errorCode: error.errorCode,
+        error: error.content,
+        status: error.status
+      }, null);
+
+    } else {
+      log.info([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Process completed successfully&#x27;]);
+
+      responseFn(null, {
+        serverUrl: self._session.url,
+        readyState: state,
+        appKey: self._appKey,
+        roomServer: self._globals.current.roomServer,
+        defaultRoom: self._globals.current.defaultRoom,
+        selectedRoom: self._globals.current.selectedRoom,
+        serverRegion: self._globals.current.region,
+        enableDataChannel: self._globals.current.enableDataChannel,
+        enableIceTrickle: self._globals.current.enableIceTrickle,
+        enableTURNServer: self._globals.current.enableTURNServer,
+        enableSTUNServer: self._globals.current.enableSTUNServer,
+        TURNTransport: self._globals.current.TURNServerTransport,
+        audioFallback: self._globals.current.audioFallback,
+        forceSSL: self._globals.current.forceSSL,
+        socketTimeout: self._globals.current.socketTimeout,
+        forceTURNSSL: self._globals.current.forceTURNSSL,
+        audioCodec: self._globals.current.audioCodec,
+        videoCodec: self._globals.current.videoCodec,
+        forceTURN: self._globals.current.forceTURN,
+        usePublicSTUN: self._globals.current.usePublicSTUN
+      });
+    }
+  };
+
+  log.debug([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Parsing configuration options -&gt;&#x27;], options);
+
+  processSetStateFn(self.READY_STATE_CHANGE.INIT);
+
+  /**
+   * Parameter: init(&quot;appKey&quot;)
+   */
+  if (typeof options === &#x27;string&#x27;) {
+    self._globals.current.appKey = options;
+    self._globals.current.defaultRoom = options;
+
+  /**
+   * Parameter: init({})
+   */
+  } else if (typeof options === &#x27;object&#x27; &amp;&amp; !!options) {
+    /**
+     * Parameter: init({ appKey: xxx })
+     */
+    if (typeof options.appKey === &#x27;string&#x27; &amp;&amp; !!options.appKey) {
+      self._globals.current.appKey = options.appKey;
+
+    /**
+     * Parameter: init({ apiKey: xxx })
+     */
+    } else if (typeof options.apiKey === &#x27;string&#x27; &amp;&amp; !!options.apiKey) {
+      self._globals.current.appKey = options.apiKey;
+
+    /**
+     * Parameter: init({ !appKey })
+     */
+    } else {
+      processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+        errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+        content: new Error(&#x27;Failed configuration as &quot;appKey&quot; value provided is invalid&#x27;),
+        status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+      });
+      return;
+    }
+
+    /**
+     * Parameter: init({ defaultRoom: xxx })
+     */
+    if (typeof options.defaultRoom === &#x27;string&#x27; &amp;&amp; !!options.defaultRoom) {
+      self._globals.current.defaultRoom = options.defaultRoom;
+
+    } else {
+      self._globals.current.defaultRoom = self._globals.current.appKey;
+    }
+
+    /**
+     * Parameter: init({ roomServer: xxx })
+     */
+    if (typeof options.roomServer === &#x27;string&#x27; &amp;&amp; !!options.roomServer) {
+      // Prevent invalid API servers provided
+      if (options.roomServer.indexOf(&#x27;//&#x27;) !== 0 ||
+        options.roomServer.indexOf(&#x27;/&#x27;) === options.roomServer.length - 1) {
+
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;roomServer&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.roomServer = options.roomServer;
+    }
+
+    /**
+     * Parameter: init({ region: xxx })
+     */
+    if (typeof options.region === &#x27;string&#x27; &amp;&amp; !!options.region) {
+      // Prevent invalid API servers provided
+      if (!SkylinkUtils.objectContainsFn(self.REGIONAL_SERVER, options.region)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;region&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.region = options.region;
+    }
+
+    /**
+     * Parameter: init({ enableIceTrickle: xxx })
+     */
+    if (typeof options.enableIceTrickle === &#x27;boolean&#x27;) {
+      self._globals.current.enableIceTrickle = options.enableIceTrickle;
+    }
+
+    /**
+     * Parameter: init({ enableDataChannel: xxx })
+     */
+    if (typeof options.enableDataChannel === &#x27;boolean&#x27;) {
+      self._globals.current.enableDataChannel = options.enableDataChannel;
+    }
+
+    /**
+     * Parameter: init({ enableTURNServer: xxx })
+     */
+    if (typeof options.enableTURNServer === &#x27;boolean&#x27;) {
+      self._globals.current.enableTURNServer = options.enableTURNServer;
+    }
+
+    /**
+     * Parameter: init({ enableSTUNServer: xxx })
+     */
+    if (typeof options.enableSTUNServer === &#x27;boolean&#x27;) {
+      self._globals.current.enableSTUNServer = options.enableSTUNServer;
+    }
+
+    /**
+     * Parameter: init({ forceTURN: xxx })
+     */
+    if (typeof options.forceTURN === &#x27;boolean&#x27;) {
+      self._globals.current.forceTURN = options.forceTURN;
+    }
+
+    /**
+     * Parameter: init({ usePublicSTUN: xxx })
+     */
+    if (typeof options.usePublicSTUN === &#x27;boolean&#x27;) {
+      self._globals.current.usePublicSTUN = options.usePublicSTUN;
+    }
+
+    /**
+     * Parameter: init({ TURNServerTransport: xxx })
+     */
+    if (typeof options.TURNServerTransport === &#x27;string&#x27; &amp;&amp; !!options.TURNServerTransport) {
+      // Prevent invalid TURN ICE server transports provided
+      if (!SkylinkUtils.objectContainsFn(self.TURN_TRANSPORT, options.TURNServerTransport)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;TURNServerTransport&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.TURNServerTransport = options.TURNServerTransport;
+    }
+
+    /**
+     * Parameter: init({ credentials: {} })
+     */
+    if (typeof options.credentials === &#x27;object&#x27; &amp;&amp; !!options.credentials) {
+
+      if (!(typeof options.credentials.startDateTime === &#x27;string&#x27; &amp;&amp;
+        !window.isNaN((new Date(options.credentials.startDateTime)).getTime()))) {
+
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;credentials.startDateTime&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      if (!(typeof options.credentials.duration === &#x27;number&#x27; &amp;&amp; options.credentials.duration &gt; 0)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;credentials.duration&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      if (!(typeof options.credentials.credentials === &#x27;string&#x27; &amp;&amp; !!options.credentials.credentials)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;credentials.credentials&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.credentials = {
+        startDateTime: options.credentials.startDateTime,
+        duration: options.credentials.duration,
+        credentials: options.credentials.credentials
+      };
+    }
+
+    /**
+     * Parameter: init({ audioFallback: xxx })
+     */
+    if (typeof options.audioFallback === &#x27;boolean&#x27;) {
+      self._globals.current.audioFallback = options.audioFallback;
+    }
+
+    /**
+     * Parameter: init({ forceSSL: xxx })
+     */
+    if (typeof options.forceSSL === &#x27;boolean&#x27; &amp;&amp; window.location.protocol !== &#x27;https:&#x27;) {
+      self._globals.current.forceSSL = options.forceSSL;
+    }
+
+    /**
+     * Parameter: init({ audioCodec: xxx })
+     */
+    if (typeof options.audioCodec === &#x27;string&#x27; &amp;&amp; !!options.audioCodec) {
+      // Prevent invalid audio codec provided
+      if (!SkylinkUtils.objectContainsFn(self.AUDIO_CODEC, options.audioCodec)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;audioCodec&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.audioCodec = options.audioCodec;
+    }
+
+    /**
+     * Parameter: init({ videoCodec: xxx })
+     */
+    if (typeof options.videoCodec === &#x27;string&#x27; &amp;&amp; !!options.videoCodec) {
+      // Prevent invalid video codec provided
+      if (!SkylinkUtils.objectContainsFn(self.VIDEO_CODEC, options.videoCodec)) {
+        processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+          errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+          content: new Error(&#x27;Failed configuration as &quot;videoCodec&quot; value provided is invalid&#x27;),
+          status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+        });
+        return;
+      }
+
+      self._globals.current.videoCodec = options.videoCodec;
+    }
+
+    /**
+     * Parameter: init({ forceTURNSSL: xxx })
+     */
+    if (typeof options.forceTURNSSL === &#x27;boolean&#x27; &amp;&amp; window.location.protocol !== &#x27;https:&#x27;) {
+      self._globals.current.forceTURNSSL = options.forceTURNSSL;
+    }
+
+  /**
+   * Parameter: init(function () {})
+   */
+  } else {
+    if (typeof options === &#x27;function&#x27;) {
+      callback = options;
+    }
+
+    processSetStateFn(self.READY_STATE_CHANGE.ERROR, {
+      errorCode: self.READY_STATE_CHANGE_ERROR.NO_PATH,
+      content: new Error(&#x27;Failed configuration as &quot;appKey&quot; value is not provided&#x27;),
+      status: self.READY_STATE_CHANGE_ERROR_STATUS.NO_REQUEST_MADE
+    });
+  }
+
+  self._globals.current.selectedRoom = self._globals.current.defaultRoom;
+
+  log.debug([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Starting connection session with configuration -&gt;&#x27;], self._globals.current);
+
+
+  processSetStateFn(self.READY_STATE_CHANGE.LOADING);
+
+
+  SkylinkAPI.requestFn(self._globals.current, function (state, data) {
+    if (state === &#x27;completed&#x27;) {
+      log.info([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Started connection session successfully -&gt;&#x27;], data);
+
+      processSetStateFn(self.READY_STATE_CHANGE.COMPLETED);
+
+    } else if (state === &#x27;error&#x27;) {
+      log.error([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Failed starting connection session -&gt;&#x27;], data);
+
+      processSetStateFn(self.READY_STATE_CHANGE.ERROR, data);
+
+    } else if (state === &#x27;retry&#x27;) {
+      log.debug([&#x27;self&#x27;, &#x27;Skylink&#x27;, &#x27;init()&#x27;, &#x27;Retrying starting connection session attempt -&gt;&#x27;], data);
+    }
+  });
+};
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SkylinkJS 0.7.0</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Sans+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Source+Code+Pro"
+    type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
+    type="text/css">
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link href="../assets/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- Javascripts -->
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+
+<body>
+  <div id="doc">
+    <nav id="hd" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="" class="navbar-brand">
+            <img src="../assets/img/logo.svg" />JS<small>Version: 0.7.0</small>
+          </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="api-list" class="nav navbar-nav navbar-right">
+  <li><a href="https://temasys.github.io">Getting Started</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
+        <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
+      
+    </ul>
+  </li>-->
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
+  <!--<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#api-modules">View all Modules</a></li>
+      
+    </ul>
+  </li>-->
+</ul>
+<!--<form id="api-tabview" class="navbar-form navbar-right" role="form">
+  <div id="api-tabview-filter" class="form-group">
+    <input type="search" id="api-filter" placeholder="Type to filter APIs">
+  </div>
+</form>-->
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div id="bd" class="yui3-g">
+      <div class="yui3-u-1-4">
+      </div>
+      <div class="yui3-u-3-4">
+        
+        <div class="apidocs">
+          <div id="docs-main">
+            <div class="content content-main">
+              <h1 class="file-heading">File: source/modules/api.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Module that handles requests to API to start connection session.
+ * @class SkylinkAPI
+ * @private
+ * @for Skylink
+ * @since 0.7.0
+ */
+var SkylinkAPI = {
+  /**
+   * Function that builds the HTTP URL for the SDK to fetch and start connection session to.
+   * @method URLBuilderFn
+   * @param {JSON} options The parameter options.
+   * @param {Boolean} forceSSL The &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;forceSSL&lt;/code&gt; parameter option.
+   * @param {String} appKey The &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;appKey&lt;/code&gt; parameter option.
+   * @param {String} roomServer The &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;roomServer&lt;/code&gt; parameter option.
+   * @param {String} region The &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;region&lt;/code&gt; parameter option.
+   * @param {JSON} credentials The &lt;code&gt;init()&lt;/code&gt; &lt;code&gt;credentials&lt;/code&gt; parameter option.
+   * @param {String} selectedRoom The selected Room name to fetch and start connection session to.
+   * @return {String} The generated HTTP URL based on options provided.
+   * @private
+   * @for SkylinkAPI
+   * @since 0.7.0
+   */
+  URLBuilderFn: function (options) {
+    var baseUrl = (options.forceSSL ? &#x27;https:&#x27; : window.location.protocol),
+        queries = [&#x27;rand=&#x27; + (new Date()).getTime()];
+
+    // Append API url
+    baseUrl += options.roomServer + &#x27;/api/&#x27; + options.appKey + &#x27;/&#x27; + options.selectedRoom;
+
+    if (options.credentials) {
+      baseUrl += &#x27;/&#x27; + options.credentials.startDateTime + &#x27;/&#x27; + options.credentials.duration;
+      queries.splice(0, 0, &#x27;cred=&#x27; + options.credentials.credentials);
+    }
+
+    if (options.region) {
+      queries.splice(0, 0, &#x27;rg=&#x27; + options.region);
+    }
+
+    return baseUrl + &#x27;?&#x27; + queries.join(&#x27;&amp;&#x27;);
+  },
+
+  /**
+   * Function that fetchs from HTTP URL (build from &lt;code&gt;options&lt;/code&gt; parameter provided)
+   *   to start connection session to.
+   * @method URLBuilderFn
+   * @param {JSON} options The parameter options.
+   *   &lt;small&gt;See &lt;code&gt;URLBuilderFn()&lt;/code&gt; function for full parameter options&lt;/small&gt;
+   * @param {Function} fn The parameter callback function that triggers on HTTP request state change.
+   * @param {String} fn.state The callback function parameter payload to determine the current state
+   *   of the HTTP request.&lt;br&gt;
+   *   &lt;blockquote class=&quot;sub&quot;&gt;
+   *   &lt;code&gt;&quot;loading&quot;&lt;/code&gt;: The state when loading HTTP request.&lt;br&gt;
+   *   &lt;code&gt;&quot;loaded&quot;&lt;/code&gt;: The state when connection session has started.&lt;br&gt;
+   *   &lt;code&gt;&quot;error&quot;&lt;/code&gt;: The state when connection session has errors&lt;br&gt;
+   *   &lt;code&gt;&quot;retry&quot;&lt;/code&gt;: The state when retrying loading HTTP request when timeout.
+   *     Maximum retries are &lt;var&gt;5&lt;/var&gt;&lt;/blockquote&gt;
+   * @param {JSON} fn.data The callback function parameter payload that contains the error object which
+   *   follows the &lt;code&gt;readyStateChange&lt;/code&gt; &lt;code&gt;error&lt;/code&gt; event payload
+   *   or the connection session data.
+   * @private
+   * @for SkylinkAPI
+   * @since 0.7.0
+   */
+  requestFn: function (options, fn) {
+    var self = this;
+    var xhr = null,
+        retries = 0;
+
+    if ([&#x27;object&#x27;, &#x27;function&#x27;].indexOf(typeof window.XDomainRequest) &gt; -1) {
+      xhr = new window.XDomainRequest();
+
+    } else {
+      xhr = new window.XMLHttpRequest();
+    }
+
+    xhr.onload = function () {
+      var result = JSON.parse(xhr.responseText || xhr.response || &#x27;{}&#x27;);
+
+      if (Object.keys(result).length === 0) {
+        fn(&#x27;error&#x27;, {
+          errorCode: Skylink.prototype.READY_STATE_CHANGE_ERROR.XML_HTTP_REQUEST_ERROR,
+          content: new Error(&#x27;Failed API request as loaded session is empty&#x27;),
+          status: 0
+        });
+        return;
+      }
+
+      if (result.success) {
+        fn(&#x27;loaded&#x27;, result);
+
+      } else {
+        fn(&#x27;error&#x27;, {
+          errorCode: result.error,
+          content: new Error(result.info),
+          status: 200
+        });
+      }
+    };
+
+    xhr.onerror = function (error) {
+      if (retries === 5) {
+        fn(&#x27;error&#x27;, {
+          errorCode: Skylink.prototype.READY_STATE_CHANGE_ERROR.XML_HTTP_REQUEST_ERROR,
+          content: new Error(&#x27;Failed API request as connection has timed out&#x27;),
+          status: -1
+        });
+        return;
+      }
+
+      xhr.open(&#x27;GET&#x27;, self.URLBuilderFn(options), true);
+      xhr.send();
+
+      retries++;
+
+      fn(&#x27;retry&#x27;, retries);
+    };
+
+    xhr.onprogress = function (evt) {
+      fn(&#x27;loading&#x27;);
+    };
+
+    xhr.open(&#x27;GET&#x27;, self.URLBuilderFn(options), true);
+    xhr.send();
+  }
+
+};
+    </pre>
+</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/vendor/prettify/prettify-min.js"></script>
+  <script>
+  prettyPrint();
+  </script>
+  <script src="../assets/vendor/yui/yui-prettify.js"></script>
+  <script src="../assets/../api.js"></script>
+  <script src="../assets/vendor/yui/api-filter.js"></script>
+  <script src="../assets/vendor/yui/api-list.js"></script>
+  <script src="../assets/vendor/yui/api-search.js"></script>
+  <script src="../assets/vendor/yui/apidocs.js"></script>
+</body>
+
+</html>
