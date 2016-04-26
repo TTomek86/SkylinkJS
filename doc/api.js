@@ -1,7 +1,11 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
-        "Skylink"
+        "Logger",
+        "Skylink",
+        "SkylinkAPI",
+        "SkylinkEvent",
+        "SkylinkUtils"
     ],
     "modules": [],
     "allModules": []

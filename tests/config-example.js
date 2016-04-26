@@ -1,7 +1,7 @@
 /**
  * Running test configuration
  */
-module.exports = {
+var config = {
   key: {
     id: '<%= YOUR APP KEY HERE %>',
     secret: '<%= YOUR APP KEY SECRET HERE %>'
@@ -26,3 +26,7 @@ module.exports = {
     }*/
   }
 };
+
+if (typeof module !== 'undefined') {
+  module.exports = config;
+}

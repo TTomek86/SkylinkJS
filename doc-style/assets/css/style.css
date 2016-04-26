@@ -224,7 +224,18 @@ h3 code {
 .code-item-type i {
   font-style: normal;
   text-transform: uppercase;
-  margin-right: 15px;
+}
+.code-item-type kbd {
+  color: #337ab7;
+  background: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+.code-item-type kbd:before {
+  content: "\"";
+}
+.code-item-type kbd:after {
+  content: "\"";
 }
 .params-list .param {
   margin-bottom: 7px;
@@ -267,6 +278,33 @@ h3 code {
 .param .param-description small var {
   font-size: 10px;
   font-style: normal;
+}
+.param .param-description small.tip-box {
+  background: #f8f8f8;
+  padding: 5px;
+  margin: 10px 0;
+  border: solid 2px #eee;
+}
+.param .param-description small.tip-box b {
+  font-weight: 600;
+}
+.param .param-description small.tip-box ol,
+.param .param-description small.tip-box ul {
+  list-style-position: inside;
+  margin: 5px 7px;
+  padding: 0;
+}
+.param .param-description small.tip-box ol li,
+.param .param-description small.tip-box ul li {
+  margin-bottom: 5px;
+  display: block;
+}
+.param .param-description small.tip-box var {
+  display: block;
+  border: solid 1px #ccc;
+  padding: 2px 5px;
+  border-radius: 1px;
+  margin: 5px 2px 9px;
 }
 .param .param-description code small {
   display: inline-block;
@@ -404,7 +442,8 @@ blockquote.sub {
   vertical-align: top;
   clear: both;
 }
-blockquote.sub code {
+blockquote.sub code,
+blockquote.sub var {
   text-transform: none;
 }
 #hd {

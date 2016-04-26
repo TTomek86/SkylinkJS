@@ -64,8 +64,9 @@ module.exports = function(grunt) {
       production: {
         files: {
           '<%= production %>/skylink.debug.js': [
+            '<%= source %>/globals.js',
             '<%= source %>/core.js',
-            '<%= source %>/*.js'
+            '<%= source %>/**/*.js'
           ],
           '<%= production %>/skylink.complete.js': [
             'node_modules/socket.io-client/socket.io.js',
@@ -151,7 +152,9 @@ module.exports = function(grunt) {
             'rev': '<%= grunt.config.get("meta.rev") %>',
             'date': '<%= grunt.config.get("meta.date") %>',
             'tag': '<%= grunt.config.get("meta.tag") %>',
-            'version': '<%= pkg.version %>'
+            'version': '<%= pkg.version %>',
+            'adapterjsVersion': '<%= pkg.dependencies["adapterjs"] %>',
+            'socketioVersion': '<%= pkg.dependencies["socket.io-client"] %>'
           },
           prefix: '@@'
         },

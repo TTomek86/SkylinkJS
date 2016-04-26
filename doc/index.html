@@ -50,19 +50,24 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul id="api-list" class="nav navbar-nav navbar-right">
   <li><a href="https://temasys.github.io">Getting Started</a></li>
-  
-    <li><a href="./classes/Skylink.html">Documentation</a></li>
-  
   <!--<li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
       
+        <li><a href="./classes/Logger.html">Logger</a></li>
+      
         <li><a href="./classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="./classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="./classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="./classes/SkylinkUtils.html">SkylinkUtils</a></li>
       
     </ul>
   </li>-->
-  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Developer Console</a></li>
-  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Support</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
   <!--<li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
@@ -88,19 +93,15 @@
         <div class="apidocs">
           <div id="docs-main">
             <div class="content content-main">
-              <div class="jumbotron no-padding">
-  <div class="container">
-    <h1>
-      SkylinkJS <span>API Documentation</span>
-      <small><i class="fa fa-info-circle">&nbsp;&nbsp;&nbsp;</i>Version: 0.7.0</small>
-    </h1>
-    <br>
-  </div>
-</div>
-<div class="container">
-  <h3>Select a class/module to view API documentation</h3>
-  <p>It's on the top-right hand corner</p>
-</div>
+              <script>
+  var pathname = window.location.pathname.replace('index.html', '');
+
+  if (pathname[pathname.length - 1] !== '/') {
+    pathname += '/'
+  }
+
+  window.location.pathname = pathname + 'classes/Skylink.html';
+</script>
             </div>
           </div>
         </div>

@@ -50,19 +50,24 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul id="api-list" class="nav navbar-nav navbar-right">
   <li><a href="https://temasys.github.io">Getting Started</a></li>
-  
-    <li><a href="../classes/Skylink.html">Documentation</a></li>
-  
   <!--<li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
       
+        <li><a href="../classes/Logger.html">Logger</a></li>
+      
         <li><a href="../classes/Skylink.html">Skylink</a></li>
+      
+        <li><a href="../classes/SkylinkAPI.html">SkylinkAPI</a></li>
+      
+        <li><a href="../classes/SkylinkEvent.html">SkylinkEvent</a></li>
+      
+        <li><a href="../classes/SkylinkUtils.html">SkylinkUtils</a></li>
       
     </ul>
   </li>-->
-  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Developer Console</a></li>
-  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Support</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://developer.temasys.com.sg/">Manage Application Keys</a></li>
+  <li><a class="btn btn-info btn-navbar" href="http://support.temasys.com.sg/">Get Support</a></li>
   <!--<li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
@@ -88,26 +93,10 @@
         <div class="apidocs">
           <div id="docs-main">
             <div class="content content-main">
-              <div class="jumbotron no-padding">
-  <div class="container">
-    <h1>
-      Skylink <span>Class</span>
-      
-        <small>
-          <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_core.js.html#l1"><code>source&#x2F;core.js:1</code></a>
-        </small>
-      
-      
-        <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
-      
-    </h1>
-    <br/>
-  </div>
-</div>
-<div class="page container">
+              <div class="page container" style="margin-top: 30px;">
   <section id="infodocs">
     <p><p><h2>Before using Skylink</h2>
-Please invoke Skylink/init:method method
+Please invoke <a href="../classes/Skylink.html#method_init" class="crosslink">init()</a> method
 first to initialise the Application Key before using any functionalities in Skylink.</p>
 <p>If you do not have an Application Key, you may register for a Skylink platform developer account
   <a href="http://developer.temasys.com.sg/register">to create one</a>.</p>
@@ -121,8 +110,12 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
   </section>
   <section id="classdocs">
     <ul class="nav nav-tabs" role="tablist">
-      <li  role="presentation" class="doc-selected active"><a href="#constructor">Constructor</a></li>
+      <li  role="presentation" class="doc-selected active"><a href="#constructor">Setting up SkylinkJS</a></li>
       
+        <li role="presentation" class="doc-selected"><a href="#methods">Methods</a></li>
+      
+      
+        <li role="presentation" class="doc-selected"><a href="#events">Events</a></li>
       
       
          <li role="presentation" class="doc-selected"><a href="#attrs">Constants</a></li>
@@ -155,8 +148,66 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
                 &nbsp;&nbsp;Skylink ()
               </a>
               
+                
+                  <a href="#method_init" class="list-group-item code-menu-item method-item ">
+                    &nbsp;&nbsp;init
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#method_off" class="list-group-item code-menu-item method-item ">
+                    &nbsp;&nbsp;off
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#method_on" class="list-group-item code-menu-item method-item ">
+                    &nbsp;&nbsp;on
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#method_once" class="list-group-item code-menu-item method-item ">
+                    &nbsp;&nbsp;once
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
               
               
+              
+                
+                  <a href="#attr__globals" class="list-group-item code-menu-item  private-attr-item ">
+                    &nbsp;&nbsp;_globals
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#attr__listeners" class="list-group-item code-menu-item  private-attr-item ">
+                    &nbsp;&nbsp;_listeners
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#attr__session" class="list-group-item code-menu-item  private-attr-item ">
+                    &nbsp;&nbsp;_session
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
                 
                   <a href="#attr_AUDIO_CODEC" class="list-group-item code-menu-item attr-item ">
                     &nbsp;&nbsp;AUDIO_CODEC
@@ -264,6 +315,14 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
                     </span>
                   </a>
                 
+                  <a href="#attr_log" class="list-group-item code-menu-item  private-attr-item ">
+                    &nbsp;&nbsp;log
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
                   <a href="#attr_LOG_LEVEL" class="list-group-item code-menu-item attr-item ">
                     &nbsp;&nbsp;LOG_LEVEL
                     <span class="settings">
@@ -290,6 +349,14 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
                 
                   <a href="#attr_READY_STATE_CHANGE_ERROR" class="list-group-item code-menu-item attr-item ">
                     &nbsp;&nbsp;READY_STATE_CHANGE_ERROR
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
+                  <a href="#attr_READY_STATE_CHANGE_ERROR_STATUS" class="list-group-item code-menu-item attr-item ">
+                    &nbsp;&nbsp;READY_STATE_CHANGE_ERROR_STATUS
                     <span class="settings">
                       
                       
@@ -387,6 +454,16 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
                   </a>
                 
               
+              
+                
+                  <a href="#event_readyStateChange" class="list-group-item code-menu-item event-item ">
+                    &nbsp;&nbsp;readyStateChange
+                    <span class="settings">
+                      
+                      
+                    </span>
+                  </a>
+                
               
             </div>
           </div>
@@ -525,14 +602,1721 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
           </section>
         
         
+          <section id="methods">
+            
+              <div id="method_init" class="code-item method item method-item ">
+  <h3 class="code-item-name"><code>init</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>options</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code class="optional">[callbackFn]</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+        <span class="label label-danger" title="This method is required before using any SDK functionalities.">required</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p><blockquote class="panel-warning">
+  Note that this method is required to call before using any other functionalities
+  except Event methods like <a href="#method_on"><u><code>on()</code> method</u></a>,
+  <a href="#method_off"><u><code>off()</code> method</u></a>
+  or <a href="#method_once"><u><code>once()</code> method</u></a>. By default,
+  the SDK uses CORS authentication. To use credentials based authentication, configure the
+  <code>credentials</code> parameter.
+</blockquote>
+Method that initializes the Skylink object to start connection session.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">options</code>
+            <span class="type"><b>{</b>String | JSON<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The parameter for configuration settings.<br>
+  Providing this value as a <kbd>&quot;String&quot;</kbd> reads as <code>appKey</code>.</p>
+
+            </div>
+
+            
+              <ul class="params-list">
+                
+                  <li class="param">
+                    <code class="param-name">appKey</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      
+                      <p>The parameter to configure the Application Key.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">defaultRoom</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>&amp;options.appKey</small>
+                      <p><blockquote class="panel-info">
+    This fallbacks to the value of Application Key configured if not provided.
+  </blockquote>
+  The parameter to configure the default Room name that the SDK
+  uses when no <code>room</code> parameter is
+  provided in <a href="#method_joinRoom"><u><code>joinRoom()</code> method</u></a>.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">roomServer</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      
+                      <p><blockquote class="panel-info">
+    This is for SDK debugging purposes and it is <u>NOT RECOMMENDED</u> to modify the value.
+    To use this, have to provide the Protocol Relative URL value (<code>&quot;//&quot;</code>) before the domain name.
+    Ensure that no (<code>&quot;/&quot;</code>) value is provided at the end of the value.
+  </blockquote>
+  The parameter to configure the API server to start connection session.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">region</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      
+                      <p><blockquote class="panel-info">
+    This has been deprecated and it is not recommended to configure this value anymore.
+  </blockquote>
+  The parameter to configure the nearest regional server for the SDK to connect to.
+  [Rel: Skylink.attr.REGIONAL_SERVER]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">enableIceTrickle</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>true</small>
+                      <p><blockquote class="panel-info">
+    Note that setting this to <code>false</code> may result in a slower connection.
+  </blockquote>
+  The parameter to enable trickle ICE connections for faster connectivity.
+  <small>See: <a href="#x">What is ICE and how it works</a></small></p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">enableDataChannel</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>true</small>
+                      <p><blockquote class="panel-info">
+    Note that setting this to <code>false</code> will disable
+    <a href="#method_sendBlobData"><u><code>sendBlobData()</code> method</u></a>,
+    <a href="#method_sendURLData"><u><code>sendURLData()</code> method</u></a> and
+    <a href="#method_sendBlobData"><u><code>sendP2PMessage()</code> method</u></a> functionalities.
+    You will not be able to receive any P2P messages as well.
+    Additionally, even with this enabled,
+    if there is a connecting Peer that does not have <code>enableDataChannel</code>
+    enabled, the following above functionalities will not work with that particular Peer connection.
+  </blockquote>
+  The parameter to enable Datachannel connections.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">enableTURNServer</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>true</small>
+                      <p><blockquote class="panel-info">
+    Note that this only filters the ICE servers when starting Peer connection. To enforce
+    TURN connections, configure <code>forceTURN</code> parameter instead.
+  </blockquote>
+  The parameter to enable using TURN ICE servers when starting a Peer connection.<br>
+  Disabling this will filter out all TURN ICE servers passed in Peer connections.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">enableSTUNServer</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>true</small>
+                      <p>The parameter to
+  enable using STUN ICE servers when starting a Peer connection.<br>
+  Disabling this will filter out all STUN ICE servers passed in Peer connections.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">forceTURN</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>false</small>
+                      <p><blockquote class="panel-info">
+    Note that if TURN is not enabled for the Application Key configured, Peer connections will not be
+    able to connect.
+  </blockquote>
+  The parameter to enforce TURN ICE connections.<br>
+  Enabling this will filter out all STUN ICE servers as well.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">usePublicSTUN</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>true</small>
+                      <p>The parameter to
+  enable using publicly available STUN ICE servers when starting a Peer connection.<br>
+  Disabling this will filter out all publicly available STUN ICE servers.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">TURNServerTransport</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>#&lt;Skylink.TURN_TRANSPORT.ANY&gt;</small>
+                      <p>The parameter to
+  configure the TURN ICE servers transports.
+  [Rel: Skylink.attr.TURN_TRANSPORT]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">credentials</code>
+                    <span class="type"><b>{</b>JSON<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      
+                      <p><blockquote class="panel-info">
+  Note that you require the configure the correct <code>startDateTime</code> and
+  <code>duration</code> used when generating the <code>credentials</code> to configure the SDK
+  to use credentials based authentication, By default, when credentials is not provided,
+  the SDK will use CORS based authentication. Additionally, take note that
+  using credentials based authentication does not allow you to join the Room
+  based on the <code>room</code> paramter provided in
+  <a href="#method_joinRoom"><u><code>joinRoom()</code> method</u></a>.</blockquote>
+  The parameter to use credentials based authentication to start connection session.
+  <small>See:<a href="http://support.temasys.com.sg/support/solutions/articles/12000002712-authenticating-your-application-key-to-start-a-connection">
+    Authenticating SDK connection sessions</a>.</small></p>
+
+                    </div>
+
+                    
+                      <ul class="params-list">
+                        
+                          <li class="param">
+                            <code class="param-name">startDateTime</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The parameter to configure the
+  <code>credentials</code> starting DateTime. This value has to be set in
+  (<a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601 format</a>), which can be retrieved from
+  the <kbd>Date</kbd> object <code>Date.getISOString()</code> method.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">duration</code>
+                            <span class="type"><b>{</b>Number<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The parameter to configure the
+  <code>credentials</code> connection session duration in Hours.
+  <small>EXAMPLES:<br>
+  30 mins: <code>0.5</code><br>
+  1 hour, 24mins: <code>1.4</code><br>
+  2 hours, 30mins: <code>2.5</code></small>
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">credentials</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The parameter to configure the
+  <code>credentials</code> connection session authentication string.<br>
+  This requires you to generate with your configured Application Key <u>Secret</u>,
+  provided <code>credentials</code> - <code>startDateTime</code>, <code>duration</code> and
+  <code>defaultRoom</code> values.
+  <small class="tip-box">
+  <b>INSTRUCTIONS ON GENERATING CREDENTIALS STRING:</b>
+  <ol>
+  <li>Concatenate the <code>defaultRoom</code>, <code>credentials</code> - <code>duration</code> and <code>startDateTime</code>.
+     <var>var <code>concatStr</code> = <code>defaultRoom</code> + "_" + <code>duration</code> + "_" + <code>startDateTimeStamp</code>;</var></li>
+  <li>Hash the <code>concatStr</code> value with the Application Key <u>Secret</u> using SHA-1
+     In this example, we use the <a href="https://code.google.com/p/crypto-js/#HMAC"><u><code>CryptoJS.HmacSHA1</code> function</u></a> .
+     <var>var <code>hash</code> = CryptoJS.HmacSHA1(<code>concatStr</code>, <code>secret</code>);</var></li>
+  <li>Convert the hash to a Base64 encoded string.
+     In this example, we use the <a href="https://code.google.com/p/crypto-js/#The_Cipher_Output""><u><code>CryptoJS.enc.Base64</code> function</u></a>.
+     <var>var <code>base64String</code> = <code>hash</code>.toString(CryptoJS.enc.Base64);</var></li>
+  <li>Encode the Base64 encoded string to a URI component using UTF-8 encoding with
+     <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent"><u><code>encodeURIComponent()</code> function</u></a>.
+     <var>var <code>credentialsStr</code> = encodeURIComponent(<code>base64String</code>);</var></li></ol></small>
+                            </div>
+                          </li>
+                        
+                      </ul>
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">audioFallback</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>false</small>
+                      <p>The parameter to configure to retrieve audio only
+  as a fallback when retrieving audio and video fails in
+  <a href="#method_getUserMedia"><u><code>getUserMedia()</code> method</u></a>.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">forceSSL</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>false</small>
+                      <p><blockquote class="panel-info">
+  By default, if user is accessing the SDK from <code>https:</code> protocol, SSL connections are already enabled.</blockquote>
+  The parameter to enforce SSL connections when starting connection session and Room socket connection.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">audioCodec</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>#&lt;Skylink.AUDIO_CODEC.AUTO&gt;</small>
+                      <p>The parameter to configure
+  the audio codec for audio streams.
+  [Rel: Skylink.attr.AUDIO_CODEC]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">videoCodec</code>
+                    <span class="type"><b>{</b>String<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>#&lt;Skylink.VIDEO_CODEC.AUTO&gt;</small>
+                      <p>The parameter to configure
+  the audio codec for video streams.
+  [Rel: Skylink.attr.VIDEO_CODEC]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">socketTimeout</code>
+                    <span class="type"><b>{</b>Number<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>20000</small>
+                      <p>The parameter to configure the timeout to wait when there is no
+  connection response before triggering as <code>CONNECTION_FAILED</code> or <code>RECONNECTION_FAILED</code>.
+  [Rel: Skylink.attr.SOCKET_ERROR]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">forceTURNSSL</code>
+                    <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                    <span class="label">Optional</span>
+                    
+
+                    <div class="param-description">
+                      <small class="default"><span>DEFAULT: </span>false</small>
+                      <p><blockquote class="panel-info">
+  By default, if user is accessing the SDK from <code>https:</code> protocol, TURN SSL connections are already enabled</code>.
+  Note that if the browser does not support the <code>turns:</code> protocol, SSL ports will be used instead.</blockquote>
+  The parameter to enforce SSL connections for TURN ICE server connections.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+              </ul>
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">callbackFn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            <span class="label">Optional</span>
+            
+
+            <div class="param-description">
+              
+              <p>The parameter <code>callback</code> function that would be triggered when
+  after <code>init()</code> method process has completed.
+  <blockquote class="sub">Method parameter payload signature: <var>function(<code>error</code>, <code>success</code>)</var></blockquote></p>
+
+            </div>
+
+            
+              <ul class="params-list">
+                
+                  <li class="param">
+                    <code class="param-name">error</code>
+                    <span class="type"><b>{</b>JSON<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      
+                      <p>The <code>callback</code> function parameter payload that is defined when
+  <code>init()</code> method process encountered an error.</p>
+
+                    </div>
+
+                    
+                      <ul class="params-list">
+                        
+                          <li class="param">
+                            <code class="param-name">errorCode</code>
+                            <span class="type"><b>{</b>Number<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The error code.
+  [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR]
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">error</code>
+                            <span class="type"><b>{</b>Error<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The error object.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">status</code>
+                            <span class="type"><b>{</b>Number<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The HTTP status received when encountering the error.<br>
+  [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR_STATUS]
+                            </div>
+                          </li>
+                        
+                      </ul>
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">success</code>
+                    <span class="type"><b>{</b>JSON<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      
+                      <p>The <code>callback</code> function parameter payload that is defined when
+  <code>init()</code> method process has completed without errors.</p>
+
+                    </div>
+
+                    
+                      <ul class="params-list">
+                        
+                          <li class="param">
+                            <code class="param-name">serverUrl</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              <blockquote class="panel-info">
+  This has been deprecated and will be removed in the next releases.
+</blockquote> The API HTTP request URL.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">readyState</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              <blockquote class="panel-info">
+  This has been deprecated and will be removed in the next releases.
+</blockquote> The current connection session ready state.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">appKey</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>appKey</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">defaultRoom</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>defaultRoom</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">selectedRoom</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              <blockquote class="panel-info">
+  This has been deprecated in the callback and will be removed in the next releases.
+</blockquote> The current selected Room name.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">roomServer</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>roomServer</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">enableIceTrickle</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>enableIceTrickle</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">enableDataChannel</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>enableDataChannel</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">enableTURNServer</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>enableTURNServer</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">enableSTUNServer</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>enableSTUNServer</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">TURNTransport</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              <blockquote class="panel-info">
+  This will be renamed as <code>TURNServerTransport</code> in the next releases.
+</blockquote> The configured parameter <code>TURNServerTransport</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">serverRegion</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            <span class="label">Optional</span>
+                            
+
+                            <div class="param-description">
+                              
+                              <blockquote class="panel-info">
+  This will be renamed as <code>region</code> in the next releases before removal of <code>region</code> parameter.
+</blockquote> The configured parameter <code>region</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">audioFallback</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>audioFallback</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">forceSSL</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>forceSSL</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">audioCodec</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>audioCodec</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">videoCodec</code>
+                            <span class="type"><b>{</b>String<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>videoCodec</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">socketTimeout</code>
+                            <span class="type"><b>{</b>Number<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>socketTimeout</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">forceTURNSSL</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>forceTURNSSL</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">forceTURN</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>forceTURN</code> value.
+                            </div>
+                          </li>
+                        
+                          <li class="param">
+                            <code class="param-name">usePublicSTUN</code>
+                            <span class="type"><b>{</b>Boolean<b>}</b></span>
+
+                            
+                            
+
+                            <div class="param-description">
+                              
+                              The configured parameter <code>usePublicTURN</code> value.
+                            </div>
+                          </li>
+                        
+                      </ul>
+                    
+                  </li>
+                
+              </ul>
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Example:</h4>
+      <pre class="example-content prettyprint">
+        <p>  // Parameters: Skylink.init(appKey);
+  SkylinkDemo.init(&quot;&lt;% Your Application Key value here %&gt;&quot;);</p>
+<p>  // Parameters: Skylink.init(options);
+  SkylinkDemo.init({
+    appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+    audioFallback: true,
+    defaultRoom: &quot;&lt;% Your default Room name value here %&gt;&quot;,
+    forceSSL: true,
+    forceTURNSSL: true
+  });</p>
+<p>  // Parameters: Skylink.init(options); - using credentials based authentication
+  // ----------------------------------------------------------------------------------
+  //  NOTE: It is not recommended to generate credentials on client side but server
+  //        side for security. This is for illustration purposes.
+  // ----------------------------------------------------------------------------------
+  function generateCreds (room, duration, startDateTime) {
+    var concatStr = room + &quot;_&quot; + duration + &quot;_&quot; + startDateTime;
+    //! Do not EXPOSE to any users
+    var hash = CryptoJS.HmacSHA1(concatStr, &quot;&lt;% Your Application Key secret value here %&gt;&quot;);
+    var base64String = hash.toString(CryptoJS.enc.Base64);
+    return encodeURIComponent(base64String);
+  }</p>
+<p>  //! This is the Room name that will only be joined for the connection session
+  var room  = &quot;&lt;% Your Room name value here %&gt;&quot;, //
+      credentials  = {
+       //! Set as 2 Hours.
+        duration: 2,
+        //! Currently is configure for Now. Can be configured with any starting date if preferred.
+        startDateTime: (new Date()).toISOString(),
+        credentials: null
+      };</p>
+<p>  credentials.credentials = generateCreds(room, credentials.duration, credentials.startDateTime);</p>
+<p>  SkylinkDemo.init({
+    appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+    defaultRoom: room,
+    credentials: credentials
+  });</p>
+<p>  // Parameters: Skylink.init(options, callback);
+  SkylinkDemo.init({
+    appKey: &quot;&lt;% Your Application Key value here %&gt;&quot;,
+    audioFallback: true,
+    defaultRoom: &quot;&lt;% Your default Room name value here %&gt;&quot;,
+    forceSSL: true,
+    forceTURNSSL: true
+  }, function(error, success){
+    if (error) {
+      ///-[Error: See &amp;callbackFn error parameter payload.]
+    } else{
+      ///-[Success: See &amp;callbackFn success parameter payload.]
+    }
+  });</p>
+
+      </pre>
+    </div>
+  
+  <hr>
+</div>
+            
+              <div id="method_off" class="code-item method item method-item ">
+  <h3 class="code-item-name"><code>off</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code class="optional">[eventName]</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code class="optional">[listenerFn]</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p>Method that unsubscribes <code>listener</code> functions from <a href="#events">Events</a>.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">eventName</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            <span class="label">Optional</span>
+            
+
+            <div class="param-description">
+              
+              <p><blockquote class="panel-info">
+    Not providing this parameter value removes all <code>listener</code> functions from
+    all <a href="#events">Events</a>.
+  </blockquote>
+  The parameter name of the <a href="#events">Event</a> to unsubscribe <code>listener</code> functions.<br></p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">listenerFn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            <span class="label">Optional</span>
+            
+
+            <div class="param-description">
+              
+              <p><blockquote class="panel-info">
+    Not providing this parameter value removes all <code>listener</code> functions from
+    the provided <code>eventName</code> parameter <a href="#events">Event</a>.
+  </blockquote>
+  The parameter of a particular <code>listener</code> function to unsubscribe from the
+  provided <code>eventName</code> parameter <a href="#events">Event</a>.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Example:</h4>
+      <pre class="example-content prettyprint">
+        <p>  // Parameters: off(eventName, listenerFn)
+  //! Unsubscribes this specific listener function from &quot;iceConnectionState&quot; Event
+  var listenerFn = function (state, peerId) {
+    console.log(peerId + &quot; connection state: &quot; + state);
+  };</p>
+<p>  SkylinkDemo.off(&quot;iceConnectionState&quot;, listenerFn);</p>
+<p>  // Parameters: off(eventName)
+  //! Unsubscribes all listener functions from &quot;peerJoined&quot; Event
+  SkylinkDemo.off(&quot;peerJoined&quot;);</p>
+<p>  // Parameters: off()
+  //! Unsubscribes all listener functions from all Events</p>
+<p>  SkylinkDemo.off();</p>
+
+      </pre>
+    </div>
+  
+  <hr>
+</div>
+            
+              <div id="method_on" class="code-item method item method-item ">
+  <h3 class="code-item-name"><code>on</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>eventName</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code>listenerFn</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p>Method that subscribes a <code>listener</code> function to an <a href="#events">Event</a> which would be triggered
+  every time when the <a href="#events">Event</a> is dispatched.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">eventName</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The parameter name of the <a href="#events">Event</a> to subscribe to.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">listenerFn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The parameter <code>listener</code> function to bind to the subscription.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Example:</h4>
+      <pre class="example-content prettyprint">
+        <p>  // Parameters: on(eventName, listenerFn)
+  SkylinkDemo.on(&quot;peerJoined&quot;, function (peerId) {
+    console.log(peerID + &quot; has joined the Room&quot;);
+    ///-[Handle UI view when Peer has joined the Room]
+  });</p>
+
+      </pre>
+    </div>
+  
+  <hr>
+</div>
+            
+              <div id="method_once" class="code-item method item method-item ">
+  <h3 class="code-item-name"><code>once</code></h3>
+  
+    <div class="args">
+      <span class="paren">(</span>
+      
+        
+          <code>eventName</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code>listenerFn</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+        
+          <code class="optional">[conditionalFn]</code>
+        
+        <i class="seperator">,&nbsp;&nbsp;</i>
+      
+      <span class="paren">)</span>
+    </div>
+  
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    <small>
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span>
+    </small>
+  </div>
+
+  <div class="code-item-description">
+    <p>Method that subscribes a <code>listener</code> function to an <a href="#events">Event</a> which would be triggered
+  only once when the <a href="#events">Event</a> is dispatched.</p>
+
+  </div>
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Parameters:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">eventName</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The parameter name of the <a href="#events">Event</a> to subscribe to.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">listenerFn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+              
+              <p>The parameter listener function to bind to the subscription.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">conditionalFn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            <span class="label">Optional</span>
+            
+
+            <div class="param-description">
+              
+              <p><blockquote class="panel-info">
+    This function will trigger every time the <a href="#events">Event</a> is dispatched.
+    Return <code>true</code> in this function to complete the <code>conditional</code> function.
+  </blockquote> The parameter <code>conditional</code> function
+  that halts the triggering of the <code>listener</code> function until the
+  <code>conditional</code> function returns <code>true</code>.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Example:</h4>
+      <pre class="example-content prettyprint">
+        <p>  // Parameters: once(eventName, listenerFn)
+  SkylinkDemo.on(&quot;mediaAccessSuccess&quot;, function (stream) {
+    console.log(&quot;Received local stream&quot;, stream);
+    ///-[Handle UI view when user has given access to local Stream]
+  });</p>
+<p>  // Parameters: once(eventName, listenerFn, conditionalFn)
+  SkylinkDemo.on(&quot;dataChannelState&quot;, function (state, peerId) {
+    console.info(&quot;P2P messaging are now available with &quot; + peerId);
+    ///-[Handle UI view when P2P messaging is available]
+  }, function (state, peerId, error, channelName, channelType) {
+    //! Condition to ensure that Datachannel is opened and is for messaiging Datachannel
+    return state === SkylinkDemo.DATA_CHANNEL_STATE.OPEN &amp;&amp;
+      channelType === SkylinkDemo.DATA_CHANNEL_TYPE.MESSAGING;
+  });</p>
+
+      </pre>
+    </div>
+  
+  <hr>
+</div>
+            
+          </section>
+        
         
         
           <section id="attrs">
             
+              <div id="attr__globals" class="code-item attr item private-attr-item ">
+  <a name="config__globals"></a> 
+  <h3 class="code-item-name"><code>_globals</code></h3>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+        <span class="label label-default" title="This attribute is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Stores the global configuration made in <code>init()</code>.<br></p>
+
+  </div>
+
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Keys:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">current</code>
+            <span class="type"><b>{</b>JSON<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The current <code>init()</code> configuration.
+  <small>Parameter fields follows <code>init()</code> <code>options</code> parameter.</small></p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">defaults</code>
+            <span class="type"><b>{</b>JSON<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The default <code>init()</code> configuration.
+  <small>Parameter fields follows <code>init()</code> <code>options</code> parameter.</small></p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+              <div id="attr__listeners" class="code-item attr item private-attr-item ">
+  <a name="config__listeners"></a> 
+  <h3 class="code-item-name"><code>_listeners</code></h3>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+        <span class="label label-default" title="This attribute is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Stores all the <a href="#events">Events</a> listeners.</p>
+
+  </div>
+
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Keys:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">on</code>
+            <span class="type"><b>{</b>JSON<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>Stores the list of <code>on()</code> listener functions.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">once</code>
+            <span class="type"><b>{</b>JSON<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>Stores the list of <code>once()</code> listener functions.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+              <div id="attr__session" class="code-item attr item private-attr-item ">
+  <a name="config__session"></a> 
+  <h3 class="code-item-name"><code>_session</code></h3>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+        <span class="label label-default" title="This attribute is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Stores the current connection session information.</p>
+
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+  <hr>
+</div>
+            
               <div id="attr_AUDIO_CODEC" class="code-item attr item attr-item ">
   <a name="config_AUDIO_CODEC"></a> 
   <h3 class="code-item-name"><code>AUDIO_CODEC</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -576,13 +2360,7 @@ that uses Skylink Web SDK at <a href="http://getaroom.io/">getaroom.io</a>.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l1"><code>source&#x2F;constants.js:1</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -733,7 +2511,7 @@ Contains the list of audio codec configuration options to use during connection 
               <div id="attr_CANDIDATE_GENERATION_STATE" class="code-item attr item attr-item ">
   <a name="config_CANDIDATE_GENERATION_STATE"></a> 
   <h3 class="code-item-name"><code>CANDIDATE_GENERATION_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -777,13 +2555,7 @@ Contains the list of audio codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l40"><code>source&#x2F;constants.js:40</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -863,7 +2635,7 @@ Contains the list of audio codec configuration options to use during connection 
               <div id="attr_DATA_CHANNEL_STATE" class="code-item attr item attr-item ">
   <a name="config_DATA_CHANNEL_STATE"></a> 
   <h3 class="code-item-name"><code>DATA_CHANNEL_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -907,13 +2679,7 @@ Contains the list of audio codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l61"><code>source&#x2F;constants.js:61</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1026,7 +2792,7 @@ Contains the list of audio codec configuration options to use during connection 
               <div id="attr_DATA_CHANNEL_TYPE" class="code-item attr item attr-item ">
   <a name="config_DATA_CHANNEL_TYPE"></a> 
   <h3 class="code-item-name"><code>DATA_CHANNEL_TYPE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1070,13 +2836,7 @@ Contains the list of audio codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l88"><code>source&#x2F;constants.js:88</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1147,7 +2907,7 @@ Contains the list of audio codec configuration options to use during connection 
               <div id="attr_DATA_TRANSFER_DATA_TYPE" class="code-item attr item attr-item ">
   <a name="config_DATA_TRANSFER_DATA_TYPE"></a> 
   <h3 class="code-item-name"><code>DATA_TRANSFER_DATA_TYPE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1191,13 +2951,7 @@ Contains the list of audio codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l112"><code>source&#x2F;constants.js:112</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1282,7 +3036,7 @@ Contains the list of audio codec configuration options to use during connection 
               <div id="attr_DATA_TRANSFER_SESSION_TYPE" class="code-item attr item attr-item ">
   <a name="config_DATA_TRANSFER_SESSION_TYPE"></a> 
   <h3 class="code-item-name"><code>DATA_TRANSFER_SESSION_TYPE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1326,13 +3080,7 @@ Contains the list of audio codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l137"><code>source&#x2F;constants.js:137</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1401,7 +3149,7 @@ Contains the list of data transfers transfer types.</p>
               <div id="attr_DATA_TRANSFER_STATE" class="code-item attr item attr-item ">
   <a name="config_DATA_TRANSFER_STATE"></a> 
   <h3 class="code-item-name"><code>DATA_TRANSFER_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1445,13 +3193,7 @@ Contains the list of data transfers transfer types.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l159"><code>source&#x2F;constants.js:159</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1645,7 +3387,7 @@ Contains the list of data transfers transfer types.</p>
               <div id="attr_DATA_TRANSFER_TYPE" class="code-item attr item attr-item  deprecated">
   <a name="config_DATA_TRANSFER_TYPE"></a> 
   <h3 class="code-item-name"><code>DATA_TRANSFER_TYPE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1691,13 +3433,7 @@ Contains the list of data transfers transfer types.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l202"><code>source&#x2F;constants.js:202</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1765,7 +3501,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_DT_PROTOCOL_VERSION" class="code-item attr item attr-item ">
   <a name="config_DT_PROTOCOL_VERSION"></a> 
   <h3 class="code-item-name"><code>DT_PROTOCOL_VERSION</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>String<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>String</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1809,13 +3545,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l224"><code>source&#x2F;constants.js:224</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1839,7 +3569,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_GET_PEERS_STATE" class="code-item attr item attr-item ">
   <a name="config_GET_PEERS_STATE"></a> 
   <h3 class="code-item-name"><code>GET_PEERS_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -1883,13 +3613,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l235"><code>source&#x2F;constants.js:235</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -1969,7 +3693,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_HANDSHAKE_PROGRESS" class="code-item attr item attr-item ">
   <a name="config_HANDSHAKE_PROGRESS"></a> 
   <h3 class="code-item-name"><code>HANDSHAKE_PROGRESS</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2013,13 +3737,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l255"><code>source&#x2F;constants.js:255</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2048,7 +3766,7 @@ Contains the list of data transfer directions.</p>
             <div class="param-description">
                 <p><small>Value <code>&quot;enter&quot;</code></small>
   The state when Peer has just entered the Room.<br>
-  As a response, <code>WELCOME</code> will be sent to notify of SDK Peer existence.</p>
+  As a response, <code>WELCOME</code> will be sent to notify of user existence.</p>
 
             </div>
 
@@ -2064,7 +3782,7 @@ Contains the list of data transfer directions.</p>
 
             <div class="param-description">
                 <p><small>Value <code>&quot;welcome&quot;</code></small>
-  The state when SDK Peer is notified of Peer that is already in the Room.<br>
+  The state when user is notified of Peer that is already in the Room.<br>
   As a response, <code>OFFER</code> will be sent to initiate connection handshaking.</p>
 
             </div>
@@ -2137,7 +3855,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_ICE_CONNECTION_STATE" class="code-item attr item attr-item ">
   <a name="config_ICE_CONNECTION_STATE"></a> 
   <h3 class="code-item-name"><code>ICE_CONNECTION_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2181,13 +3899,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l287"><code>source&#x2F;constants.js:287</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2356,7 +4068,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_INTRODUCE_STATE" class="code-item attr item attr-item ">
   <a name="config_INTRODUCE_STATE"></a> 
   <h3 class="code-item-name"><code>INTRODUCE_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2400,13 +4112,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l331"><code>source&#x2F;constants.js:331</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2484,10 +4190,161 @@ Contains the list of data transfer directions.</p>
   <hr>
 </div>
             
+              <div id="attr_log" class="code-item attr item private-attr-item ">
+  <a name="config_log"></a> 
+  <h3 class="code-item-name"><code>log</code></h3>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+        <span class="label label-default" title="This attribute is private.">private</span>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Global that contains the logging functions</p>
+
+  </div>
+
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Keys:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">debug</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The <code>DEBUG</code> level logging function.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">log</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The <code>LOG</code> level logging function.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">info</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The <code>INFO</code> level logging function.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">warn</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The <code>WARN</code> level logging function.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">error</code>
+            <span class="type"><b>{</b>Function<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The <code>ERROR</code> level logging function.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
               <div id="attr_LOG_LEVEL" class="code-item attr item attr-item ">
   <a name="config_LOG_LEVEL"></a> 
   <h3 class="code-item-name"><code>LOG_LEVEL</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2531,13 +4388,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l353"><code>source&#x2F;constants.js:353</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2677,7 +4528,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_PEER_CONNECTION_STATE" class="code-item attr item attr-item ">
   <a name="config_PEER_CONNECTION_STATE"></a> 
   <h3 class="code-item-name"><code>PEER_CONNECTION_STATE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2721,13 +4572,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l393"><code>source&#x2F;constants.js:393</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2843,7 +4688,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_READY_STATE_CHANGE" class="code-item attr item attr-item ">
   <a name="config_READY_STATE_CHANGE"></a> 
   <h3 class="code-item-name"><code>READY_STATE_CHANGE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -2887,13 +4732,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l423"><code>source&#x2F;constants.js:423</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -2992,7 +4831,7 @@ Contains the list of data transfer directions.</p>
               <div id="attr_READY_STATE_CHANGE_ERROR" class="code-item attr item attr-item ">
   <a name="config_READY_STATE_CHANGE_ERROR"></a> 
   <h3 class="code-item-name"><code>READY_STATE_CHANGE_ERROR</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3036,13 +4875,7 @@ Contains the list of data transfer directions.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l449"><code>source&#x2F;constants.js:449</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3316,10 +5149,153 @@ Contains the list of <a href="#method_init"><u><code>init()</code> method</u></a
   <hr>
 </div>
             
+              <div id="attr_READY_STATE_CHANGE_ERROR_STATUS" class="code-item attr item attr-item ">
+  <a name="config_READY_STATE_CHANGE_ERROR_STATUS"></a> 
+  <h3 class="code-item-name"><code>READY_STATE_CHANGE_ERROR_STATUS</code></h3>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <span class="label label-info" title="This attribute is reference only.">readonly</span>
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Contains the list of <a href="#method_init"><u><code>init()</code> method</u></a>
+  SDK initialization errors current HTTP request status.</p>
+
+  </div>
+
+  
+
+  
+
+  
+    <div class="code-item-section">
+      <h4>Keys:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">NO_REQUEST_MADE</code>
+            <span class="type"><b>{</b>Number<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p><small>Value <code>-2</code></small>
+  The status error when no HTTP request has been made due to invalid configuration passed in
+  <a href="#method_init"><u><code>init()</code> method</u></a>.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">REQUEST_ERROR</code>
+            <span class="type"><b>{</b>Number<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p><small>Value <code>-1</code></small>
+  The status error when HTTP request had failed due to request errors.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">REQUEST_EMPTY_RESULT</code>
+            <span class="type"><b>{</b>Number<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p><small>Value <code>0</code></small>
+  The status error when HTTP request returns an empty response.</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">REQUEST_FAILED</code>
+            <span class="type"><b>{</b>Number<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p><small>Value <code>200</code></small>
+  The status error when HTTP request returns a response but authentication to start
+    connection session fails.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
               <div id="attr_REGIONAL_SERVER" class="code-item attr item attr-item  deprecated">
   <a name="config_REGIONAL_SERVER"></a> 
   <h3 class="code-item-name"><code>REGIONAL_SERVER</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3365,13 +5341,7 @@ Contains the list of <a href="#method_init"><u><code>init()</code> method</u></a
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l536"><code>source&#x2F;constants.js:536</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3440,7 +5410,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
               <div id="attr_SERVER_PEER_TYPE" class="code-item attr item attr-item ">
   <a name="config_SERVER_PEER_TYPE"></a> 
   <h3 class="code-item-name"><code>SERVER_PEER_TYPE</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3484,13 +5454,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l559"><code>source&#x2F;constants.js:559</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3539,7 +5503,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
               <div id="attr_SM_PROTOCOL_VERSION" class="code-item attr item attr-item ">
   <a name="config_SM_PROTOCOL_VERSION"></a> 
   <h3 class="code-item-name"><code>SM_PROTOCOL_VERSION</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>String<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>String</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3583,13 +5547,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l575"><code>source&#x2F;constants.js:575</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3613,7 +5571,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
               <div id="attr_SOCKET_ERROR" class="code-item attr item attr-item ">
   <a name="config_SOCKET_ERROR"></a> 
   <h3 class="code-item-name"><code>SOCKET_ERROR</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3657,13 +5615,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l586"><code>source&#x2F;constants.js:586</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3777,7 +5729,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
               <div id="attr_SOCKET_FALLBACK" class="code-item attr item attr-item ">
   <a name="config_SOCKET_FALLBACK"></a> 
   <h3 class="code-item-name"><code>SOCKET_FALLBACK</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -3821,13 +5773,7 @@ Contains the list of regional server that the SDK can use to connect to.</p>
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l614"><code>source&#x2F;constants.js:614</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -3859,59 +5805,11 @@ Contains the list of Room socket fallback states for a successful reconnection.<
 
             <div class="param-description">
                 <p><small>Value <code>&quot;nonfallback&quot;</code></small>
+  <blockquote class="panel-info">This has been deprecated and will be eventually be removed
+     or changed into other seperate states in next releases.</blockquote>
   The state when socket is attempting to reconnect the first port and transports used that had failed.
-  <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>WebSocket</code></blockquote></p>
-
-            </div>
-
-            
-          </li>
-      
-          <li class="param">
-            <code class="param-name">NON_FALLBACK_SSL</code>
-            <span class="type"><b>{</b>String<b>}</b></span>
-
-            
-            
-
-            <div class="param-description">
-                <p><small>Value <code>&quot;nonfallbackSSL&quot;</code></small>
-  The state when socket is attempting to reconnect the first port and transports used that had failed.
-  <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>WebSocket</code></blockquote></p>
-
-            </div>
-
-            
-          </li>
-      
-          <li class="param">
-            <code class="param-name">NON_FALLBACK_LONG_POLLING</code>
-            <span class="type"><b>{</b>String<b>}</b></span>
-
-            
-            
-
-            <div class="param-description">
-                <p><small>Value <code>&quot;nonLongPollingfallback&quot;</code></small>
-  The state when socket is attempting to reconnect the first port and transports used that had failed.
-  <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote></p>
-
-            </div>
-
-            
-          </li>
-      
-          <li class="param">
-            <code class="param-name">NON_FALLBACK_LONG_POLLING_SSL</code>
-            <span class="type"><b>{</b>String<b>}</b></span>
-
-            
-            
-
-            <div class="param-description">
-                <p><small>Value <code>&quot;nonLongPollingfallbackSSL&quot;</code></small>
-  The state when socket is attempting to reconnect the first port and transports used that had failed.
-  <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote></p>
+  <blockquote class="sub">Protocol: <code>http:</code>, <code>https:</code><br>
+     Transports: <code>WebSocket</code>, <code>Polling</code></blockquote></p>
 
             </div>
 
@@ -3965,7 +5863,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
   for a better attempt at reconnectivity after all reconnection attempts with all available ports
   has failed.<br>The socket will start the reconnect attempt with
   next fallback port starting from the first port used.<br>
-  This state may occur directly after <code>NON_FALLBACK_LONG_POLLING</code>
+  This state may occur directly after <code>NON_FALLBACK</code>
   if <kbd>WebSocket</kbd> transports is not supported.
   <blockquote class="sub">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote></p>
 
@@ -3987,7 +5885,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
   for a better attempt at reconnectivity after all reconnection attempts with all available ports
   has failed.<br>The socket will start the reconnect attempt with
   next fallback port starting from the first port used.<br>
-  This state may occur directly after <code>NON_FALLBACK_LONG_POLLING_SSL</code>
+  This state may occur directly after <code>NON_FALLBACK</code>
   if <kbd>WebSocket</kbd> transports is not supported.
   <blockquote class="sub">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote></p>
 
@@ -4009,7 +5907,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
               <div id="attr_SYSTEM_ACTION" class="code-item attr item attr-item ">
   <a name="config_SYSTEM_ACTION"></a> 
   <h3 class="code-item-name"><code>SYSTEM_ACTION</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4053,13 +5951,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l671"><code>source&#x2F;constants.js:671</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -4125,7 +6017,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
               <div id="attr_SYSTEM_ACTION_REASON" class="code-item attr item attr-item ">
   <a name="config_SYSTEM_ACTION_REASON"></a> 
   <h3 class="code-item-name"><code>SYSTEM_ACTION_REASON</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4169,13 +6061,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l690"><code>source&#x2F;constants.js:690</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -4203,7 +6089,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
 
             <div class="param-description">
                 <p><small>Value <code>&quot;locked&quot;</code></small>
-  The action reason when Room is locked and SDK Peer is unable to join the Room.</p>
+  The action reason when Room is locked and user is unable to join the Room.</p>
 <blockquote class="sub">Action associated: <code>REJECT</code></blockquote>
             </div>
 
@@ -4308,7 +6194,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
               <div id="attr_TURN_TRANSPORT" class="code-item attr item attr-item ">
   <a name="config_TURN_TRANSPORT"></a> 
   <h3 class="code-item-name"><code>TURN_TRANSPORT</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4352,13 +6238,7 @@ Contains the list of Room socket fallback states for a successful reconnection.<
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l733"><code>source&#x2F;constants.js:733</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -4498,7 +6378,7 @@ Contains the list of available TURN transports configuration options to pass whe
               <div id="attr_VERSION" class="code-item attr item attr-item ">
   <a name="config_VERSION"></a> 
   <h3 class="code-item-name"><code>VERSION</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>String<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>String</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4542,13 +6422,7 @@ Contains the list of available TURN transports configuration options to pass whe
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l787"><code>source&#x2F;constants.js:787</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -4573,7 +6447,7 @@ Contains the list of available TURN transports configuration options to pass whe
               <div id="attr_VIDEO_CODEC" class="code-item attr item attr-item ">
   <a name="config_VIDEO_CODEC"></a> 
   <h3 class="code-item-name"><code>VIDEO_CODEC</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4617,13 +6491,7 @@ Contains the list of available TURN transports configuration options to pass whe
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l799"><code>source&#x2F;constants.js:799</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -4740,7 +6608,7 @@ Contains the list of video codec configuration options to use during connection 
               <div id="attr_VIDEO_RESOLUTION" class="code-item attr item attr-item ">
   <a name="config_VIDEO_RESOLUTION"></a> 
   <h3 class="code-item-name"><code>VIDEO_RESOLUTION</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>JSON<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>JSON</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -4784,13 +6652,7 @@ Contains the list of video codec configuration options to use during connection 
     </div>
 
     
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_constants.js.html#l830"><code>source&#x2F;constants.js:830</code></a>
-      </small>
-    
-
-    
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">0.7.0</span></small>
     
   </div>
 
@@ -5171,6 +7033,198 @@ Contains the list of video resolution default presets.</p>
             
           </section>
         
+        
+          <section id="events">
+            
+              <div id="event_readyStateChange" class="code-item attr item event-item ">
+  <h3 class="code-item-name"><code>readyStateChange</code></h3>
+
+  <div class="code-item-properties">
+    <div class="properties-wrapper">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+    </div>
+
+    <div class="code-item-information">
+      
+        
+          
+        
+      
+      
+      
+    </div>
+
+    
+      <small>
+        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="../files/source_events_core.js.html#l2"><code>source&#x2F;events&#x2F;core.js:2</code></a>
+      </small>
+    
+
+    
+      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">0.4.0</span></small>
+    
+  </div>
+
+  <div class="code-item-description">
+    <p>Event triggered when room connection information is being retrieved from platform server.</p>
+<ul>
+<li>This is also triggered when <a href="#method_init">init()</a> is invoked, but
+the socket connection events like <a href="#event_channelOpen">channelOpen</a> does
+not get triggered but stops at <u>readyStateChange</u> event.</li>
+</ul>
+
+  </div>
+
+  
+    <div class="code-item-section">
+      <h4>Event Payload:</h4>
+
+      <ul class="params-list">
+      
+          <li class="param">
+            <code class="param-name">readyState</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The current ready state of the retrieval when the event is triggered.
+  [Rel: Skylink.READY_STATE_CHANGE]</p>
+
+            </div>
+
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">error</code>
+            <span class="type"><b>{</b>JSON<b>}</b></span>
+
+            <span class="label">Optional</span>
+            
+
+            <div class="param-description">
+                <p>The error object thrown when there is a failure in retrieval.
+  If received as <code>null</code>, it means that there is no errors.</p>
+
+            </div>
+
+            
+              <ul class="params-list">
+                
+                  <li class="param">
+                    <code class="param-name">status</code>
+                    <span class="type"><b>{</b>Number<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      <p>Http status when retrieving information.
+  May be empty for other errors.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">errorCode</code>
+                    <span class="type"><b>{</b>Number<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      <p>The
+  <a href="#attr_READY_STATE_CHANGE_ERROR">READY_STATE_CHANGE_ERROR</a>
+  if there is an <a href="#event_readyStateChange">readyStateChange</a>
+  event error that caused the failure for initialising Skylink.
+  [Rel: Skylink.READY_STATE_CHANGE_ERROR]</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">content</code>
+                    <span class="type"><b>{</b>Object<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      <p>The exception thrown that caused the failure
+  for initialising Skylink.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+                  <li class="param">
+                    <code class="param-name">status</code>
+                    <span class="type"><b>{</b>Number<b>}</b></span>
+
+                    
+                    
+
+                    <div class="param-description">
+                      <p>The XMLHttpRequest status code received
+  when exception is thrown that caused the failure for initialising Skylink.</p>
+
+                    </div>
+
+                    
+                  </li>
+                
+              </ul>
+            
+          </li>
+      
+          <li class="param">
+            <code class="param-name">room</code>
+            <span class="type"><b>{</b>String<b>}</b></span>
+
+            
+            
+
+            <div class="param-description">
+                <p>The selected room connection information that Skylink is attempting
+  to retrieve the information for to start connection to.</p>
+
+            </div>
+
+            
+          </li>
+      
+      </ul>
+    </div>
+  
+
+  
+
+  
+  <hr>
+</div>
+            
+          </section>
         
       </div>
     </div>

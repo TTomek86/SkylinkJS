@@ -6,12 +6,66 @@
         "url": "https://temasys.github.io/"
     },
     "files": {
-        "source/constants.js": {
-            "name": "source/constants.js",
+        "source/constants/core.js": {
+            "name": "source/constants/core.js",
             "modules": {},
             "classes": {},
             "fors": {
                 "Skylink": 1
+            },
+            "namespaces": {}
+        },
+        "source/events/core.js": {
+            "name": "source/events/core.js",
+            "modules": {},
+            "classes": {},
+            "fors": {
+                "Skylink": 1
+            },
+            "namespaces": {}
+        },
+        "source/methods/init.js": {
+            "name": "source/methods/init.js",
+            "modules": {},
+            "classes": {},
+            "fors": {
+                "Skylink": 1
+            },
+            "namespaces": {}
+        },
+        "source/modules/api.js": {
+            "name": "source/modules/api.js",
+            "modules": {},
+            "classes": {
+                "SkylinkAPI": 1
+            },
+            "fors": {
+                "Skylink": 1,
+                "SkylinkAPI": 1
+            },
+            "namespaces": {}
+        },
+        "source/modules/event.js": {
+            "name": "source/modules/event.js",
+            "modules": {},
+            "classes": {
+                "SkylinkEvent": 1
+            },
+            "fors": {
+                "Skylink": 1,
+                "SkylinkEvent": 1
+            },
+            "namespaces": {}
+        },
+        "source/modules/utils.js": {
+            "name": "source/modules/utils.js",
+            "modules": {},
+            "classes": {
+                "SkylinkUtils": 1
+            },
+            "fors": {
+                "Skylink": 1,
+                "SkylinkUtils": 1
             },
             "namespaces": {}
         },
@@ -20,6 +74,17 @@
             "modules": {},
             "classes": {
                 "Skylink": 1
+            },
+            "fors": {
+                "Skylink": 1
+            },
+            "namespaces": {}
+        },
+        "source/globals.js": {
+            "name": "source/globals.js",
+            "modules": {},
+            "classes": {
+                "Logger": 1
             },
             "fors": {
                 "Skylink": 1
@@ -45,11 +110,71 @@
                 "\n  // Here's a simple example on how you can start using Skylink\n  var SkylinkDemo = new Skylink();\n\n  // Subscribe all events first before init()\n  SkylinkDemo.on(\"incomingStream\", function (peerId, stream, peerInfo, isSelf) {\n    if (isSelf) {\n      attachMediaStream(document.getElementById(\"selfVideo\"), stream);\n    } else {\n      var peerVideo = document.createElement(\"video\");\n      peerVideo.id = peerId;\n      peerVideo.autoplay = \"autoplay\";\n      document.getElementById(\"peersVideo\").appendChild(peerVideo);\n      attachMediaStream(peerVideo, stream);\n    }\n  });\n\n  SkylinkDemo.on(\"peerLeft\", function (peerId, peerInfo, isSelf) {\n    if (!isSelf) {\n      var peerVideo = document.getElementById(peerId);\n      // do a check if peerVideo exists first\n      if (peerVideo) {\n        document.getElementById(\"peersVideo\").removeChild(peerVideo);\n      } else {\n        console.error(\"Peer video for \" + peerId + \" is not found.\");\n      }\n    }\n  });\n\n // never call joinRoom in readyStateChange event subscription.\n // call joinRoom after init() callback if you want to joinRoom instantly.\n SkylinkDemo.on(\"readyStateChange\", function (state, room) {\n   console.log(\"Room (\" + room + \") state: \", room);\n })\n\n // always remember to call init()\n SkylinkDemo.init(\"YOUR_APP_KEY_HERE\", function (error, success) {\n   // do a check for error or success\n   if (error) {\n     console.error(\"Init failed: \", error);\n   } else {\n     SkylinkDemo.joinRoom(\"my_room\", {\n       userData: \"My Username\",\n       audio: true,\n       video: true\n     });\n   }\n });"
             ],
             "since": "0.7.0"
+        },
+        "SkylinkAPI": {
+            "name": "SkylinkAPI",
+            "shortname": "SkylinkAPI",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "source/modules/api.js",
+            "line": 1,
+            "description": "Module that handles requests to API to start connection session.",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0"
+        },
+        "SkylinkEvent": {
+            "name": "SkylinkEvent",
+            "shortname": "SkylinkEvent",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "source/modules/event.js",
+            "line": 1,
+            "description": "Module that allows <kbd>Objects</kbd> to mixin functions for event subscriptions and dispatching.",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0"
+        },
+        "SkylinkUtils": {
+            "name": "SkylinkUtils",
+            "shortname": "SkylinkUtils",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "source/modules/utils.js",
+            "line": 1,
+            "description": "Module that handles utilities functions.",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0"
+        },
+        "Logger": {
+            "name": "Logger",
+            "shortname": "Logger",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "source/globals.js",
+            "line": 23,
+            "description": "Module that handles logging.",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0"
         }
     },
     "classitems": [
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 1,
             "description": "<div class=\"panel-warning\">\n  Note that configuring these options might not necessarily result in the audio codec connection\n  as it is depends on the browser supports.\n</div>\nContains the list of audio codec configuration options to use during connection with audio streams.",
             "itemtype": "attribute",
@@ -97,7 +222,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 40,
             "description": "Contains the list of ICE gathering states of a Peer connection.",
             "itemtype": "attribute",
@@ -126,7 +251,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 61,
             "description": "Contains the list of Datachannel connection states.",
             "itemtype": "attribute",
@@ -164,7 +289,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 88,
             "description": "Contains the list of Datachannel types.",
             "itemtype": "attribute",
@@ -187,7 +312,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 112,
             "description": "Contains the list of data transfer data types.",
             "itemtype": "attribute",
@@ -215,7 +340,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 137,
             "description": "<blockquote class=\"panel-warning\">\n  Note that for the next releases, this constant will be renamed as <code>DATA_TRANSFER_TYPE</code>.\n</blockquote>\nContains the list of data transfers transfer types.",
             "itemtype": "attribute",
@@ -238,7 +363,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 159,
             "description": "Contains the list of data transfer states.",
             "itemtype": "attribute",
@@ -301,7 +426,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 202,
             "description": "<blockquote class=\"panel-warning\">\n  Note that for the next releases, this constant will be renamed as <code>DATA_TRANSFER_DIRECTION</code>\n  before removal in the next releases.\n</blockquote>\nContains the list of data transfer directions.",
             "itemtype": "attribute",
@@ -325,7 +450,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 224,
             "description": "Contains the current DT Protocol version of SkylinkJS.<br>\n<blockquote class=\"sub\">Current version: <code>0.1.0</code></blockquote>",
             "itemtype": "attribute",
@@ -336,7 +461,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 235,
             "description": "Contains the list of <a href=\"#method_getPeers\"><u><code>getPeers()</code> method</u></a> retrieval states.",
             "itemtype": "attribute",
@@ -365,7 +490,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 255,
             "description": "Contains the list of connection handshaking states of a Peer connection.",
             "itemtype": "attribute",
@@ -373,12 +498,12 @@
             "params": [
                 {
                     "name": "ENTER",
-                    "description": "<small>Value <code>\"enter\"</code></small>\n  The state when Peer has just entered the Room.<br>\n  As a response, <code>WELCOME</code> will be sent to notify of SDK Peer existence.",
+                    "description": "<small>Value <code>\"enter\"</code></small>\n  The state when Peer has just entered the Room.<br>\n  As a response, <code>WELCOME</code> will be sent to notify of user existence.",
                     "type": "String"
                 },
                 {
                     "name": "WELCOME",
-                    "description": "<small>Value <code>\"welcome\"</code></small>\n  The state when SDK Peer is notified of Peer that is already in the Room.<br>\n  As a response, <code>OFFER</code> will be sent to initiate connection handshaking.",
+                    "description": "<small>Value <code>\"welcome\"</code></small>\n  The state when user is notified of Peer that is already in the Room.<br>\n  As a response, <code>OFFER</code> will be sent to initiate connection handshaking.",
                     "type": "String"
                 },
                 {
@@ -403,7 +528,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 287,
             "description": "Contains the list of ICE connection states of a Peer connection.",
             "itemtype": "attribute",
@@ -456,7 +581,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 331,
             "description": "Contains the list of <a href=\"#method_introducePeer\"><u><code>introducePeer()</code> method</u></a>\n  introduction states.",
             "itemtype": "attribute",
@@ -485,7 +610,7 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
+            "file": "source/constants/core.js",
             "line": 353,
             "description": "Contains the list of SDK log levels.",
             "itemtype": "attribute",
@@ -528,8 +653,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 393,
+            "file": "source/constants/core.js",
+            "line": 394,
             "description": "Contains the list of signaling states of a Peer connection.",
             "itemtype": "attribute",
             "name": "PEER_CONNECTION_STATE",
@@ -566,8 +691,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 423,
+            "file": "source/constants/core.js",
+            "line": 424,
             "description": "Contains the list of <a href=\"#method_init\"><u><code>init()</code> method</u></a>\n  SDK initialization ready states.",
             "itemtype": "attribute",
             "name": "READY_STATE_CHANGE",
@@ -599,8 +724,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 449,
+            "file": "source/constants/core.js",
+            "line": 450,
             "description": "<blockquote class=\"panel-warning\">\n  Note that for the next releases, the Keys and Values will change for a more\n  descriptive term.\n</blockquote>\nContains the list of <a href=\"#method_init\"><u><code>init()</code> method</u></a>\n  SDK initialization errors.",
             "itemtype": "attribute",
             "name": "READY_STATE_CHANGE_ERROR",
@@ -677,8 +802,41 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 536,
+            "file": "source/constants/core.js",
+            "line": 537,
+            "description": "Contains the list of <a href=\"#method_init\"><u><code>init()</code> method</u></a>\n  SDK initialization errors current HTTP request status.",
+            "itemtype": "attribute",
+            "name": "READY_STATE_CHANGE_ERROR_STATUS",
+            "params": [
+                {
+                    "name": "NO_REQUEST_MADE",
+                    "description": "<small>Value <code>-2</code></small>\n  The status error when no HTTP request has been made due to invalid configuration passed in\n  <a href=\"#method_init\"><u><code>init()</code> method</u></a>.",
+                    "type": "Number"
+                },
+                {
+                    "name": "REQUEST_ERROR",
+                    "description": "<small>Value <code>-1</code></small>\n  The status error when HTTP request had failed due to request errors.",
+                    "type": "Number"
+                },
+                {
+                    "name": "REQUEST_EMPTY_RESULT",
+                    "description": "<small>Value <code>0</code></small>\n  The status error when HTTP request returns an empty response.",
+                    "type": "Number"
+                },
+                {
+                    "name": "REQUEST_FAILED",
+                    "description": "<small>Value <code>200</code></small>\n  The status error when HTTP request returns a response but authentication to start\n    connection session fails.",
+                    "type": "Number"
+                }
+            ],
+            "type": "JSON",
+            "readonly": "",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/constants/core.js",
+            "line": 563,
             "description": "<div class=\"panel-warning\">\n  Note that configurating the regional server is no longer required as the automatic\n  selection for the nearest regional server is implemented based on load and latency.\n  Hence, this has been deprecated and will be removed in the next releases.\n</div>\nContains the list of regional server that the SDK can use to connect to.",
             "itemtype": "attribute",
             "name": "REGIONAL_SERVER",
@@ -701,8 +859,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 559,
+            "file": "source/constants/core.js",
+            "line": 586,
             "description": "Contains the list of connecting server Peer types.",
             "itemtype": "attribute",
             "name": "SERVER_PEER_TYPE",
@@ -719,8 +877,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 575,
+            "file": "source/constants/core.js",
+            "line": 602,
             "description": "Contains the current SM Protocol version of SkylinkJS.\n<blockquote class=\"sub\">Current version: <code>0.1.1</code></blockquote>",
             "itemtype": "attribute",
             "name": "SM_PROTOCOL_VERSION",
@@ -730,8 +888,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 586,
+            "file": "source/constants/core.js",
+            "line": 613,
             "description": "Contains the list of Room socket connection error states.",
             "itemtype": "attribute",
             "name": "SOCKET_ERROR",
@@ -768,30 +926,15 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 614,
+            "file": "source/constants/core.js",
+            "line": 641,
             "description": "<blockquote class=\"panel-warning\">\n  Note that for the next releases, the Keys and Values will change for a more\n  descriptive term.\n</blockquote>\nContains the list of Room socket fallback states for a successful reconnection.",
             "itemtype": "attribute",
             "name": "SOCKET_FALLBACK",
             "params": [
                 {
                     "name": "NON_FALLBACK",
-                    "description": "<small>Value <code>\"nonfallback\"</code></small>\n  The state when socket is attempting to reconnect the first port and transports used that had failed.\n  <blockquote class=\"sub\">Protocol: <code>http:</code><br>Transports: <code>WebSocket</code></blockquote>",
-                    "type": "String"
-                },
-                {
-                    "name": "NON_FALLBACK_SSL",
-                    "description": "<small>Value <code>\"nonfallbackSSL\"</code></small>\n  The state when socket is attempting to reconnect the first port and transports used that had failed.\n  <blockquote class=\"sub\">Protocol: <code>https:</code><br>Transports: <code>WebSocket</code></blockquote>",
-                    "type": "String"
-                },
-                {
-                    "name": "NON_FALLBACK_LONG_POLLING",
-                    "description": "<small>Value <code>\"nonLongPollingfallback\"</code></small>\n  The state when socket is attempting to reconnect the first port and transports used that had failed.\n  <blockquote class=\"sub\">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote>",
-                    "type": "String"
-                },
-                {
-                    "name": "NON_FALLBACK_LONG_POLLING_SSL",
-                    "description": "<small>Value <code>\"nonLongPollingfallbackSSL\"</code></small>\n  The state when socket is attempting to reconnect the first port and transports used that had failed.\n  <blockquote class=\"sub\">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote>",
+                    "description": "<small>Value <code>\"nonfallback\"</code></small>\n  <blockquote class=\"panel-info\">This has been deprecated and will be eventually be removed\n     or changed into other seperate states in next releases.</blockquote>\n  The state when socket is attempting to reconnect the first port and transports used that had failed.\n  <blockquote class=\"sub\">Protocol: <code>http:</code>, <code>https:</code><br>\n     Transports: <code>WebSocket</code>, <code>Polling</code></blockquote>",
                     "type": "String"
                 },
                 {
@@ -806,12 +949,12 @@
                 },
                 {
                     "name": "LONG_POLLING",
-                    "description": "<small>Value <code>\"fallbackLongPollingNonSSL\"</code></small>\n  The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports\n  for a better attempt at reconnectivity after all reconnection attempts with all available ports\n  has failed.<br>The socket will start the reconnect attempt with\n  next fallback port starting from the first port used.<br>\n  This state may occur directly after <code>NON_FALLBACK_LONG_POLLING</code>\n  if <kbd>WebSocket</kbd> transports is not supported.\n  <blockquote class=\"sub\">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote>",
+                    "description": "<small>Value <code>\"fallbackLongPollingNonSSL\"</code></small>\n  The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports\n  for a better attempt at reconnectivity after all reconnection attempts with all available ports\n  has failed.<br>The socket will start the reconnect attempt with\n  next fallback port starting from the first port used.<br>\n  This state may occur directly after <code>NON_FALLBACK</code>\n  if <kbd>WebSocket</kbd> transports is not supported.\n  <blockquote class=\"sub\">Protocol: <code>http:</code><br>Transports: <code>Polling</code></blockquote>",
                     "type": "String"
                 },
                 {
                     "name": "LONG_POLLING_SSL",
-                    "description": "<small>Value <code>\"fallbackLongPollingSSL\"</code></small>\n  The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports\n  for a better attempt at reconnectivity after all reconnection attempts with all available ports\n  has failed.<br>The socket will start the reconnect attempt with\n  next fallback port starting from the first port used.<br>\n  This state may occur directly after <code>NON_FALLBACK_LONG_POLLING_SSL</code>\n  if <kbd>WebSocket</kbd> transports is not supported.\n  <blockquote class=\"sub\">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote>",
+                    "description": "<small>Value <code>\"fallbackLongPollingSSL\"</code></small>\n  The state when socket switches to <kbd>Polling</kbd> transports from <kbd>WebSocket</kbd> transports\n  for a better attempt at reconnectivity after all reconnection attempts with all available ports\n  has failed.<br>The socket will start the reconnect attempt with\n  next fallback port starting from the first port used.<br>\n  This state may occur directly after <code>NON_FALLBACK</code>\n  if <kbd>WebSocket</kbd> transports is not supported.\n  <blockquote class=\"sub\">Protocol: <code>https:</code><br>Transports: <code>Polling</code></blockquote>",
                     "type": "String"
                 }
             ],
@@ -821,8 +964,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 671,
+            "file": "source/constants/core.js",
+            "line": 689,
             "description": "Contains the list of SDK connection session actions.",
             "itemtype": "attribute",
             "name": "SYSTEM_ACTION",
@@ -844,15 +987,15 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 690,
+            "file": "source/constants/core.js",
+            "line": 708,
             "description": "Contains the list of SDK connection session actions reasons.",
             "itemtype": "attribute",
             "name": "SYSTEM_ACTION_REASON",
             "params": [
                 {
                     "name": "ROOM_LOCKED",
-                    "description": "<small>Value <code>\"locked\"</code></small>\n  The action reason when Room is locked and SDK Peer is unable to join the Room.\n<blockquote class=\"sub\">Action associated: <code>REJECT</code></blockquote>",
+                    "description": "<small>Value <code>\"locked\"</code></small>\n  The action reason when Room is locked and user is unable to join the Room.\n<blockquote class=\"sub\">Action associated: <code>REJECT</code></blockquote>",
                     "type": "String"
                 },
                 {
@@ -887,8 +1030,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 733,
+            "file": "source/constants/core.js",
+            "line": 751,
             "description": "<div class=\"panel-warning\">\n  Note that configuring these options might not necessarily result in the desired type (TCP/UDP) of connection\n  as it is depends on how the browser connects the connection.\n</div>\nContains the list of available TURN transports configuration options to pass when constructing a connection object.",
             "itemtype": "attribute",
             "name": "TURN_TRANSPORT",
@@ -925,8 +1068,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 787,
+            "file": "source/constants/core.js",
+            "line": 805,
             "description": "Contains the current SDK version of SkylinkJS.\n  <blockquote class=\"sub\">Current version: <code>(See documentation version)</code></blockquote>",
             "itemtype": "attribute",
             "name": "VERSION",
@@ -936,8 +1079,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 799,
+            "file": "source/constants/core.js",
+            "line": 817,
             "description": "<div class=\"panel-warning\">\n  Note that configuring these options might not necessarily result in the video codec connection\n  as it is depends on the browser supports.\n</div>\nContains the list of video codec configuration options to use during connection with video streams.",
             "itemtype": "attribute",
             "name": "VIDEO_CODEC",
@@ -974,8 +1117,8 @@
             "class": "Skylink"
         },
         {
-            "file": "source/constants.js",
-            "line": 830,
+            "file": "source/constants/core.js",
+            "line": 848,
             "description": "<div class=\"panel-warning\">\n  Note that configuring these options might not necessarily result in the desired resolution as it\n  depends on how the browser renders the video stream resolution.\n</div>\nContains the list of video resolution default presets.",
             "params": [
                 {
@@ -1085,20 +1228,1026 @@
             "readonly": "",
             "since": "0.7.0",
             "class": "Skylink"
+        },
+        {
+            "file": "source/events/core.js",
+            "line": 2,
+            "description": "Event triggered when room connection information is being retrieved from platform server.\n- This is also triggered when <a href=\"#method_init\">init()</a> is invoked, but\n  the socket connection events like <a href=\"#event_channelOpen\">channelOpen</a> does\n  not get triggered but stops at <u>readyStateChange</u> event.",
+            "itemtype": "event",
+            "name": "readyStateChange",
+            "params": [
+                {
+                    "name": "readyState",
+                    "description": "The current ready state of the retrieval when the event is triggered.\n  [Rel: Skylink.READY_STATE_CHANGE]",
+                    "type": "String"
+                },
+                {
+                    "name": "error",
+                    "description": "The error object thrown when there is a failure in retrieval.\n  If received as <code>null</code>, it means that there is no errors.",
+                    "type": "JSON",
+                    "optional": true,
+                    "optdefault": "null",
+                    "props": [
+                        {
+                            "name": "status",
+                            "description": "Http status when retrieving information.\n  May be empty for other errors.",
+                            "type": "Number"
+                        },
+                        {
+                            "name": "errorCode",
+                            "description": "The\n  <a href=\"#attr_READY_STATE_CHANGE_ERROR\">READY_STATE_CHANGE_ERROR</a>\n  if there is an <a href=\"#event_readyStateChange\">readyStateChange</a>\n  event error that caused the failure for initialising Skylink.\n  [Rel: Skylink.READY_STATE_CHANGE_ERROR]",
+                            "type": "Number"
+                        },
+                        {
+                            "name": "content",
+                            "description": "The exception thrown that caused the failure\n  for initialising Skylink.",
+                            "type": "Object"
+                        },
+                        {
+                            "name": "status",
+                            "description": "The XMLHttpRequest status code received\n  when exception is thrown that caused the failure for initialising Skylink.",
+                            "type": "Number"
+                        }
+                    ]
+                },
+                {
+                    "name": "room",
+                    "description": "The selected room connection information that Skylink is attempting\n  to retrieve the information for to start connection to.",
+                    "type": "String"
+                }
+            ],
+            "component": "Events",
+            "since": "0.4.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 2,
+            "description": "<blockquote class=\"panel-warning\">\n  Note that this method is required to call before using any other functionalities\n  except Event methods like <a href=\"#method_on\"><u><code>on()</code> method</u></a>,\n  <a href=\"#method_off\"><u><code>off()</code> method</u></a>\n  or <a href=\"#method_once\"><u><code>once()</code> method</u></a>. By default,\n  the SDK uses CORS authentication. To use credentials based authentication, configure the\n  <code>credentials</code> parameter.\n</blockquote>\nMethod that initializes the Skylink object to start connection session.",
+            "itemtype": "method",
+            "name": "init",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "The parameter for configuration settings.<br>\n  Providing this value as a <kbd>\"String\"</kbd> reads as <code>appKey</code>.",
+                    "type": "String|JSON",
+                    "props": [
+                        {
+                            "name": "appKey",
+                            "description": "The parameter to configure the Application Key.",
+                            "type": "String"
+                        },
+                        {
+                            "name": "defaultRoom",
+                            "description": "<blockquote class=\"panel-info\">\n    This fallbacks to the value of Application Key configured if not provided.\n  </blockquote>\n  The parameter to configure the default Room name that the SDK\n  uses when no <code>room</code> parameter is\n  provided in <a href=\"#method_joinRoom\"><u><code>joinRoom()</code> method</u></a>.",
+                            "type": "String",
+                            "optional": true,
+                            "optdefault": "&options.appKey"
+                        },
+                        {
+                            "name": "roomServer",
+                            "description": "<blockquote class=\"panel-info\">\n    This is for SDK debugging purposes and it is <u>NOT RECOMMENDED</u> to modify the value.\n    To use this, have to provide the Protocol Relative URL value (<code>\"//\"</code>) before the domain name.\n    Ensure that no (<code>\"/\"</code>) value is provided at the end of the value.\n  </blockquote>\n  The parameter to configure the API server to start connection session.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "region",
+                            "description": "<blockquote class=\"panel-info\">\n    This has been deprecated and it is not recommended to configure this value anymore.\n  </blockquote>\n  The parameter to configure the nearest regional server for the SDK to connect to.\n  [Rel: Skylink.attr.REGIONAL_SERVER]",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "enableIceTrickle",
+                            "description": "<blockquote class=\"panel-info\">\n    Note that setting this to <code>false</code> may result in a slower connection.\n  </blockquote>\n  The parameter to enable trickle ICE connections for faster connectivity.\n  <small>See: <a href=\"#x\">What is ICE and how it works</a></small>",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "true"
+                        },
+                        {
+                            "name": "enableDataChannel",
+                            "description": "<blockquote class=\"panel-info\">\n    Note that setting this to <code>false</code> will disable\n    <a href=\"#method_sendBlobData\"><u><code>sendBlobData()</code> method</u></a>,\n    <a href=\"#method_sendURLData\"><u><code>sendURLData()</code> method</u></a> and\n    <a href=\"#method_sendBlobData\"><u><code>sendP2PMessage()</code> method</u></a> functionalities.\n    You will not be able to receive any P2P messages as well.\n    Additionally, even with this enabled,\n    if there is a connecting Peer that does not have <code>enableDataChannel</code>\n    enabled, the following above functionalities will not work with that particular Peer connection.\n  </blockquote>\n  The parameter to enable Datachannel connections.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "true"
+                        },
+                        {
+                            "name": "enableTURNServer",
+                            "description": "<blockquote class=\"panel-info\">\n    Note that this only filters the ICE servers when starting Peer connection. To enforce\n    TURN connections, configure <code>forceTURN</code> parameter instead.\n  </blockquote>\n  The parameter to enable using TURN ICE servers when starting a Peer connection.<br>\n  Disabling this will filter out all TURN ICE servers passed in Peer connections.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "true"
+                        },
+                        {
+                            "name": "enableSTUNServer",
+                            "description": "The parameter to\n  enable using STUN ICE servers when starting a Peer connection.<br>\n  Disabling this will filter out all STUN ICE servers passed in Peer connections.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "true"
+                        },
+                        {
+                            "name": "forceTURN",
+                            "description": "<blockquote class=\"panel-info\">\n    Note that if TURN is not enabled for the Application Key configured, Peer connections will not be\n    able to connect.\n  </blockquote>\n  The parameter to enforce TURN ICE connections.<br>\n  Enabling this will filter out all STUN ICE servers as well.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "usePublicSTUN",
+                            "description": "The parameter to\n  enable using publicly available STUN ICE servers when starting a Peer connection.<br>\n  Disabling this will filter out all publicly available STUN ICE servers.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "true"
+                        },
+                        {
+                            "name": "TURNServerTransport",
+                            "description": "The parameter to\n  configure the TURN ICE servers transports.\n  [Rel: Skylink.attr.TURN_TRANSPORT]",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "#<Skylink.TURN_TRANSPORT.ANY>"
+                        },
+                        {
+                            "name": "credentials",
+                            "description": "<blockquote class=\"panel-info\">\n  Note that you require the configure the correct <code>startDateTime</code> and\n  <code>duration</code> used when generating the <code>credentials</code> to configure the SDK\n  to use credentials based authentication, By default, when credentials is not provided,\n  the SDK will use CORS based authentication. Additionally, take note that\n  using credentials based authentication does not allow you to join the Room\n  based on the <code>room</code> paramter provided in\n  <a href=\"#method_joinRoom\"><u><code>joinRoom()</code> method</u></a>.</blockquote>\n  The parameter to use credentials based authentication to start connection session.\n  <small>See:<a href=\"http://support.temasys.com.sg/support/solutions/articles/12000002712-authenticating-your-application-key-to-start-a-connection\">\n    Authenticating SDK connection sessions</a>.</small>",
+                            "type": "JSON",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "startDateTime",
+                                    "description": "The parameter to configure the\n  <code>credentials</code> starting DateTime. This value has to be set in\n  (<a href=\"https://en.wikipedia.org/wiki/ISO_8601\">ISO 8601 format</a>), which can be retrieved from\n  the <kbd>Date</kbd> object <code>Date.getISOString()</code> method.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "duration",
+                                    "description": "The parameter to configure the\n  <code>credentials</code> connection session duration in Hours.\n  <small>EXAMPLES:<br>\n  30 mins: <code>0.5</code><br>\n  1 hour, 24mins: <code>1.4</code><br>\n  2 hours, 30mins: <code>2.5</code></small>",
+                                    "type": "Number"
+                                },
+                                {
+                                    "name": "credentials",
+                                    "description": "The parameter to configure the\n  <code>credentials</code> connection session authentication string.<br>\n  This requires you to generate with your configured Application Key <u>Secret</u>,\n  provided <code>credentials</code> - <code>startDateTime</code>, <code>duration</code> and\n  <code>defaultRoom</code> values.\n  <small class=\"tip-box\">\n  <b>INSTRUCTIONS ON GENERATING CREDENTIALS STRING:</b>\n  <ol>\n  <li>Concatenate the <code>defaultRoom</code>, <code>credentials</code> - <code>duration</code> and <code>startDateTime</code>.\n     <var>var <code>concatStr</code> = <code>defaultRoom</code> + \"_\" + <code>duration</code> + \"_\" + <code>startDateTimeStamp</code>;</var></li>\n  <li>Hash the <code>concatStr</code> value with the Application Key <u>Secret</u> using SHA-1\n     In this example, we use the <a href=\"https://code.google.com/p/crypto-js/#HMAC\"><u><code>CryptoJS.HmacSHA1</code> function</u></a> .\n     <var>var <code>hash</code> = CryptoJS.HmacSHA1(<code>concatStr</code>, <code>secret</code>);</var></li>\n  <li>Convert the hash to a Base64 encoded string.\n     In this example, we use the <a href=\"https://code.google.com/p/crypto-js/#The_Cipher_Output\"\"><u><code>CryptoJS.enc.Base64</code> function</u></a>.\n     <var>var <code>base64String</code> = <code>hash</code>.toString(CryptoJS.enc.Base64);</var></li>\n  <li>Encode the Base64 encoded string to a URI component using UTF-8 encoding with\n     <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent\"><u><code>encodeURIComponent()</code> function</u></a>.\n     <var>var <code>credentialsStr</code> = encodeURIComponent(<code>base64String</code>);</var></li></ol></small>",
+                                    "type": "String"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "audioFallback",
+                            "description": "The parameter to configure to retrieve audio only\n  as a fallback when retrieving audio and video fails in\n  <a href=\"#method_getUserMedia\"><u><code>getUserMedia()</code> method</u></a>.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "forceSSL",
+                            "description": "<blockquote class=\"panel-info\">\n  By default, if user is accessing the SDK from <code>https:</code> protocol, SSL connections are already enabled.</blockquote>\n  The parameter to enforce SSL connections when starting connection session and Room socket connection.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "audioCodec",
+                            "description": "The parameter to configure\n  the audio codec for audio streams.\n  [Rel: Skylink.attr.AUDIO_CODEC]",
+                            "type": "String",
+                            "optional": true,
+                            "optdefault": "#<Skylink.AUDIO_CODEC.AUTO>"
+                        },
+                        {
+                            "name": "videoCodec",
+                            "description": "The parameter to configure\n  the audio codec for video streams.\n  [Rel: Skylink.attr.VIDEO_CODEC]",
+                            "type": "String",
+                            "optional": true,
+                            "optdefault": "#<Skylink.VIDEO_CODEC.AUTO>"
+                        },
+                        {
+                            "name": "socketTimeout",
+                            "description": "The parameter to configure the timeout to wait when there is no\n  connection response before triggering as <code>CONNECTION_FAILED</code> or <code>RECONNECTION_FAILED</code>.\n  [Rel: Skylink.attr.SOCKET_ERROR]",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "20000"
+                        },
+                        {
+                            "name": "forceTURNSSL",
+                            "description": "<blockquote class=\"panel-info\">\n  By default, if user is accessing the SDK from <code>https:</code> protocol, TURN SSL connections are already enabled</code>.\n  Note that if the browser does not support the <code>turns:</code> protocol, SSL ports will be used instead.</blockquote>\n  The parameter to enforce SSL connections for TURN ICE server connections.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "callbackFn",
+                    "description": "The parameter <code>callback</code> function that would be triggered when\n  after <code>init()</code> method process has completed.\n  <blockquote class=\"sub\">Method parameter payload signature: <var>function(<code>error</code>, <code>success</code>)</var></blockquote>",
+                    "type": "Function",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "error",
+                            "description": "The <code>callback</code> function parameter payload that is defined when\n  <code>init()</code> method process encountered an error.",
+                            "type": "JSON",
+                            "props": [
+                                {
+                                    "name": "errorCode",
+                                    "description": "The error code.\n  [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR]",
+                                    "type": "Number"
+                                },
+                                {
+                                    "name": "error",
+                                    "description": "The error object.",
+                                    "type": "Error"
+                                },
+                                {
+                                    "name": "status",
+                                    "description": "The HTTP status received when encountering the error.<br>\n  [Rel: Skylink.attr.READY_STATE_CHANGE_ERROR_STATUS]",
+                                    "type": "Number"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "success",
+                            "description": "The <code>callback</code> function parameter payload that is defined when\n  <code>init()</code> method process has completed without errors.",
+                            "type": "JSON",
+                            "props": [
+                                {
+                                    "name": "serverUrl",
+                                    "description": "<blockquote class=\"panel-info\">\n  This has been deprecated and will be removed in the next releases.\n</blockquote> The API HTTP request URL.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "readyState",
+                                    "description": "<blockquote class=\"panel-info\">\n  This has been deprecated and will be removed in the next releases.\n</blockquote> The current connection session ready state.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "appKey",
+                                    "description": "The configured parameter <code>appKey</code> value.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "defaultRoom",
+                                    "description": "The configured parameter <code>defaultRoom</code> value.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "selectedRoom",
+                                    "description": "<blockquote class=\"panel-info\">\n  This has been deprecated in the callback and will be removed in the next releases.\n</blockquote> The current selected Room name.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "roomServer",
+                                    "description": "The configured parameter <code>roomServer</code> value.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "enableIceTrickle",
+                                    "description": "The configured parameter <code>enableIceTrickle</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "enableDataChannel",
+                                    "description": "The configured parameter <code>enableDataChannel</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "enableTURNServer",
+                                    "description": "The configured parameter <code>enableTURNServer</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "enableSTUNServer",
+                                    "description": "The configured parameter <code>enableSTUNServer</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "TURNTransport",
+                                    "description": "<blockquote class=\"panel-info\">\n  This will be renamed as <code>TURNServerTransport</code> in the next releases.\n</blockquote> The configured parameter <code>TURNServerTransport</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "serverRegion",
+                                    "description": "<blockquote class=\"panel-info\">\n  This will be renamed as <code>region</code> in the next releases before removal of <code>region</code> parameter.\n</blockquote> The configured parameter <code>region</code> value.",
+                                    "type": "String",
+                                    "optional": true
+                                },
+                                {
+                                    "name": "audioFallback",
+                                    "description": "The configured parameter <code>audioFallback</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "forceSSL",
+                                    "description": "The configured parameter <code>forceSSL</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "audioCodec",
+                                    "description": "The configured parameter <code>audioCodec</code> value.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "videoCodec",
+                                    "description": "The configured parameter <code>videoCodec</code> value.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "socketTimeout",
+                                    "description": "The configured parameter <code>socketTimeout</code> value.",
+                                    "type": "Number"
+                                },
+                                {
+                                    "name": "forceTURNSSL",
+                                    "description": "The configured parameter <code>forceTURNSSL</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "forceTURN",
+                                    "description": "The configured parameter <code>forceTURN</code> value.",
+                                    "type": "Boolean"
+                                },
+                                {
+                                    "name": "usePublicSTUN",
+                                    "description": "The configured parameter <code>usePublicTURN</code> value.",
+                                    "type": "Boolean"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "example": [
+                "\n  // Parameters: Skylink.init(appKey);\n  SkylinkDemo.init(\"<% Your Application Key value here %>\");\n\n\n  // Parameters: Skylink.init(options);\n  SkylinkDemo.init({\n    appKey: \"<% Your Application Key value here %>\",\n    audioFallback: true,\n    defaultRoom: \"<% Your default Room name value here %>\",\n    forceSSL: true,\n    forceTURNSSL: true\n  });\n\n\n  // Parameters: Skylink.init(options); - using credentials based authentication\n  // ----------------------------------------------------------------------------------\n  //  NOTE: It is not recommended to generate credentials on client side but server\n  //        side for security. This is for illustration purposes.\n  // ----------------------------------------------------------------------------------\n  function generateCreds (room, duration, startDateTime) {\n    var concatStr = room + \"\\_\" + duration + \"\\_\" + startDateTime;\n    //! Do not EXPOSE to any users\n    var hash = CryptoJS.HmacSHA1(concatStr, \"<% Your Application Key secret value here %>\");\n    var base64String = hash.toString(CryptoJS.enc.Base64);\n    return encodeURIComponent(base64String);\n  }\n\n  //! This is the Room name that will only be joined for the connection session\n  var room  = \"<% Your Room name value here %>\", //\n      credentials  = {\n       //! Set as 2 Hours.\n        duration: 2,\n        //! Currently is configure for Now. Can be configured with any starting date if preferred.\n        startDateTime: (new Date()).toISOString(),\n        credentials: null\n      };\n\n  credentials.credentials = generateCreds(room, credentials.duration, credentials.startDateTime);\n\n  SkylinkDemo.init({\n    appKey: \"<% Your Application Key value here %>\",\n    defaultRoom: room,\n    credentials: credentials\n  });\n\n\n  // Parameters: Skylink.init(options, callback);\n  SkylinkDemo.init({\n    appKey: \"<% Your Application Key value here %>\",\n    audioFallback: true,\n    defaultRoom: \"<% Your default Room name value here %>\",\n    forceSSL: true,\n    forceTURNSSL: true\n  }, function(error, success){\n    if (error) {\n      ///-[Error: See &callbackFn error parameter payload.]\n    } else{\n      ///-[Success: See &callbackFn success parameter payload.]\n    }\n  });"
+            ],
+            "required": 1,
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 242,
+            "description": "Function that sets the init() ready state",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 257,
+            "description": "Function that handles the result of init() process",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 304,
+            "description": "Parameter: init(\"appKey\")",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 311,
+            "description": "Parameter: init({})",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 315,
+            "description": "Parameter: init({ appKey: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 321,
+            "description": "Parameter: init({ apiKey: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 327,
+            "description": "Parameter: init({ !appKey })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 339,
+            "description": "Parameter: init({ defaultRoom: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 349,
+            "description": "Parameter: init({ roomServer: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 368,
+            "description": "Parameter: init({ region: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 385,
+            "description": "Parameter: init({ enableIceTrickle: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 392,
+            "description": "Parameter: init({ enableDataChannel: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 399,
+            "description": "Parameter: init({ enableTURNServer: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 406,
+            "description": "Parameter: init({ enableSTUNServer: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 413,
+            "description": "Parameter: init({ forceTURN: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 420,
+            "description": "Parameter: init({ usePublicSTUN: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 427,
+            "description": "Parameter: init({ TURNServerTransport: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 444,
+            "description": "Parameter: init({ credentials: {} })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 485,
+            "description": "Parameter: init({ audioFallback: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 492,
+            "description": "Parameter: init({ forceSSL: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 499,
+            "description": "Parameter: init({ audioCodec: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 516,
+            "description": "Parameter: init({ videoCodec: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 533,
+            "description": "Parameter: init({ forceTURNSSL: xxx })",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/methods/init.js",
+            "line": 540,
+            "description": "Parameter: init(function () {})",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/modules/api.js",
+            "line": 9,
+            "description": "Function that builds the HTTP URL for the SDK to fetch and start connection session to.",
+            "itemtype": "method",
+            "name": "URLBuilderFn",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "The parameter options.",
+                    "type": "JSON"
+                },
+                {
+                    "name": "forceSSL",
+                    "description": "The <code>init()</code> <code>forceSSL</code> parameter option.",
+                    "type": "Boolean"
+                },
+                {
+                    "name": "appKey",
+                    "description": "The <code>init()</code> <code>appKey</code> parameter option.",
+                    "type": "String"
+                },
+                {
+                    "name": "roomServer",
+                    "description": "The <code>init()</code> <code>roomServer</code> parameter option.",
+                    "type": "String"
+                },
+                {
+                    "name": "region",
+                    "description": "The <code>init()</code> <code>region</code> parameter option.",
+                    "type": "String"
+                },
+                {
+                    "name": "credentials",
+                    "description": "The <code>init()</code> <code>credentials</code> parameter option.",
+                    "type": "JSON"
+                },
+                {
+                    "name": "selectedRoom",
+                    "description": "The selected Room name to fetch and start connection session to.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "The generated HTTP URL based on options provided.",
+                "type": "String"
+            },
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkAPI"
+        },
+        {
+            "file": "source/modules/api.js",
+            "line": 43,
+            "description": "Function that fetchs from HTTP URL (build from <code>options</code> parameter provided)\n  to start connection session to.",
+            "itemtype": "method",
+            "name": "URLBuilderFn",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "The parameter options.\n  <small>See <code>URLBuilderFn()</code> function for full parameter options</small>",
+                    "type": "JSON"
+                },
+                {
+                    "name": "fn",
+                    "description": "The parameter callback function that triggers on HTTP request state change.",
+                    "type": "Function",
+                    "props": [
+                        {
+                            "name": "state",
+                            "description": "The callback function parameter payload to determine the current state\n  of the HTTP request.<br>\n  <blockquote class=\"sub\">\n  <code>\"loading\"</code>: The state when loading HTTP request.<br>\n  <code>\"loaded\"</code>: The state when connection session has started.<br>\n  <code>\"error\"</code>: The state when connection session has errors<br>\n  <code>\"retry\"</code>: The state when retrying loading HTTP request when timeout.\n    Maximum retries are <var>5</var></blockquote>",
+                            "type": "String"
+                        },
+                        {
+                            "name": "data",
+                            "description": "The callback function parameter payload that contains the error object which\n  follows the <code>readyStateChange</code> <code>error</code> event payload\n  or the connection session data.",
+                            "type": "JSON"
+                        }
+                    ]
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkAPI"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 10,
+            "description": "Method that subscribes a <code>listener</code> function to an <a href=\"#events\">Event</a> which would be triggered\n  every time when the <a href=\"#events\">Event</a> is dispatched.",
+            "itemtype": "method",
+            "name": "on",
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "The parameter name of the <a href=\"#events\">Event</a> to subscribe to.",
+                    "type": "String"
+                },
+                {
+                    "name": "listenerFn",
+                    "description": "The parameter <code>listener</code> function to bind to the subscription.",
+                    "type": "Function"
+                }
+            ],
+            "example": [
+                "\n  // Parameters: on(eventName, listenerFn)\n  SkylinkDemo.on(\"peerJoined\", function (peerId) {\n    console.log(peerID + \" has joined the Room\");\n    ///-[Handle UI view when Peer has joined the Room]\n  });"
+            ],
+            "linksto": "#events|See the list of available Events to subscribe to",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 38,
+            "description": "Method that unsubscribes <code>listener</code> functions from <a href=\"#events\">Events</a>.",
+            "itemtype": "method",
+            "name": "off",
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "<blockquote class=\"panel-info\">\n    Not providing this parameter value removes all <code>listener</code> functions from\n    all <a href=\"#events\">Events</a>.\n  </blockquote>\n  The parameter name of the <a href=\"#events\">Event</a> to unsubscribe <code>listener</code> functions.<br>",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "listenerFn",
+                    "description": "<blockquote class=\"panel-info\">\n    Not providing this parameter value removes all <code>listener</code> functions from\n    the provided <code>eventName</code> parameter <a href=\"#events\">Event</a>.\n  </blockquote>\n  The parameter of a particular <code>listener</code> function to unsubscribe from the\n  provided <code>eventName</code> parameter <a href=\"#events\">Event</a>.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "example": [
+                "\n  // Parameters: off(eventName, listenerFn)\n  //! Unsubscribes this specific listener function from \"iceConnectionState\" Event\n  var listenerFn = function (state, peerId) {\n    console.log(peerId + \" connection state: \" + state);\n  };\n\n  SkylinkDemo.off(\"iceConnectionState\", listenerFn);\n\n  // Parameters: off(eventName)\n  //! Unsubscribes all listener functions from \"peerJoined\" Event\n  SkylinkDemo.off(\"peerJoined\");\n\n  // Parameters: off()\n  //! Unsubscribes all listener functions from all Events\n\n  SkylinkDemo.off();"
+            ],
+            "linksto": "#events|See the list of available Events to subscribe to",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 106,
+            "description": "Method that subscribes a <code>listener</code> function to an <a href=\"#events\">Event</a> which would be triggered\n  only once when the <a href=\"#events\">Event</a> is dispatched.",
+            "itemtype": "method",
+            "name": "once",
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "The parameter name of the <a href=\"#events\">Event</a> to subscribe to.",
+                    "type": "String"
+                },
+                {
+                    "name": "listenerFn",
+                    "description": "The parameter listener function to bind to the subscription.",
+                    "type": "Function"
+                },
+                {
+                    "name": "conditionalFn",
+                    "description": "<blockquote class=\"panel-info\">\n    This function will trigger every time the <a href=\"#events\">Event</a> is dispatched.\n    Return <code>true</code> in this function to complete the <code>conditional</code> function.\n  </blockquote> The parameter <code>conditional</code> function\n  that halts the triggering of the <code>listener</code> function until the\n  <code>conditional</code> function returns <code>true</code>.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "example": [
+                "\n  // Parameters: once(eventName, listenerFn)\n  SkylinkDemo.on(\"mediaAccessSuccess\", function (stream) {\n    console.log(\"Received local stream\", stream);\n    ///-[Handle UI view when user has given access to local Stream]\n  });\n\n  // Parameters: once(eventName, listenerFn, conditionalFn)\n  SkylinkDemo.on(\"dataChannelState\", function (state, peerId) {\n    console.info(\"P2P messaging are now available with \" + peerId);\n    ///-[Handle UI view when P2P messaging is available]\n  }, function (state, peerId, error, channelName, channelType) {\n    //! Condition to ensure that Datachannel is opened and is for messaiging Datachannel\n    return state === SkylinkDemo.DATA_CHANNEL_STATE.OPEN &&\n      channelType === SkylinkDemo.DATA_CHANNEL_TYPE.MESSAGING;\n  });"
+            ],
+            "linksto": "#events|See the list of available Events to subscribe to",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 155,
+            "description": "<blockquote class=\"panel-warning\">\n  Parameters after the <code>eventName</code> parameter value is\n  considered the Event parameters payload.\n</blockquote>\nFunction that dispatches <a href=\"#events\">Event</a> to all listeners.",
+            "itemtype": "method",
+            "name": "_trigger",
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "The Event name.",
+                    "type": "String"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkEvent"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 190,
+            "description": "Function that removes a specific listener function from\n  a specific <a href=\"#events\">Event</a> from a list of listeners.",
+            "itemtype": "method",
+            "name": "_removeListener",
+            "params": [
+                {
+                    "name": "listeners",
+                    "description": "The array of listeners.",
+                    "type": "Array"
+                },
+                {
+                    "name": "listener",
+                    "description": "The specific listener to remove from the\n  array of listeners.",
+                    "type": "Function"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkEvent"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 215,
+            "description": "Function that allows mixin of all <kbd>SkylinkEvent</kbd> functions\n  to the <kbd>Object</kbd>.",
+            "itemtype": "method",
+            "name": "_mixin",
+            "params": [
+                {
+                    "name": "object",
+                    "description": "The <kbd>Object</kbd> to mixin functions for event subscriptions and dispatching.",
+                    "type": "Object"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkEvent"
+        },
+        {
+            "file": "source/modules/event.js",
+            "line": 236,
+            "description": "Stores all the <a href=\"#events\">Events</a> listeners.",
+            "itemtype": "attribute",
+            "name": "_listeners",
+            "params": [
+                {
+                    "name": "on",
+                    "description": "Stores the list of <code>on()</code> listener functions.",
+                    "type": "JSON"
+                },
+                {
+                    "name": "once",
+                    "description": "Stores the list of <code>once()</code> listener functions.",
+                    "type": "JSON"
+                }
+            ],
+            "type": "JSON",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/modules/utils.js",
+            "line": 10,
+            "description": "Function that clones <kbd>Object</kbd> keys and values.",
+            "itemtype": "method",
+            "name": "objectCloneFn",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "The <kbd>Object</kbd> to clone.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "The cloned <kbd>Object</kbd>.",
+                "type": "Object"
+            },
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkUtils"
+        },
+        {
+            "file": "source/modules/utils.js",
+            "line": 33,
+            "description": "Function that loops for <kbd>Object</kbd> keys and values.",
+            "itemtype": "method",
+            "name": "objectLoopFn",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "The <kbd>Object</kbd> to loop.",
+                    "type": "Array|String|JSON"
+                },
+                {
+                    "name": "fn",
+                    "description": "The function callback triggered for each loop.<br>\n  Return <code>true</code> in function callback to break looping execution.",
+                    "type": "Function"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkUtils"
+        },
+        {
+            "file": "source/modules/utils.js",
+            "line": 73,
+            "description": "Function that checks if <kbd>Object</kbd> contains the value provided.",
+            "itemtype": "method",
+            "name": "objectContainsFn",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "The <kbd>Object</kbd> to check.",
+                    "type": "Array|String|JSON"
+                },
+                {
+                    "name": "value",
+                    "description": "The value to check if it exists in <kbd>Object</kbd>.",
+                    "type": "Any"
+                }
+            ],
+            "return": {
+                "description": "The flag that indicates if value exists in <kbd>Object</kbd>.",
+                "type": "Boolean"
+            },
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "SkylinkUtils"
+        },
+        {
+            "file": "source/core.js",
+            "line": 72,
+            "description": "Stores the global configuration made in <code>init()</code>.<br>",
+            "itemtype": "attribute",
+            "name": "_globals",
+            "type": "JSON",
+            "params": [
+                {
+                    "name": "current",
+                    "description": "The current <code>init()</code> configuration.\n  <small>Parameter fields follows <code>init()</code> <code>options</code> parameter.</small>",
+                    "type": "JSON"
+                },
+                {
+                    "name": "defaults",
+                    "description": "The default <code>init()</code> configuration.\n  <small>Parameter fields follows <code>init()</code> <code>options</code> parameter.</small>",
+                    "type": "JSON"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/core.js",
+            "line": 109,
+            "description": "Stores the current connection session information.",
+            "itemtype": "attribute",
+            "name": "_session",
+            "type": "JSON",
+            "access": "private",
+            "tagname": "",
+            "since": "0.7.0",
+            "class": "Skylink"
+        },
+        {
+            "file": "source/globals.js",
+            "line": 1,
+            "description": "Global that contains the logging functions",
+            "itemtype": "attribute",
+            "name": "log",
+            "type": "JSON",
+            "params": [
+                {
+                    "name": "debug",
+                    "description": "The <code>DEBUG</code> level logging function.",
+                    "type": "Function"
+                },
+                {
+                    "name": "log",
+                    "description": "The <code>LOG</code> level logging function.",
+                    "type": "Function"
+                },
+                {
+                    "name": "info",
+                    "description": "The <code>INFO</code> level logging function.",
+                    "type": "Function"
+                },
+                {
+                    "name": "warn",
+                    "description": "The <code>WARN</code> level logging function.",
+                    "type": "Function"
+                },
+                {
+                    "name": "error",
+                    "description": "The <code>ERROR</code> level logging function.",
+                    "type": "Function"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "global": "",
+            "since": "0.7.0",
+            "class": "Skylink"
         }
     ],
     "warnings": [
         {
             "message": "unknown tag: link",
-            "line": " source/constants.js:40"
+            "line": " source/constants/core.js:40"
         },
         {
             "message": "unknown tag: link",
-            "line": " source/constants.js:235"
+            "line": " source/constants/core.js:235"
         },
         {
             "message": "unknown tag: link",
-            "line": " source/constants.js:331"
+            "line": " source/constants/core.js:331"
+        },
+        {
+            "message": "unknown tag: component",
+            "line": " source/events/core.js:2"
+        },
+        {
+            "message": "unknown tag: linksto",
+            "line": " source/modules/event.js:10"
+        },
+        {
+            "message": "unknown tag: linksto",
+            "line": " source/modules/event.js:38"
+        },
+        {
+            "message": "unknown tag: linksto",
+            "line": " source/modules/event.js:106"
+        },
+        {
+            "message": "Missing item type\nFunction that sets the init() ready state",
+            "line": " source/methods/init.js:242"
+        },
+        {
+            "message": "Missing item type\nFunction that handles the result of init() process",
+            "line": " source/methods/init.js:257"
+        },
+        {
+            "message": "Missing item type\nParameter: init(\"appKey\")",
+            "line": " source/methods/init.js:304"
+        },
+        {
+            "message": "Missing item type\nParameter: init({})",
+            "line": " source/methods/init.js:311"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ appKey: xxx })",
+            "line": " source/methods/init.js:315"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ apiKey: xxx })",
+            "line": " source/methods/init.js:321"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ !appKey })",
+            "line": " source/methods/init.js:327"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ defaultRoom: xxx })",
+            "line": " source/methods/init.js:339"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ roomServer: xxx })",
+            "line": " source/methods/init.js:349"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ region: xxx })",
+            "line": " source/methods/init.js:368"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ enableIceTrickle: xxx })",
+            "line": " source/methods/init.js:385"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ enableDataChannel: xxx })",
+            "line": " source/methods/init.js:392"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ enableTURNServer: xxx })",
+            "line": " source/methods/init.js:399"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ enableSTUNServer: xxx })",
+            "line": " source/methods/init.js:406"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ forceTURN: xxx })",
+            "line": " source/methods/init.js:413"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ usePublicSTUN: xxx })",
+            "line": " source/methods/init.js:420"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ TURNServerTransport: xxx })",
+            "line": " source/methods/init.js:427"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ credentials: {} })",
+            "line": " source/methods/init.js:444"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ audioFallback: xxx })",
+            "line": " source/methods/init.js:485"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ forceSSL: xxx })",
+            "line": " source/methods/init.js:492"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ audioCodec: xxx })",
+            "line": " source/methods/init.js:499"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ videoCodec: xxx })",
+            "line": " source/methods/init.js:516"
+        },
+        {
+            "message": "Missing item type\nParameter: init({ forceTURNSSL: xxx })",
+            "line": " source/methods/init.js:533"
+        },
+        {
+            "message": "Missing item type\nParameter: init(function () {})",
+            "line": " source/methods/init.js:540"
         }
     ]
 }

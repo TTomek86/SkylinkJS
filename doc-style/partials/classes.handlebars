@@ -1,27 +1,11 @@
-<div class="jumbotron no-padding">
-  <div class="container">
-    <h1>
-      {{name}} <span>Class</span>
-      {{#if foundAt}}
-        <small>
-          <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="{{foundAt}}">`{{{file}}}:{{{line}}}`</a>
-        </small>
-      {{/if}}
-      {{#if since}}
-        <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">{{since}}</span></small>
-      {{/if}}
-    </h1>
-    <br/>
-  </div>
-</div>
-<div class="page container">
+<div class="page container" style="margin-top: 30px;">
   <section id="infodocs">
     <p>{{{classDescription}}}</p>
     <hr>
   </section>
   <section id="classdocs">
     <ul class="nav nav-tabs" role="tablist">
-      <li  role="presentation" class="doc-selected active"><a href="#constructor">Constructor</a></li>
+      <li  role="presentation" class="doc-selected active"><a href="#constructor">Setting up SkylinkJS</a></li>
       {{#if methods}}
         <li role="presentation" class="doc-selected"><a href="#methods">Methods</a></li>
       {{/if}}
@@ -131,7 +115,7 @@
         {{#is_constructor}}
           <section id="constructor">
             <div class="constructor-item">
-              {{>method}}
+              {{>constructor}}
             </div>
             <hr>
           </section>

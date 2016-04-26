@@ -19,6 +19,10 @@
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
+      {{#if required}}
+        <span class="label label-danger" title="This method is required before using any SDK functionalities.">required</span>
+      {{/if}}
+
       {{#if deprecated}}
         <span class="label label-warning" title="This property is deprecated. Might be removed in future releases.">deprecated</span>
       {{/if}}
@@ -99,20 +103,8 @@
       {{/if}}
     </div>
 
-    {{#if foundAt}}
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="{{foundAt}}">`{{{file}}}:{{{line}}}`</a>
-      </small>
-    {{/if}}
-
     <small>
-      {{#if since}}
-        <i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">{{since}}</span>
-      {{/if}}
-
-      {{#if partof}}
-        &nbsp;&nbsp; | &nbsp;&nbsp;Part of &#187; <b style="font-weight:600;text-transform:uppercase;">{{partof}}</b>
-      {{/if}}
+      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">{{since}}</span>
     </small>
   </div>
 

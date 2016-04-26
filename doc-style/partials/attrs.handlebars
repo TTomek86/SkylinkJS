@@ -1,7 +1,7 @@
 <div id="attr_{{name}}" class="code-item attr item {{#if access}}{{access}}-{{/if}}attr-item {{#if deprecated}} deprecated{{/if}}{{#if extended_from}} inherited{{/if}}">
   <a name="config_{{name}}"></a> {{! For backwards compatibility }}
   <h3 class="code-item-name"><code>{{name}}</code></h3>
-  <span class="code-item-type"><i>Attribute Type</i>: <b>{</b>{{#crossLink type}}{{/crossLink}}<b>}</b></span>
+  <span class="code-item-type"><i>Attribute type is</i> <kbd>{{#crossLink type}}{{/crossLink}}</kbd></span>
 
   <div class="code-item-properties">
     <div class="properties-wrapper">
@@ -89,14 +89,8 @@
       {{/if}}
     </div>
 
-    {{#if foundAt}}
-      <small>
-        <i class="fa fa-chevron-right"></i>&nbsp;&nbsp;Defined in: <a href="{{foundAt}}">`{{{file}}}:{{{line}}}`</a>
-      </small>
-    {{/if}}
-
     {{#if since}}
-      <small><i class="fa">&nbsp;&nbsp;&nbsp;</i>&nbsp;&nbsp;Available since <span class="badge">{{since}}</span></small>
+      <small><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Available since <span class="badge">{{since}}</span></small>
     {{/if}}
   </div>
 
