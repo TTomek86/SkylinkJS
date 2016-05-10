@@ -329,6 +329,11 @@ Skylink.prototype._startPeerConnectionHealthCheck = function (peerId, toOffer) {
     timer = 105000;
   }*/
 
+  if (self._hasMCU) {
+    log.warn([peerId, 'PeerConnectionHealth', null, 'Ignoring check for peer\'s connection health']);
+    return;
+  }
+
   timer += self._retryCount*10000;
 
   log.log([peerId, 'PeerConnectionHealth', null,

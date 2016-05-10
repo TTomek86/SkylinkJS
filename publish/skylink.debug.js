@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.12 - Thu Apr 21 2016 15:09:18 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Tue May 10 2016 13:00:29 GMT+0800 (SGT) */
 
 (function() {
 
@@ -5079,6 +5079,11 @@ Skylink.prototype._startPeerConnectionHealthCheck = function (peerId, toOffer) {
   if (['Android', 'iOS'].indexOf(agent.name) > -1) {
     timer = 105000;
   }*/
+
+  if (self._hasMCU) {
+    log.warn([peerId, 'PeerConnectionHealth', null, 'Ignoring check for peer\'s connection health']);
+    return;
+  }
 
   timer += self._retryCount*10000;
 
