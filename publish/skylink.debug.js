@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.12 - Tue May 10 2016 13:00:29 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Fri May 27 2016 16:59:59 GMT+0800 (SGT) */
 
 (function() {
 
@@ -4997,7 +4997,7 @@ Skylink.prototype._doOffer = function(targetMid, isRenego) {
   pc.createOffer(function(offer) {
     log.debug([targetMid, null, null, 'Created offer'], offer);
 
-    self._setLocalAndSendMessage(targetMid, offer, isRenego);
+    self._setLocalAndSendMessage(targetMid, offer);
 
   }, function(error) {
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -5043,7 +5043,7 @@ Skylink.prototype._doAnswer = function(targetMid, isRenego) {
   // { iceRestart: true }
   pc.createAnswer(function(answer) {
     log.debug([targetMid, null, null, 'Created answer'], answer);
-    self._setLocalAndSendMessage(targetMid, answer, isRenego);
+    self._setLocalAndSendMessage(targetMid, answer);
   }, function(error) {
     log.error([targetMid, null, null, 'Failed creating an answer:'], error);
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -5191,7 +5191,7 @@ Skylink.prototype._stopPeerConnectionHealthCheck = function (peerId) {
  * @for Skylink
  * @since 0.5.2
  */
-Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription, isRenego) {
+Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription) {
   var self = this;
   var pc = self._peerConnections[targetMid];
 
@@ -5365,8 +5365,7 @@ Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescripti
       sdp: sessionDescription.sdp,
       mid: self._user.sid,
       target: targetMid,
-      rid: self._room.id,
-      isRego: isRenego === true
+      rid: self._room.id
     });
 
   }, function(error) {

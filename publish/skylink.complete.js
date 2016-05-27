@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.12 - Tue May 10 2016 13:00:29 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Fri May 27 2016 16:59:59 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10461,7 +10461,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.12 - Tue May 10 2016 13:00:29 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Fri May 27 2016 16:59:59 GMT+0800 (SGT) */
 
 (function() {
 
@@ -15460,7 +15460,7 @@ Skylink.prototype._doOffer = function(targetMid, isRenego) {
   pc.createOffer(function(offer) {
     log.debug([targetMid, null, null, 'Created offer'], offer);
 
-    self._setLocalAndSendMessage(targetMid, offer, isRenego);
+    self._setLocalAndSendMessage(targetMid, offer);
 
   }, function(error) {
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -15506,7 +15506,7 @@ Skylink.prototype._doAnswer = function(targetMid, isRenego) {
   // { iceRestart: true }
   pc.createAnswer(function(answer) {
     log.debug([targetMid, null, null, 'Created answer'], answer);
-    self._setLocalAndSendMessage(targetMid, answer, isRenego);
+    self._setLocalAndSendMessage(targetMid, answer);
   }, function(error) {
     log.error([targetMid, null, null, 'Failed creating an answer:'], error);
     self._trigger('handshakeProgress', self.HANDSHAKE_PROGRESS.ERROR, targetMid, error);
@@ -15654,7 +15654,7 @@ Skylink.prototype._stopPeerConnectionHealthCheck = function (peerId) {
  * @for Skylink
  * @since 0.5.2
  */
-Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription, isRenego) {
+Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescription) {
   var self = this;
   var pc = self._peerConnections[targetMid];
 
@@ -15828,8 +15828,7 @@ Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescripti
       sdp: sessionDescription.sdp,
       mid: self._user.sid,
       target: targetMid,
-      rid: self._room.id,
-      isRego: isRenego === true
+      rid: self._room.id
     });
 
   }, function(error) {
