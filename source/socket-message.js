@@ -1272,6 +1272,17 @@ Skylink.prototype._offerHandler = function(message) {
 
   pc.processingRemoteSDP = true;
 
+  if (typeof message.userInfo === 'object') {
+    var agent = (self._peerInformations[targetMid] || {}).agent || {
+      name: '',
+      version: 0,
+      os: ''
+    };
+
+    self._peerInformations[targetMid] = message.userInfo || {};
+    self._peerInformations[targetMid].agent = agent;
+  }
+
   pc.setRemoteDescription(offer, function() {
     log.debug([targetMid, 'RTCSessionDescription', message.type, 'Remote description set']);
     pc.setOffer = 'remote';
@@ -1488,6 +1499,17 @@ Skylink.prototype._answerHandler = function(message) {
   }
 
   pc.processingRemoteSDP = true;
+
+  if (typeof message.userInfo === 'object') {
+    var agent = (self._peerInformations[targetMid] || {}).agent || {
+      name: '',
+      version: 0,
+      os: ''
+    };
+
+    self._peerInformations[targetMid] = message.userInfo || {};
+    self._peerInformations[targetMid].agent = agent;
+  }
 
   pc.setRemoteDescription(answer, function() {
     log.debug([targetMid, null, message.type, 'Remote description set']);

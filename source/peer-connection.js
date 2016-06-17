@@ -279,6 +279,7 @@ Skylink.prototype._restartPeerConnection = function (peerId, isSelfInitiatedRest
           mid: self._user.sid,
           target: peerId,
           rid: self._room.id,
+          userInfo: self.getPeerInfo(),
           restart: true
         });
       } else {

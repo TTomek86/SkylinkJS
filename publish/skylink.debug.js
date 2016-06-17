@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.12 - Fri May 27 2016 16:59:59 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Fri Jun 17 2016 23:36:45 GMT+0800 (SGT) */
 
 (function() {
 
@@ -3344,7 +3344,8 @@ Skylink.prototype._onIceCandidate = function(targetMid, candidate) {
         mid: self._user.sid,
         agent: window.webrtcDetectedBrowser,
         target: targetMid,
-        rid: self._room.id
+        rid: self._room.id,
+        userInfo: self.getPeerInfo()
       });
     }
 
@@ -4069,6 +4070,7 @@ Skylink.prototype._restartPeerConnection = function (peerId, isSelfInitiatedRest
           mid: self._user.sid,
           target: peerId,
           rid: self._room.id,
+          userInfo: self.getPeerInfo(),
           restart: true
         });
       } else {
@@ -5365,7 +5367,8 @@ Skylink.prototype._setLocalAndSendMessage = function(targetMid, sessionDescripti
       sdp: sessionDescription.sdp,
       mid: self._user.sid,
       target: targetMid,
-      rid: self._room.id
+      rid: self._room.id,
+      userInfo: self.getPeerInfo()
     });
 
   }, function(error) {
@@ -11706,6 +11709,17 @@ Skylink.prototype._offerHandler = function(message) {
 
   pc.processingRemoteSDP = true;
 
+  if (typeof message.userInfo === 'object') {
+    var agent = (self._peerInformations[targetMid] || {}).agent || {
+      name: '',
+      version: 0,
+      os: ''
+    };
+
+    self._peerInformations[targetMid] = message.userInfo || {};
+    self._peerInformations[targetMid].agent = agent;
+  }
+
   pc.setRemoteDescription(offer, function() {
     log.debug([targetMid, 'RTCSessionDescription', message.type, 'Remote description set']);
     pc.setOffer = 'remote';
@@ -11922,6 +11936,17 @@ Skylink.prototype._answerHandler = function(message) {
   }
 
   pc.processingRemoteSDP = true;
+
+  if (typeof message.userInfo === 'object') {
+    var agent = (self._peerInformations[targetMid] || {}).agent || {
+      name: '',
+      version: 0,
+      os: ''
+    };
+
+    self._peerInformations[targetMid] = message.userInfo || {};
+    self._peerInformations[targetMid].agent = agent;
+  }
 
   pc.setRemoteDescription(answer, function() {
     log.debug([targetMid, null, message.type, 'Remote description set']);
