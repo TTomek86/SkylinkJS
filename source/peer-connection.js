@@ -137,9 +137,9 @@ Skylink.prototype._addPeer = function(targetMid, peerBrowser, toOffer, restartCo
 
   self._peerConnections[targetMid].receiveOnly = !!receiveOnly;
   self._peerConnections[targetMid].hasScreen = !!isSS;
-  if (!receiveOnly) {
+  /*if (!receiveOnly) {
     self._addLocalMediaStreams(targetMid);
-  }
+  }*/
   // I'm the callee I need to make an offer
   /*if (toOffer) {
     self._doOffer(targetMid, peerBrowser);

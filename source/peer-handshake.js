@@ -243,6 +243,10 @@ Skylink.prototype._doOffer = function(targetMid, isRenego) {
 
   log.debug([targetMid, null, null, 'Creating offer with config:'], offerConstraints);
 
+  if (!pc.receiveOnly) {
+    self._addLocalMediaStreams(targetMid);
+  }
+
   pc.createOffer(function(offer) {
     log.debug([targetMid, null, null, 'Created offer'], offer);
 
@@ -286,6 +290,10 @@ Skylink.prototype._doAnswer = function(targetMid, isRenego) {
       'Dropping of creating of answer as signalingState is not "' +
       self.PEER_CONNECTION_STATE.HAVE_REMOTE_OFFER + '" ->'], pc.signalingState);
     return;
+  }
+
+  if (!pc.receiveOnly) {
+    self._addLocalMediaStreams(targetMid);
   }
 
   // No ICE restart constraints for createAnswer as it fails in chrome 48

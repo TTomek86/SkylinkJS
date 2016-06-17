@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.12 - Fri Jun 17 2016 23:36:45 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.12 - Sat Jun 18 2016 00:28:22 GMT+0800 (SGT) */
 
 (function() {
 
@@ -3928,9 +3928,9 @@ Skylink.prototype._addPeer = function(targetMid, peerBrowser, toOffer, restartCo
 
   self._peerConnections[targetMid].receiveOnly = !!receiveOnly;
   self._peerConnections[targetMid].hasScreen = !!isSS;
-  if (!receiveOnly) {
+  /*if (!receiveOnly) {
     self._addLocalMediaStreams(targetMid);
-  }
+  }*/
   // I'm the callee I need to make an offer
   /*if (toOffer) {
     self._doOffer(targetMid, peerBrowser);
@@ -4996,6 +4996,10 @@ Skylink.prototype._doOffer = function(targetMid, isRenego) {
 
   log.debug([targetMid, null, null, 'Creating offer with config:'], offerConstraints);
 
+  if (!pc.receiveOnly) {
+    self._addLocalMediaStreams(targetMid);
+  }
+
   pc.createOffer(function(offer) {
     log.debug([targetMid, null, null, 'Created offer'], offer);
 
@@ -5039,6 +5043,10 @@ Skylink.prototype._doAnswer = function(targetMid, isRenego) {
       'Dropping of creating of answer as signalingState is not "' +
       self.PEER_CONNECTION_STATE.HAVE_REMOTE_OFFER + '" ->'], pc.signalingState);
     return;
+  }
+
+  if (!pc.receiveOnly) {
+    self._addLocalMediaStreams(targetMid);
   }
 
   // No ICE restart constraints for createAnswer as it fails in chrome 48
