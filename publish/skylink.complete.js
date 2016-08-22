@@ -1,4 +1,4 @@
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:45:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Mon Aug 22 2016 23:49:06 GMT+0800 (SGT) */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -7248,7 +7248,7 @@ function toArray(list, index) {
 },{}]},{},[31])(31)
 });
 
-/*! adapterjs - v0.13.2 - 2016-03-18 */
+/*! adapterjs - v0.13.3 - 2016-04-13 */
 
 // Adapter's interface.
 var AdapterJS = AdapterJS || {};
@@ -7267,7 +7267,7 @@ AdapterJS.options = AdapterJS.options || {};
 // AdapterJS.options.hidePluginInstallPrompt = true;
 
 // AdapterJS version
-AdapterJS.VERSION = '0.13.2';
+AdapterJS.VERSION = '0.13.3';
 
 // This function will be called when the WebRTC API is ready to be used
 // Whether it is the native implementation (Chrome, Firefox, Opera) or
@@ -9959,24 +9959,30 @@ if ( navigator.mozGetUserMedia ||
 
       // Call relevant PeerConnection constructor according to plugin version
       AdapterJS.WebRTCPlugin.WaitForPluginReady();
+
+      // RTCPeerConnection prototype from the old spec
+      var iceServers = null;
+      if (servers && Array.isArray(servers.iceServers)) {
+        iceServers = servers.iceServers;
+        for (var i = 0; i < iceServers.length; i++) {
+          // Legacy plugin versions compatibility
+          if (iceServers[i].urls && !iceServers[i].url) {
+            iceServers[i].url = iceServers[i].urls;
+          }
+          iceServers[i].hasCredentials = AdapterJS.
+            isDefined(iceServers[i].username) &&
+            AdapterJS.isDefined(iceServers[i].credential);
+        }
+      }
+
       if (AdapterJS.WebRTCPlugin.plugin.PEER_CONNECTION_VERSION &&
           AdapterJS.WebRTCPlugin.plugin.PEER_CONNECTION_VERSION > 1) {
         // RTCPeerConnection prototype from the new spec
+        if (iceServers) {
+          servers.iceServers = iceServers;
+        }
         return AdapterJS.WebRTCPlugin.plugin.PeerConnection(servers);
       } else {
-        // RTCPeerConnection prototype from the old spec
-        var iceServers = null;
-        if (servers && Array.isArray(servers.iceServers)) {
-          iceServers = servers.iceServers;
-          for (var i = 0; i < iceServers.length; i++) {
-            if (iceServers[i].urls && !iceServers[i].url) {
-              iceServers[i].url = iceServers[i].urls;
-            }
-            iceServers[i].hasCredentials = AdapterJS.
-              isDefined(iceServers[i].username) &&
-              AdapterJS.isDefined(iceServers[i].credential);
-          }
-        }
         var mandatory = (constraints && constraints.mandatory) ?
           constraints.mandatory : null;
         var optional = (constraints && constraints.optional) ?
@@ -10455,7 +10461,7 @@ if ( navigator.mozGetUserMedia ||
   }
 })();
 
-/*! skylinkjs - v0.6.10 - Sun Apr 17 2016 23:45:39 GMT+0800 (SGT) */
+/*! skylinkjs - v0.6.10 - Mon Aug 22 2016 23:49:06 GMT+0800 (SGT) */
 
 (function() {
 
@@ -15186,7 +15192,11 @@ Skylink.prototype._setIceServers = function(givenConfig) {
     var credential = typeof server.credential === 'string' ? server.credential : 'none';
 
     if (server.url.indexOf('turn') === 0) {
-      if (this._TURNTransport === this.TURN_TRANSPORT.ANY) {
+      if (window.webrtcDetectedBrowser === 'edge') {
+        var rawUrlEdgeParts = server.url.split(':');
+        pushIceServer(username, credential, rawUrlEdgeParts[0] + ':' + rawUrlEdgeParts[1] + ':3478?transport=udp');
+
+      } else if (this._TURNTransport === this.TURN_TRANSPORT.ANY) {
         pushIceServer(username, credential, server.url);
 
       } else {
@@ -16566,7 +16576,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
    * @since 0.6.x
    */
   SkylinkPeer.prototype._connectionSettings = {
-    enableDataChannel: superRef._enableDataChannel === true,
+    enableDataChannel: superRef._enableDataChannel === true && window.webrtcDetectedBrowser !== 'edge',
     enableIceTrickle: superRef._enableIceTrickle === true,
     enableIceRestart: false,
     stereo: false,
@@ -17404,12 +17414,12 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
     // Enforce TURN connections for Edge.
     /* NOTE: This fails for some reason. Edge interop is beta */
-    if (superRef._forceTURN && window.webrtcDetectedBrowser === 'edge') {
+    /*if (superRef._forceTURN && window.webrtcDetectedBrowser === 'edge') {
       log.warn([ref.id, 'Peer', 'RTCPeerConnection', 'Configurating Edge ICE transport policy to ' +
         'gather TURN candidates only. This is an experimental feature and may not work.']);
 
       configuration.iceTransportPolicy = 'relay';
-    }
+    }*/
 
     /**
      * Construct the RTCPeerConnection object
@@ -17436,7 +17446,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     // Stream the local MediaStream object in connection
     ref._addStream();
 
-    log.log([ref.id, 'Peer', 'RTCPeerConnection', 'Connection has started']);
+    log.log([ref.id, 'Peer', 'RTCPeerConnection', 'Connection has started ->'], configuration.iceServers);
 
     // Start a connection monitor checker
     ref.monitorConnection();

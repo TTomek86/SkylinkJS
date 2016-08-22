@@ -217,7 +217,11 @@ Skylink.prototype._setIceServers = function(givenConfig) {
     var credential = typeof server.credential === 'string' ? server.credential : 'none';
 
     if (server.url.indexOf('turn') === 0) {
-      if (this._TURNTransport === this.TURN_TRANSPORT.ANY) {
+      if (window.webrtcDetectedBrowser === 'edge') {
+        var rawUrlEdgeParts = server.url.split(':');
+        pushIceServer(username, credential, rawUrlEdgeParts[0] + ':' + rawUrlEdgeParts[1] + ':3478?transport=udp');
+
+      } else if (this._TURNTransport === this.TURN_TRANSPORT.ANY) {
         pushIceServer(username, credential, server.url);
 
       } else {

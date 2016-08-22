@@ -171,7 +171,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
    * @since 0.6.x
    */
   SkylinkPeer.prototype._connectionSettings = {
-    enableDataChannel: superRef._enableDataChannel === true,
+    enableDataChannel: superRef._enableDataChannel === true && window.webrtcDetectedBrowser !== 'edge',
     enableIceTrickle: superRef._enableIceTrickle === true,
     enableIceRestart: false,
     stereo: false,
@@ -1009,12 +1009,12 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
 
     // Enforce TURN connections for Edge.
     /* NOTE: This fails for some reason. Edge interop is beta */
-    if (superRef._forceTURN && window.webrtcDetectedBrowser === 'edge') {
+    /*if (superRef._forceTURN && window.webrtcDetectedBrowser === 'edge') {
       log.warn([ref.id, 'Peer', 'RTCPeerConnection', 'Configurating Edge ICE transport policy to ' +
         'gather TURN candidates only. This is an experimental feature and may not work.']);
 
       configuration.iceTransportPolicy = 'relay';
-    }
+    }*/
 
     /**
      * Construct the RTCPeerConnection object
@@ -1041,7 +1041,7 @@ Skylink.prototype._createPeer = function (peerId, peerData) {
     // Stream the local MediaStream object in connection
     ref._addStream();
 
-    log.log([ref.id, 'Peer', 'RTCPeerConnection', 'Connection has started']);
+    log.log([ref.id, 'Peer', 'RTCPeerConnection', 'Connection has started ->'], configuration.iceServers);
 
     // Start a connection monitor checker
     ref.monitorConnection();
